@@ -1,0 +1,91 @@
+---
+version: '3'
+services:
+  gw:
+    build: ./gw
+    network_mode: bridge
+    tty: true
+    restart: always
+    ports:
+      - ${PORT:-80}:80
+    links:
+      - auth
+      - backend
+      - frontend
+  auth:
+    build: ./auth
+    network_mode: bridge
+    tty: true
+    restart: always
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      DB_HOST: db
+      SECRET_KEY_BASE: foobar
+      RAILS_LOG_TO_STDOUT: ${RAILS_LOG_TO_STDOUT:-1}
+      SENTRY_DSN: http://abec18ecbeff4999be7e4202dc8efc38:0910a5fe4f154c17a4f8bfd9206592e4@bugs.bitia.ru/11
+    links:
+      - db
+      - redis
+    volumes:
+      - ${PWD}/auth/app:/app/app
+    ports:
+      - 3002:3002
+  backend:
+    build: ./backend
+    network_mode: bridge
+    tty: true
+    restart: always
+    environment:
+      DB_HOST: db
+      REDIS_URL: "redis://redis:6379/1"
+      RAILS_ENV: ${RAILS_ENV:-development}
+      SECRET_KEY_BASE: foobar
+      RAILS_LOG_TO_STDOUT: ${RAILS_LOG_TO_STDOUT:-1}
+      SENTRY_DSN: ${SENTRY_DSN:-https://abec18ecbeff4999be7e4202dc8efc38:0910a5fe4f154c17a4f8bfd9206592e4@bugs.bitia.ru/11}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-123456}
+    links:
+      - db
+      - redis
+    volumes:
+      - ${PWD}/storage:/app/storage
+      - ${PWD}/backend/app:/app/app
+  job:
+    build: ./backend
+    network_mode: bridge
+    tty: true
+    restart: always
+    command: bundle exec sidekiq
+    environment:
+      DB_HOST: db
+      REDIS_URL: "redis://redis:6379/1"
+      RAILS_ENV: ${RAILS_ENV:-development}
+      SECRET_KEY_BASE: foobar
+      RAILS_LOG_TO_STDOUT: ${RAILS_LOG_TO_STDOUT:-1}
+      SENTRY_DSN: ${SENTRY_DSN:-https://abec18ecbeff4999be7e4202dc8efc38:0910a5fe4f154c17a4f8bfd9206592e4@bugs.bitia.ru/11}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD:-123456}
+    links:
+      - db
+      - redis
+    volumes:
+      - ${PWD}/storage:/app/storage
+      - ${PWD}/sandbox:/tmp/sandbox
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        apiUrl: ${API_URL:-/api}
+        sentryDsn: ${SENTRY_DSN_FRONTEND:-}
+    network_mode: bridge
+    tty: true
+    restart: always
+  db:
+    image: postgres:11-alpine
+    network_mode: bridge
+    restart: always
+    volumes:
+      - ${PWD}/db:/var/lib/postgresql/data
+  redis:
+    image: redis:3.2
+    network_mode: bridge
+    tty: true
+    restart: always
