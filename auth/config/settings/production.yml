@@ -1,0 +1,4 @@
+userSession:
+  token:
+    lifeTimeShort: 1
+    lifeTimeLong: 30

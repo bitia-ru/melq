@@ -1,0 +1,6 @@
+---
+:concurrency: 3
+:pidfile: ./tmp/pids/sidekiq.pid
+:logfile: ./log/jobs.log
+:queues:
+- default

@@ -1,0 +1,10 @@
+default: &default
+  db: 0
+
+development:
+  <<: *default
+  url: redis://redis:6379
+
+production:
+  <<: *default
+  url: redis://redis:6379
