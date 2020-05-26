@@ -36,13 +36,13 @@ class InitialMigration < ActiveRecord::Migration[5.2]
     create_table :posts do |t|
       t.string :title
       t.text :content
-      t.boolean :published
-      t.column :can_comment, :can_comment
-      t.boolean :add_likes_auth_only
+      t.boolean :published, default: false
+      t.column :can_comment, :can_comment, default: 'authorized_only'
+      t.boolean :add_likes_auth_only, default: false
       t.integer :num_of_likes
       t.integer :num_of_reposts
       t.integer :num_of_views
-      t.string :slug
+      t.string :slug, null: false
       t.string :seo_title
       t.jsonb :seo_kw, default: []
 
