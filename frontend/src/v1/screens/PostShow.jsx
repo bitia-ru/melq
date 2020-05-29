@@ -10,6 +10,7 @@ import { currentUser } from '@/v1/redux/user_session/utils';
 import { closeUserSession } from '@/v1/utils/auth';
 import { loadPost } from '@/v1/redux/posts/actions';
 import Button from '@/v1/components/Button/Button';
+import prepareImageUrls from '@/v1/utils/prepareImageUrls';
 
 
 class PostShow extends React.PureComponent {
@@ -22,10 +23,23 @@ class PostShow extends React.PureComponent {
     this.props.loadPost(this.props.match.params.slug);
   }
 
+  prepareImageUrls = (content) => {
+    if (!content) {
+      return '';
+    }
+    const { posts } = this.props;
+    const { slug } = this.props.match.params;
+    const post = posts[slug];
+    const lookUp = R.fromPairs(
+      R.map(image => [image.original_filename, image.url], post.images),
+    );
+    return prepareImageUrls(lookUp, content);
+  }
+
   render() {
     const { user, history, posts } = this.props;
 
-    let post = posts[this.props.match.params.slug];
+    const post = posts[this.props.match.params.slug];
 
     return (
       <MainScreen header="">
@@ -42,7 +56,9 @@ class PostShow extends React.PureComponent {
           post && <div key={post.id}>
             <h2>{post.title}</h2>
             <div>{post.updated_at}</div>
-            <div dangerouslySetInnerHTML={{ __html: marked(post.content || '') }} />
+            <div
+              dangerouslySetInnerHTML={{ __html: marked(this.prepareImageUrls(post.content || '')) }}
+            />
             <div>{`Tags: ${R.join(', ', R.map(tag => tag.text, post.tags))}`}</div>
             <div>{`Likes: ${post.num_of_likes || 0}`}</div>
             <div>{`Reposts: ${post.num_of_reposts || 0}`}</div>
@@ -62,6 +78,9 @@ class PostShow extends React.PureComponent {
 PostShow.propTypes = {
   user: PropTypes.object,
   posts: PropTypes.object,
+  loadPost: PropTypes.func,
+  match: PropTypes.object,
+  history: PropTypes.object,
 };
 
 const mapStateToProps = state => ({

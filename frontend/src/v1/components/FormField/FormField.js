@@ -11,7 +11,7 @@ export default class FormField extends Component {
 
     render() {
       const {
-        hasError, id, disabled, type, value, onChange, placeholder, errorText,
+        hasError, id, disabled, type, value, onChange, placeholder, errorText, onBlur,
       } = this.props;
       return (
         <div>
@@ -22,6 +22,7 @@ export default class FormField extends Component {
               type={type}
               value={value}
               onChange={onChange}
+              onBlur={onBlur}
               onKeyPress={this.onKeyPress}
               placeholder={placeholder}
             />
@@ -43,6 +44,7 @@ export default class FormField extends Component {
 FormField.propTypes = {
   onEnter: PropTypes.func,
   onChange: PropTypes.func,
+  onBlur: PropTypes.func,
   hasError: PropTypes.array,
   disabled: PropTypes.bool,
   errorText: PropTypes.string,
@@ -60,5 +62,6 @@ FormField.defaultProps = {
   hasError: null,
   disabled: false,
   onChange: null,
+  onBlur: null,
   errorText: null,
 };
