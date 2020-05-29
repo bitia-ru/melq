@@ -1,0 +1,23 @@
+default: &default
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  reconnect: true
+  encoding: utf8
+
+development:
+  <<: *default
+  host: <%= ENV.fetch('DB_HOST', '127.0.0.1') %>
+  username: <%= ENV.fetch('DB_USER', 'postgres') %>
+  database: app-dev
+
+test:
+  <<: *default
+  host: <%= ENV.fetch('DB_HOST', '127.0.0.1') %>
+  username: <%= ENV.fetch('DB_USER', 'postgres') %>
+  database: app-test
+
+production:
+  <<: *default
+  host: <%= ENV.fetch('DB_HOST', '127.0.0.1') %>
+  username: <%= ENV.fetch('DB_USER', 'postgres') %>
+  database: app

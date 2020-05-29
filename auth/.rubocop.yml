@@ -1,0 +1,24 @@
+AllCops:
+  Exclude:
+    - 'bin/*'
+    - 'db/schema.rb'
+Style/FrozenStringLiteralComment: { Enabled: false }
+Performance/RedundantMerge:
+  Exclude:
+    - 'app/views/**/*.json.jbuilder'
+Metrics/LineLength:
+  Max: 100
+Metrics/MethodLength: { Enabled: false }
+Metrics/ModuleLength: { Enabled: false }
+Metrics/BlockLength: { Enabled: false }
+Metrics/AbcSize: { Enabled: false }
+Metrics/CyclomaticComplexity: { Enabled: false }
+Metrics/PerceivedComplexity: { Enabled: false }
+Metrics/BlockNesting: { Enabled: false }
+Metrics/ClassLength: { Enabled: false }
+Style/Documentation: { Enabled: false }
+Style/NumericPredicate: { Enabled: false }
+Style/ClassAndModuleChildren: { Enabled: false }
+Style/SpecialGlobalVars: { Enabled: false }
+Style/AndOr: { Enabled: false }
+Style/Lambda: { Enabled: false }

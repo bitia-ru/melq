@@ -1,0 +1,34 @@
+---
+version: '3'
+services:
+  app:
+    build: .
+    network_mode: bridge
+    tty: true
+    restart: always
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      DB_HOST: db
+      SECRET_KEY_BASE: foobar
+      RAILS_LOG_TO_STDOUT: ${RAILS_LOG_TO_STDOUT:-1}
+      SENTRY_DSN: http://abec18ecbeff4999be7e4202dc8efc38:0910a5fe4f154c17a4f8bfd9206592e4@bugs.bitia.ru/11
+    links:
+      - db
+      - redis
+    ports:
+      - 3001:3001
+    volumes:
+      - ${PWD}:/app
+  db:
+    image: postgres:11-alpine
+    network_mode: bridge
+    restart: always
+    ports:
+      - 5432:5432 # for runs service natively
+  redis:
+    image: redis:3.2
+    network_mode: bridge
+    tty: true
+    restart: always
+    ports:
+      - 6379:6379
