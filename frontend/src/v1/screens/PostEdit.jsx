@@ -10,7 +10,17 @@ import { loadTags } from '@/v1/redux/tags/actions';
 import FormField from '@/v1/components/FormField/FormField';
 import Button from '@/v1/components/Button/Button';
 import { StyleSheet, css } from '@/v1/aphrodite';
+import prepareImageUrls from '@/v1/utils/prepareImageUrls';
+import showToastr from '@/v1/utils/showToastr';
 
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  column: { flex: 1 },
+  textarea: { width: '80%' },
+});
 
 class PostEdit extends React.PureComponent {
   constructor(props) {
@@ -20,6 +30,7 @@ class PostEdit extends React.PureComponent {
       isWaiting: { submitBtn: false, removeBtn: false },
       images: [],
       removedImagesIds: [],
+      imagesUpdatedNames: {},
     };
   }
 
@@ -32,11 +43,11 @@ class PostEdit extends React.PureComponent {
   }
 
   submit = () => {
-    let { history } = this.props;
-    let { post } = this.state;
-    let { slug } = this.props.match.params;
+    const { history } = this.props;
+    const { post, isWaiting } = this.state;
+    const { slug } = this.props.match.params;
 
-    this.setState({ isWaiting: { ...this.state.isWaiting, submitBtn: true } });
+    this.setState({ isWaiting: { ...isWaiting, submitBtn: true } });
     const formData = new FormData();
 
     if (post.title) {
@@ -45,7 +56,15 @@ class PostEdit extends React.PureComponent {
     if (post.content) {
       formData.append('post[content]', post.content);
     }
-    const diff = (a, b) => (a.id === undefined ? 1 : (b.id === undefined ? -1 : a.id - b.id));
+    const diff = (a, b) => {
+      if (a.id === undefined) {
+        return 1;
+      }
+      if (b.id === undefined) {
+        return -1;
+      }
+      return a.id - b.id;
+    };
 
     if (post.tags) {
       let existingTags = [];
@@ -97,7 +116,7 @@ class PostEdit extends React.PureComponent {
     }
     R.forEach(
       (image) => {
-        formData.append('post[images][]', image.file);
+        formData.append('post[images][]', image.file, image.name);
       },
       this.state.images,
     );
@@ -108,6 +127,13 @@ class PostEdit extends React.PureComponent {
       },
       this.state.removedImagesIds,
     );
+    R.forEachObjIndexed(
+      (filename, id) => {
+        formData.append('post[images_attachments_attributes][][id]', id);
+        formData.append('post[images_attachments_attributes][][filename]', filename);
+      },
+      this.state.imagesUpdatedNames,
+    );
     if (slug) {
       this.props.updatePost(
         slug,
@@ -116,7 +142,7 @@ class PostEdit extends React.PureComponent {
           history.push('/');
         },
         () => {
-          this.setState({ isWaiting: { ...this.state.isWaiting, submitBtn: false } });
+          this.setState({ isWaiting: { ...isWaiting, submitBtn: false } });
         },
       );
     } else {
@@ -126,15 +152,16 @@ class PostEdit extends React.PureComponent {
           history.push('/');
         },
         () => {
-          this.setState({ isWaiting: { ...this.state.isWaiting, submitBtn: false } });
+          this.setState({ isWaiting: { ...isWaiting, submitBtn: false } });
         },
       );
     }
   };
 
   remove = () => {
-    let { slug } = this.props.match.params;
-    this.setState({ isWaiting: { ...this.state.isWaiting, removeBtn: true } });
+    const { slug } = this.props.match.params;
+    const { isWaiting } = this.state;
+    this.setState({ isWaiting: { ...isWaiting, removeBtn: true } });
     if (confirm('Удалить пост?')) {
       this.props.removePost(
         slug,
@@ -142,17 +169,17 @@ class PostEdit extends React.PureComponent {
           this.props.history.push('/');
         },
         () => {
-          this.setState({ isWaiting: { ...this.state.isWaiting, removeBtn: false } });
-        }
-      )
+          this.setState({ isWaiting: { ...isWaiting, removeBtn: false } });
+        },
+      );
     } else {
-      this.setState({ isWaiting: { ...this.state.isWaiting, removeBtn: false } });
+      this.setState({ isWaiting: { ...isWaiting, removeBtn: false } });
     }
-  }
+  };
 
   addImage = () => {
     this.inputRef.click();
-  }
+  };
 
   onFileRead = () => {
     const { images } = this.state;
@@ -160,52 +187,124 @@ class PostEdit extends React.PureComponent {
       {
         images: [
           ...R.slice(0, -1, images),
-          { ...images[images.length - 1], content: this.fileReader.result }
-        ]
-      }
-    )
+          { ...images[images.length - 1], content: this.fileReader.result },
+        ],
+      },
+    );
+  };
+
+  getImageNames = () => {
+    const { posts } = this.props;
+    const { images, imagesUpdatedNames } = this.state;
+    const { slug } = this.props.match.params;
+
+    if (slug) {
+      const post = posts[slug];
+      return R.concat(
+        R.map(image => imagesUpdatedNames[image.id] || image.original_filename, post.images),
+        R.map(image => image.name, images),
+      );
+    }
+
+    return R.map(image => image.name, images);
+  };
+
+  prepareFilename = (name) => {
+    const cleanedUpName = R.replace(/[^а-яА-Яa-zA-Z0-9-_.]/g, '', name);
+    const parts = R.split('.', cleanedUpName);
+    const extension = parts.length > 1 ? `.${R.last(parts)}` : '';
+    const fileName = parts.length > 1 ? R.join('.', R.slice(0, -1, parts)) : cleanedUpName;
+    let indexedName = cleanedUpName;
+    const existingNames = this.getImageNames();
+    let i = 1;
+    while (R.contains(indexedName, existingNames)) {
+      indexedName = `${fileName}_${i}${extension}`;
+      i += 1;
+    }
+    return indexedName;
   };
 
   onFileChosen = (file) => {
+    const { images } = this.state;
     this.fileReader = new FileReader();
     this.fileReader.onloadend = this.onFileRead;
     this.fileReader.readAsDataURL(file);
     this.setState(
       {
         images: [
-          ...this.state.images,
-          { file: file }
-        ]
-      }
-    )
+          ...images,
+          { file, name: this.prepareFilename(file.name) },
+        ],
+      },
+    );
   };
 
   removeImage = (id) => {
-    this.setState({ removedImagesIds: [...this.state.removedImagesIds, id] });
+    const { removedImagesIds } = this.state;
+    this.setState({ removedImagesIds: [...removedImagesIds, id] });
   };
 
   removeJustLoadedImage = (index) => {
-    this.setState({ images: R.remove(index, 1, this.state.images) });
+    const { images } = this.state;
+    this.setState({ images: R.remove(index, 1, images) });
+  };
+
+  prepareImageUrls = (content) => {
+    if (!content) {
+      return '';
+    }
+    const { posts } = this.props;
+    const { images, imagesUpdatedNames } = this.state;
+    const { slug } = this.props.match.params;
+    let lookUp;
+    if (slug) {
+      const post = posts[slug];
+      lookUp = R.fromPairs(
+        R.concat(
+          R.map(
+            image => [imagesUpdatedNames[image.id] || image.original_filename, image.url],
+            R.reject(a => R.contains(a.id, this.state.removedImagesIds), post.images || []),
+          ),
+          R.map(image => [image.name, image.content], images),
+        ),
+      );
+    } else {
+      lookUp = R.fromPairs(R.map(image => [image.name, image.content], images));
+    }
+    return prepareImageUrls(lookUp, content);
+  };
+
+  checkNameUniq = (name) => {
+    const existingNames = this.getImageNames();
+    if (R.reject(n => n !== name, existingNames).length > 1) {
+      showToastr('Имена файлов должны быть уникальны', { type: 'error' });
+    }
+    return false;
   };
 
   render() {
     const { posts } = this.props;
-    const { images } = this.state;
+    const { images, imagesUpdatedNames, post: postState, isWaiting } = this.state;
 
-    let { slug } = this.props.match.params;
-    let post = {
+    const { slug } = this.props.match.params;
+    const post = {
       can_comment: 'authorized_only',
       ...posts[slug],
-      ...this.state.post
+      ...this.state.post,
     };
     const mapIndexed = R.addIndex(R.map);
+    const validFileNameRe = new RegExp('^[а-яА-Яa-zA-Z0-9-_.]*$');
     return (
       <MainScreen header="">
         <h2>{slug ? 'Редактирование поста' : 'Создание поста'}</h2>
         <FormField
           placeholder="Title"
           id="title"
-          onChange={event => this.setState({ post: { ...this.state.post, title: event.target.value } })}
+          onChange={
+            event => this.setState(
+              { post: { ...postState, title: event.target.value } },
+            )
+          }
           type="text"
           value={post.title}
         />
@@ -216,25 +315,32 @@ class PostEdit extends React.PureComponent {
               rows={30}
               value={post.content}
               onChange={
-                event => this.setState({ post: { ...this.state.post, content: event.target.value } })
+                event => this.setState(
+                  { post: { ...postState, content: event.target.value } },
+                )
               }
             />
           </div>
-          <div className={css(styles.column)} dangerouslySetInnerHTML={{ __html: marked(post.content || '') }} />
+          <div
+            className={css(styles.column)}
+            dangerouslySetInnerHTML={
+              { __html: marked(this.prepareImageUrls(post.content || '')) }
+            }
+          />
         </div>
         <FormField
           placeholder="Tags"
           id="tags"
           onChange={
             (event) => {
-              let tags = R.map(
-                t => {
-                  let existingTag = R.find(R.propEq('text', t))(this.props.tags);
-                  return { text: t, ...(existingTag && { id: existingTag.id }) }
+              const tags = R.map(
+                (t) => {
+                  const existingTag = R.find(R.propEq('text', t))(this.props.tags);
+                  return { text: t, ...(existingTag && { id: existingTag.id }) };
                 },
                 R.split(', ', event.target.value),
               );
-              this.setState({post: {...this.state.post, tags: tags}})
+              this.setState({ post: { ...postState, tags } });
             }
           }
           type="text"
@@ -243,21 +349,31 @@ class PostEdit extends React.PureComponent {
         <FormField
           placeholder="Slug"
           id="slug"
-          onChange={event => this.setState({ post: { ...this.state.post, slug: event.target.value } })}
+          onChange={
+            event => this.setState({ post: { ...postState, slug: event.target.value } })
+          }
           type="text"
           value={post.slug}
         />
         <FormField
           placeholder="Seo title"
           id="seo_title"
-          onChange={(event) => this.setState({ post: { ...this.state.post, seo_title: event.target.value } })}
+          onChange={
+            event => this.setState(
+              { post: { ...postState, seo_title: event.target.value } },
+            )
+          }
           type="text"
           value={post.seo_title}
         />
         <FormField
           placeholder="Seo key words"
           id="seo_kw"
-          onChange={(event) => this.setState({ post: { ...this.state.post, seo_kw: event.target.value } })}
+          onChange={
+            event => this.setState(
+              { post: { ...postState, seo_kw: event.target.value } },
+            )
+          }
           type="text"
           value={post.seo_kw}
         />
@@ -266,49 +382,92 @@ class PostEdit extends React.PureComponent {
             type="checkbox"
             disabled={posts[slug]?.published}
             checked={post.published}
-            onChange={(event) => this.setState({ post: { ...this.state.post, published: !post.published } })}
-          />Published
+            onChange={
+              () => this.setState(
+                { post: { ...postState, published: !post.published } },
+              )
+            }
+          />
+          Published
         </div>
         <div>
           Allow comment:
           <input
             type="radio"
             checked={post.can_comment === 'authorized_only'}
-            onChange={(event) => this.setState({ post: { ...this.state.post, can_comment: 'authorized_only' } })}
-          />Auth only
+            onChange={
+              () => this.setState(
+                { post: { ...postState, can_comment: 'authorized_only' } },
+              )
+            }
+          />
+          Auth only
           <input
             type="radio"
             checked={post.can_comment === 'everyone'}
-            onChange={(event) => this.setState({ post: { ...this.state.post, can_comment: 'everyone' } })}
-          />All
+            onChange={
+              () => this.setState(
+                { post: { ...postState, can_comment: 'everyone' } },
+              )
+            }
+          />
+          All
           <input
             type="radio"
             checked={post.can_comment === 'nobody'}
-            onChange={(event) => this.setState({ post: { ...this.state.post, can_comment: 'nobody' } })}
-          />Not allowed
+            onChange={
+              () => this.setState({ post: { ...postState, can_comment: 'nobody' } })
+            }
+          />
+          Not allowed
         </div>
         <div>
           <input
             type="checkbox"
             checked={post.add_likes_auth_only}
             onChange={
-              (event) => {
-                this.setState({ post: { ...this.state.post, add_likes_auth_only: !post.add_likes_auth_only } })
+              () => {
+                this.setState(
+                  { post: { ...postState, add_likes_auth_only: !post.add_likes_auth_only } },
+                );
               }
             }
-          />Allow likes for auth only
+          />
+          Allow likes for auth only
         </div>
         {
           R.map(
-            (image) => (
+            image => (
               <div key={image.id}>
-                <img height="100" src={image.url} />
-                <Button
-                  onClick={() => this.removeImage(image.id)}
-                >
-                  Remove
-                </Button>
-                <input readOnly value={image.url}/>
+                <img height="100" src={image.url} alt="" />
+                <Button onClick={() => this.removeImage(image.id)}>Remove</Button>
+                <FormField
+                  placeholder="File Name"
+                  onChange={
+                    (event) => {
+                      if (!R.test(validFileNameRe, event.target.value)) {
+                        return;
+                      }
+                      this.setState(
+                        {
+                          imagesUpdatedNames: {
+                            ...imagesUpdatedNames,
+                            [image.id]: event.target.value,
+                          },
+                        },
+                      );
+                    }
+                  }
+                  onBlur={
+                    () => {
+                      this.checkNameUniq(
+                        imagesUpdatedNames[image.id] || image.original_filename,
+                      );
+                    }
+                  }
+                  type="text"
+                  value={imagesUpdatedNames[image.id] || image.original_filename}
+                />
               </div>
             ),
             R.reject(a => R.contains(a.id, this.state.removedImagesIds), post.images || []),
@@ -318,12 +477,34 @@ class PostEdit extends React.PureComponent {
           mapIndexed(
             (image, index) => (
               <div key={index}>
-                <img height="100" src={image.content} />
-                <Button
-                  onClick={() => this.removeJustLoadedImage(index)}
-                >
-                  Remove
-                </Button>
+                <img height="100" src={image.content} alt="" />
+                <Button onClick={() => this.removeJustLoadedImage(index)}>Remove</Button>
+                <FormField
+                  placeholder="File Name"
+                  onChange={
+                    (event) => {
+                      if (!R.test(validFileNameRe, event.target.value)) {
+                        return;
+                      }
+                      this.setState(
+                        {
+                          images: [
+                            ...R.slice(0, index, images),
+                            { ...image, name: event.target.value },
+                            ...R.slice(index + 1, Infinity, images),
+                          ],
+                        },
+                      );
+                    }
+                  }
+                  onBlur={
+                    () => {
+                      this.checkNameUniq(image.name);
+                    }
+                  }
+                  type="text"
+                  value={image.name}
+                />
               </div>
             ),
             images,
@@ -332,7 +513,7 @@ class PostEdit extends React.PureComponent {
         <Button onClick={this.addImage}>Add image</Button>
         <div>
           <input
-            ref={(ref) => {this.inputRef = ref}}
+            ref={(ref) => { this.inputRef = ref; }}
             type="file"
             hidden
             onChange={event => this.onFileChosen(event.target.files[0])}
@@ -340,18 +521,12 @@ class PostEdit extends React.PureComponent {
         </div>
         {
           slug && (
-            <Button
-              isWaiting={this.state.isWaiting.removeBtn}
-              onClick={this.remove}
-            >
+            <Button isWaiting={isWaiting.removeBtn} onClick={this.remove}>
               Удалить
             </Button>
           )
         }
-        <Button
-          isWaiting={this.state.isWaiting.submitBtn}
-          onClick={this.submit}
-        >
+        <Button isWaiting={isWaiting.submitBtn} onClick={this.submit}>
           Сохранить
         </Button>
       </MainScreen>
@@ -359,22 +534,16 @@ class PostEdit extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  column: {
-    flex: 1,
-  },
-  textarea: {
-    width: '80%',
-  }
-});
-
 PostEdit.propTypes = {
   posts: PropTypes.object,
   tags: PropTypes.array,
+  match: PropTypes.object,
+  loadPost: PropTypes.func,
+  loadTags: PropTypes.func,
+  updatePost: PropTypes.func,
+  createPost: PropTypes.func,
+  removePost: PropTypes.func,
+  history: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
@@ -383,10 +552,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  loadPost: (slug) => dispatch(loadPost(slug)),
+  loadPost: slug => dispatch(loadPost(slug)),
   loadTags: () => dispatch(loadTags()),
-  updatePost: (slug, params, afterSuccess, afterAll) => dispatch(updatePost(slug, params, afterSuccess, afterAll)),
-  createPost: (params, afterSuccess, afterAll) => dispatch(createPost(params, afterSuccess, afterAll)),
+  updatePost: (slug, params, afterSuccess, afterAll) => (
+    dispatch(updatePost(slug, params, afterSuccess, afterAll))
+  ),
+  createPost: (params, afterSuccess, afterAll) => (
+    dispatch(createPost(params, afterSuccess, afterAll))
+  ),
   removePost: (slug, afterSuccess, afterAll) => dispatch(removePost(slug, afterSuccess, afterAll)),
 });
 
