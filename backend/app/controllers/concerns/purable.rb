@@ -13,7 +13,11 @@ module Purable
         if m.nil?
           pm.singularize.classify.constantize
         else
-          m.find(params["#{m.to_s.underscore}_id"]).send(pm.to_sym)
+          if params.include?("#{m.to_s.underscore}_id")
+            m.find(params["#{m.to_s.underscore}_id"]).send(pm.to_sym)
+          else
+            m.find_by(slug: params["#{m.to_s.underscore}_slug"]).send(pm.to_sym)
+          end
         end
       end
 
