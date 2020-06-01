@@ -2,7 +2,6 @@ import * as R from 'ramda';
 import { acts } from './actions';
 import DEFAULT_STORE_FORMAT from './constants/defaultStoreFormat';
 
-
 const postsReducer = (
   state = DEFAULT_STORE_FORMAT,
   action,
@@ -38,6 +37,117 @@ const postsReducer = (
     return {
       ...state,
       posts: R.dissoc(action.slug, state.posts),
+      numOfActiveRequests: state.numOfActiveRequests - 1,
+    };
+  case acts.LOAD_POST_COMMENTS_SUCCESS:
+    return {
+      ...state,
+      posts: {
+        ...state.posts,
+        [action.postSlug]: {
+          ...state.posts[action.postSlug],
+          comments: action.comments,
+        },
+      },
+      numOfActiveRequests: state.numOfActiveRequests - 1,
+    };
+  case acts.CREATE_COMMENT_SUCCESS:
+    if (action.comment.comment_id === null) {
+      return {
+        ...state,
+        posts: {
+          ...state.posts,
+          [action.postSlug]: {
+            ...state.posts[action.postSlug],
+            comments: [
+              ...state.posts[action.postSlug].comments,
+              action.comment,
+            ],
+          },
+        },
+        numOfActiveRequests: state.numOfActiveRequests - 1,
+      };
+    }
+    let findAndUpdateComment = (comments) => {
+      const index = R.findIndex(R.propEq('id', action.comment.comment_id))(comments);
+      if (index !== -1) {
+        return [
+          ...R.slice(0, index, comments),
+          {
+            ...comments[index],
+            comments: [...comments[index].comments, action.comment],
+          },
+          ...R.slice(index + 1, Infinity, comments),
+        ];
+      }
+      return R.map(
+        comment => (
+          { ...comment, comments: findAndUpdateComment(comment.comments) }
+        ),
+        comments,
+      );
+    };
+    return {
+      ...state,
+      posts: {
+        ...state.posts,
+        [action.postSlug]: {
+          ...state.posts[action.postSlug],
+          comments: findAndUpdateComment(state.posts[action.postSlug].comments),
+        },
+      },
+      numOfActiveRequests: state.numOfActiveRequests - 1,
+    };
+  case acts.UPDATE_COMMENT_SUCCESS:
+    findAndUpdateComment = (comments) => {
+      const index = R.findIndex(R.propEq('id', action.comment.id))(comments);
+      if (index !== -1) {
+        return [
+          ...R.slice(0, index, comments),
+          action.comment,
+          ...R.slice(index + 1, Infinity, comments),
+        ];
+      }
+      return R.map(
+        comment => (
+          { ...comment, comments: findAndUpdateComment(comment.comments) }
+        ),
+        comments,
+      );
+    };
+    return {
+      ...state,
+      posts: {
+        ...state.posts,
+        [action.postSlug]: {
+          ...state.posts[action.postSlug],
+          comments: findAndUpdateComment(state.posts[action.postSlug].comments),
+        },
+      },
+      numOfActiveRequests: state.numOfActiveRequests - 1,
+    };
+  case acts.REMOVE_COMMENT_SUCCESS:
+    const findAndRemoveComment = (comments) => {
+      const index = R.findIndex(R.propEq('id', action.commentId))(comments);
+      if (index !== -1) {
+        return R.remove(index, 1, comments);
+      }
+      return R.map(
+        comment => (
+          { ...comment, comments: findAndRemoveComment(comment.comments) }
+        ),
+        comments,
+      );
+    };
+    return {
+      ...state,
+      posts: {
+        ...state.posts,
+        [action.postSlug]: {
+          ...state.posts[action.postSlug],
+          comments: findAndRemoveComment(state.posts[action.postSlug].comments),
+        },
+      },
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
   default:

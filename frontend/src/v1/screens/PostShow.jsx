@@ -8,9 +8,10 @@ import MainScreen from '../layouts/MainScreen/MainScreen';
 import { notReady, notExist } from '@/v1/utils';
 import { currentUser } from '@/v1/redux/user_session/utils';
 import { closeUserSession } from '@/v1/utils/auth';
-import { loadPost } from '@/v1/redux/posts/actions';
+import { loadPost, loadComments } from '@/v1/redux/posts/actions';
 import Button from '@/v1/components/Button/Button';
 import prepareImageUrls from '@/v1/utils/prepareImageUrls';
+import CommentBlock from '../components/CommentBlock/CommentBlock';
 
 
 class PostShow extends React.PureComponent {
@@ -20,7 +21,9 @@ class PostShow extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.props.loadPost(this.props.match.params.slug);
+    const { slug } = this.props.match.params;
+    this.props.loadPost(slug);
+    this.props.loadComments(slug);
   }
 
   prepareImageUrls = (content) => {
@@ -53,22 +56,27 @@ class PostShow extends React.PureComponent {
             )
         }
         {
-          post && <div key={post.id}>
-            <h2>{post.title}</h2>
-            <div>{post.updated_at}</div>
-            <div
-              dangerouslySetInnerHTML={{ __html: marked(this.prepareImageUrls(post.content || '')) }}
-            />
-            <div>{`Tags: ${R.join(', ', R.map(tag => tag.text, post.tags))}`}</div>
-            <div>{`Likes: ${post.num_of_likes || 0}`}</div>
-            <div>{`Reposts: ${post.num_of_reposts || 0}`}</div>
-            <div>{`Views: ${post.num_of_views || 0}`}</div>
-            <div>
-              <Link to="/">Back</Link>
-              |
-              <Link to={`/${post.slug}/edit`}>Edit</Link>
+          post && (
+            <div key={post.id}>
+              <h2>{post.title}</h2>
+              <div>{post.updated_at}</div>
+              <div
+                dangerouslySetInnerHTML={
+                  { __html: marked(this.prepareImageUrls(post.content || '')) }
+                }
+              />
+              <div>{`Tags: ${R.join(', ', R.map(tag => tag.text, post.tags))}`}</div>
+              <div>{`Likes: ${post.num_of_likes || 0}`}</div>
+              <div>{`Reposts: ${post.num_of_reposts || 0}`}</div>
+              <div>{`Views: ${post.num_of_views || 0}`}</div>
+              <CommentBlock comments={post.comments} />
+              <div>
+                <Link to="/">Back</Link>
+                |
+                <Link to={`/${post.slug}/edit`}>Edit</Link>
+              </div>
             </div>
-          </div>
+          )
         }
       </MainScreen>
     );
@@ -81,6 +89,7 @@ PostShow.propTypes = {
   loadPost: PropTypes.func,
   match: PropTypes.object,
   history: PropTypes.object,
+  loadComments: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -88,6 +97,9 @@ const mapStateToProps = state => ({
   posts: state.postsStoreV1.posts,
 });
 
-const mapDispatchToProps = dispatch => ({ loadPost: slug => dispatch(loadPost(slug)) });
+const mapDispatchToProps = dispatch => ({
+  loadPost: slug => dispatch(loadPost(slug)),
+  loadComments: slug => dispatch(loadComments(slug)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PostShow));

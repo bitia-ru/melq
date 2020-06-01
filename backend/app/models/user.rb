@@ -3,14 +3,12 @@ class User < ApplicationRecord
     :email,
     uniqueness: {
       message: 'Пользователь с таким email уже существует'
-    },
-    unless: ->(u) { u.email.nil? }
+    }
   )
   validates_format_of(
     :email,
     with: /\A([^@\s]+)@((?:[-a-zA-Z0-9]+\.)+[a-zA-Z]{2,})\z/i,
-    message: 'Неверный формат',
-    unless: ->(u) { u.email.nil? }
+    message: 'Неверный формат'
   )
   validates_length_of(
     :password_digest,
@@ -18,12 +16,12 @@ class User < ApplicationRecord
     maximum: 60
   )
   validates(
-      :email,
-      presence: {
-          message: <<~MSG
+    :email,
+    presence: {
+      message: <<~MSG
         Обязательное поле
-          MSG
-      }
+      MSG
+    }
   )
 
   def unified_name
