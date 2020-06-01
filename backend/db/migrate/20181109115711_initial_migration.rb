@@ -68,15 +68,30 @@ class InitialMigration < ActiveRecord::Migration[5.2]
       t.belongs_to :tag
     end
 
+    execute <<-DDL
+      CREATE DOMAIN author_name AS TEXT
+      CHECK(
+        VALUE ~* '^[а-яА-Яa-zA-Z0-9_]*\s{0,1}[а-яА-Яa-zA-Z0-9_]*$'
+      );
+    DDL
+
     create_table :comments do |t|
       t.belongs_to :post
       t.belongs_to :comment
-      t.text :content
-      t.string :author_name
+      t.belongs_to :user
+      t.text :content, null: false
+      t.column :author_name, :author_name
       t.string :author_url
+      t.boolean :hidden, default: false
 
       t.timestamps
     end
+
+    execute <<-DDL
+      ALTER TABLE comments
+        ADD CONSTRAINT comment_content_length CHECK(char_length(content) > 0),
+        ADD CONSTRAINT comment_author_name_length CHECK(author_name IS NULL OR char_length(author_name) >= 3);
+    DDL
 
     create_table :likes do |t|
       t.belongs_to :post

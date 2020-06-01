@@ -10,7 +10,10 @@ Rails.application.routes.draw do
       get '/user_sessions/new', to: 'user_sessions#new'
       patch '/user_sessions/actions/log_out', to: 'user_sessions#log_out'
       resources :user_sessions
-      resources :posts, param: :slug
+      resources :posts, param: :slug do
+        resources :comments, module: :posts, only: %i[index]
+      end
+      resources :comments
       resources :tags
     end
   end
