@@ -30,7 +30,18 @@ module.exports = () => ({
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1,
+              modules: true,
+              localIdentName: "[name]__[local]___[hash:base64:5]"
+            },
+          },
+          'postcss-loader'
+        ],
       },
       {
         test: /\.(pdf|jpg|png|gif|svg|ico|woff2)$/,
