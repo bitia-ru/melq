@@ -14,6 +14,12 @@ module Resourceable
       @resource.to_s.pluralize.to_sym
     end
 
+    helper_method :resource_id_name
+
+    def resource_id_name
+      :id
+    end
+
     helper_method :resource
 
     def resource

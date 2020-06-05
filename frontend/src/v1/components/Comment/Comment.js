@@ -7,7 +7,7 @@ import { StyleSheet, css } from '../../aphrodite';
 import AvatarRound from '@/v1/components/AvatarRound/AvatarRound';
 import { notReady, notExist } from '@/v1/utils';
 import { currentUser } from '@/v1/redux/user_session/utils';
-import { updateComment, removeComment } from '@/v1/redux/posts/actions';
+import { updateComment, removeComment } from '@/v1/redux/comments/actions';
 
 const styles = StyleSheet.create({
   container: { display: 'flex' },
@@ -127,8 +127,8 @@ Comment.propTypes = {
 const mapStateToProps = state => ({ user: currentUser(state) });
 
 const mapDispatchToProps = dispatch => ({
-  updateComment: (postSlug, id, params, afterSuccess, afterAll) => dispatch(
-    updateComment(postSlug, id, params, afterSuccess, afterAll),
+  updateComment: (postSlug, id, attributes, afterSuccess, afterAll) => dispatch(
+    updateComment(postSlug, id, attributes, afterSuccess, afterAll),
   ),
   removeComment: (postSlug, id, afterSuccess, afterAll) => dispatch(
     removeComment(postSlug, id, afterSuccess, afterAll),

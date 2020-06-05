@@ -1,20 +1,15 @@
 import Api from '../../utils/Api';
 import toastHttpError from '@/v1/utils/toastHttpError';
+import acts from './acts';
 
-
-export const acts = {
-  LOAD_TAGS_REQUEST: 'LOAD_TAGS_REQUEST_V1',
-  LOAD_TAGS_FAILED: 'LOAD_TAGS_FAILED_V1',
-  LOAD_TAGS_SUCCESS: 'LOAD_TAGS_SUCCESS_V1',
-};
-
-export const loadTags = () => (
+export const loadTags = () => ( // eslint-disable-line import/prefer-default-export
   (dispatch) => {
     dispatch({ type: acts.LOAD_TAGS_REQUEST });
 
     Api.get(
       '/v1/tags',
       {
+        dispatch,
         success(payload) {
           dispatch({
             type: acts.LOAD_TAGS_SUCCESS,

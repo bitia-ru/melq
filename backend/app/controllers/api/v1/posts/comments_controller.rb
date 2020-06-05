@@ -18,7 +18,6 @@ module Api
           @metadata ||= {}
           @metadata[:all] = @comments.count
           @comments = @comments.where(hidden: false) unless user_signed_in?
-          @comments = @comments.where(comment_id: nil)
           super
         end
 

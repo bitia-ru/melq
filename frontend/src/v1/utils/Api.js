@@ -2,6 +2,7 @@ import Axios from 'axios';
 import * as R from 'ramda';
 import Qs from 'qs';
 import { ApiUrl } from '@/v1/Environ';
+import processEntities from './processEntities';
 
 
 Axios.interceptors.request.use((config) => {
@@ -23,15 +24,15 @@ const Api = {
     ).then((response) => {
       window.loadingIndicator && window.loadingIndicator.stopLoading();
 
+      if (response?.data?.entities) {
+        processEntities(options.dispatch, response.data.entities);
+      }
+
       if (!options.success) {
         return;
       }
 
-      if (response.data.payload) {
-        options.success(response.data.payload, response.data.metadata);
-      } else {
-        options.success(response.data);
-      }
+      options.success(response.data);
     }).catch((error) => {
       window.loadingIndicator && window.loadingIndicator.stopLoading();
 
@@ -80,11 +81,15 @@ const Api = {
     }).then((response) => {
       window.loadingIndicator && window.loadingIndicator.stopLoading();
 
+      if (response?.data?.entities) {
+        processEntities(options.dispatch, response.data.entities);
+      }
+
       if (!options.success) {
         return;
       }
 
-      options.success(response.data.payload);
+      options.success(response.data);
     }).catch((error) => {
       window.loadingIndicator && window.loadingIndicator.stopLoading();
 

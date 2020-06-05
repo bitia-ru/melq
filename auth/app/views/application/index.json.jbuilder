@@ -1,7 +1,5 @@
-json.metadata do
-  json.merge! @metadata
+defined?(entities) && json.entities do
+  json.partial! 'application/resources'
 end
-
-json.payload do
-  json.array!(resources, partial: "api/v1/#{resources_name}/#{resource_name}", as: resource_name)
-end
+json.merge!(metadata: metadata) if defined?(metadata)
+json.merge!(payload: payload) if defined?(payload)

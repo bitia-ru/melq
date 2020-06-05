@@ -93,17 +93,17 @@ module Purable
       instance_variable_set("@#{resources_name}", resources.limit(Integer(params[:limit])))
     end
     @metadata[:all] = all unless @metadata[:all]
-    respond_with(metadata: @metadata, payload: resources)
+    purable_respond_with(status: :success)
   end
 
   def new
     authorize resource
-    respond_with(metadata: @metadata, payload: resource)
+    purable_respond_with(status: :success)
   end
 
   def show
     authorize resource
-    respond_with(metadata: @metadata, payload: resource)
+    purable_respond_with(status: :success)
   end
 
   def create
@@ -118,10 +118,26 @@ module Purable
     authorize resource
     resource.destroy!
 
-    respond_with(metadata: @metadata, payload: resource)
+    purable_respond_with(status: :success)
   end
 
   private
+
+  def purable_respond_with(status)
+    unless status == :success
+      # TODO: Set status
+    end
+
+    render(
+      locals: {
+        payload: defined?(@payload) && @payload.present? ? @payload : nil,
+        metadata: defined?(@metadata) && @metadata.present? ? @metadata : nil,
+        entities: (
+          params[:action] == 'index' || purable_resource_params.is_a?(Array) ? resources : resource
+        )
+      }.compact
+    )
+  end
 
   def pure_filter(param)
     return unless params[param].present?
@@ -160,14 +176,11 @@ module Purable
           resource.save!
         end
       end
-
-      respond_with(metadata: @metadata, payload: resources)
     else
       authorize resource
       resource.assign_attributes(purable_resource_params) unless purable_resource_params.nil?
       resource.save!
-
-      respond_with(metadata: @metadata, payload: resource)
     end
+    purable_respond_with(status: :success)
   end
 end

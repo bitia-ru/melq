@@ -58,7 +58,7 @@ RSpec.describe Purable, type: :controller do
             metadata: {
               all: Anonymou.all.count
             },
-            payload: Anonymou.all
+            entities: Anonymou.all
           }
         )
       )
@@ -81,7 +81,7 @@ RSpec.describe Purable, type: :controller do
             metadata: {
               foo: Anonymou.all[7]
             },
-            payload: Anonymou.all[7]
+            entities: Anonymou.all[7]
           }
         )
       )

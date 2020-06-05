@@ -1,12 +1,9 @@
-json.metadata do
-  json.merge! @metadata
-end
-if resources.present?
-  json.payload do
-    json.array!(resources, partial: "api/v1/#{resources_name}/#{resource_name}", as: resource_name)
-  end
-else
-  json.payload do
-    json.partial! "api/v1/#{resources_name}/#{resource_name}", locals: { resource_name => resource }
+defined?(entities) && json.entities do
+  if resources.present?
+    json.partial! 'application/resources'
+  else
+    json.partial! 'application/resource'
   end
 end
+json.merge!(metadata: metadata) if defined?(metadata)
+json.merge!(payload: payload) if defined?(payload)

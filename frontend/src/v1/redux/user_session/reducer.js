@@ -1,21 +1,27 @@
-import { acts } from './actions';
+import acts from './acts';
 
-
-const usersReducer = (
-  state = {},
+const userSessionsReducer = (
+  state = { user_sessions: { self: {} } },
   action,
 ) => {
   switch (action.type) {
   case acts.LOAD_USER_SESSION_SUCCESS:
     return {
-      ...state,
-      ...action.user_session,
+      user_sessions: {
+        ...state.user_sessions,
+        self: action.user_session,
+      },
     };
   case acts.LOAD_USER_SESSION_FAILED:
-    return { user_id: null };
+    return {
+      user_sessions: {
+        ...state.user_sessions,
+        self: { user_id: null },
+      },
+    };
   default:
     return state;
   }
 };
 
-export default usersReducer;
+export default userSessionsReducer;

@@ -8,10 +8,12 @@ import MainScreen from '../layouts/MainScreen/MainScreen';
 import { notReady, notExist } from '@/v1/utils';
 import { currentUser } from '@/v1/redux/user_session/utils';
 import { closeUserSession } from '@/v1/utils/auth';
-import { loadPost, loadComments } from '@/v1/redux/posts/actions';
+import { loadPost } from '@/v1/redux/posts/actions';
+import { loadComments } from '@/v1/redux/comments/actions';
 import Button from '@/v1/components/Button/Button';
 import prepareImageUrls from '@/v1/utils/prepareImageUrls';
-import CommentBlock from '../components/CommentBlock/CommentBlock';
+import CommentBlock from '@/v1/components/CommentBlock/CommentBlock';
+import getCommentsTreeOfPost from '@/v1/utils/getCommentsTreeOfPost';
 
 
 class PostShow extends React.PureComponent {
@@ -37,7 +39,7 @@ class PostShow extends React.PureComponent {
       R.map(image => [image.original_filename, image.url], post.images),
     );
     return prepareImageUrls(lookUp, content);
-  }
+  };
 
   render() {
     const { user, history, posts } = this.props;
@@ -69,7 +71,7 @@ class PostShow extends React.PureComponent {
               <div>{`Likes: ${post.num_of_likes || 0}`}</div>
               <div>{`Reposts: ${post.num_of_reposts || 0}`}</div>
               <div>{`Views: ${post.num_of_views || 0}`}</div>
-              <CommentBlock comments={post.comments} />
+              <CommentBlock comments={getCommentsTreeOfPost(post, this.props.comments)} />
               <div>
                 <Link to="/">Back</Link>
                 |
@@ -90,11 +92,13 @@ PostShow.propTypes = {
   match: PropTypes.object,
   history: PropTypes.object,
   loadComments: PropTypes.func,
+  comments: PropTypes.object,
 };
 
 const mapStateToProps = state => ({
   user: currentUser(state),
   posts: state.postsStoreV1.posts,
+  comments: state.commentsStoreV1.comments,
 });
 
 const mapDispatchToProps = dispatch => ({

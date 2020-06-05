@@ -22,4 +22,40 @@ class Comment < ApplicationRecord
       message: 'Обязательное поле'
     }
   )
+
+  after_create do
+    notify_about_create_update_to_channel
+  end
+
+  after_update do
+    notify_about_create_update_to_channel
+  end
+
+  after_destroy do
+    notify_about_destroy_to_channel
+  end
+
+  def notify_about_create_update_to_channel
+    EntitiesChannel.broadcast_to(
+      'all',
+      comment: JSON.parse(
+        ApplicationController.render(
+          partial: 'api/v1/comments/comment',
+          locals: {
+            comment: self
+          }
+        )
+      )
+    )
+  end
+
+  def notify_about_destroy_to_channel
+    EntitiesChannel.broadcast_to(
+      'all',
+      comment: {
+        id: id,
+        _destroy: true
+      }
+    )
+  end
 end
