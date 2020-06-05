@@ -2,28 +2,28 @@ class User < ApplicationRecord
   has_many :user_sessions, dependent: :destroy
 
   validates(
-      :email,
-      uniqueness: {
-          message: 'Пользователь с таким email уже существует'
-      }
+    :email,
+    uniqueness: {
+      message: 'Пользователь с таким email уже существует'
+    }
   )
   validates_format_of(
-      :email,
-      with: /\A([^@\s]+)@((?:[-a-zA-Z0-9]+\.)+[a-zA-Z]{2,})\z/i,
-      message: 'Неверный формат'
+    :email,
+    with: /\A([^@\s]+)@((?:[-a-zA-Z0-9]+\.)+[a-zA-Z]{2,})\z/i,
+    message: 'Неверный формат'
   )
   validates_length_of(
-      :password_digest,
-      minimum: 60,
-      maximum: 60
+    :password_digest,
+    minimum: 60,
+    maximum: 60
   )
   validates(
-      :email,
-      presence: {
-          message: <<~MSG
+    :email,
+    presence: {
+      message: <<~MSG
         Обязательное поле
-          MSG
-      }
+      MSG
+    }
   )
 
   def unified_name

@@ -1,29 +1,19 @@
 import Api from '../../utils/Api';
-import { acts as usersActs } from '../users/actions';
+import acts from './acts';
+import { default as usersActs } from '../users/acts';
 
-
-export const acts = {
-  LOAD_USER_SESSION_REQUEST: 'LOAD_USER_SESSION_REQUEST_V1',
-  LOAD_USER_SESSION_FAILED: 'LOAD_USER_SESSION_FAILED_V1',
-  LOAD_USER_SESSION_SUCCESS: 'LOAD_USER_SESSION_SUCCESS_V1',
-};
-
-
-export const loadUserSession = () => (
+export const loadUserSession = () => ( // eslint-disable-line import/prefer-default-export
   (dispatch) => {
     dispatch({ type: acts.LOAD_USER_SESSION_REQUEST });
 
     Api.get(
       '/v1/user_sessions/self',
       {
-        success(payload) {
-          dispatch({
-            type: acts.LOAD_USER_SESSION_SUCCESS,
-            user_session: payload,
-          });
+        dispatch,
+        success(data) {
           dispatch({
             type: usersActs.LOAD_USERS,
-            user: payload.user,
+            user: data.entities.user_session.user,
           });
         },
         failed() {

@@ -84,6 +84,8 @@ services:
     restart: always
     volumes:
       - ${PWD}/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
   redis:
     image: redis:3.2
     network_mode: bridge

@@ -42,5 +42,6 @@ module Melq
     end
 
     config.active_record.default_timezone = :utc
+    config.action_cable.mount_path = '/cable'
   end
 end
