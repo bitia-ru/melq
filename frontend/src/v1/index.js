@@ -7,9 +7,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import ActionCable from 'actioncable';
 import V1 from '@/v1/V1';
 import store from './store';
 import './index.css';
+import processEntities from '@/v1/utils/processEntities';
 /* eslint-enable import/first */
 
 const EVENTS_TO_MODIFY = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'wheel', 'dragend', 'click'];
@@ -52,6 +54,21 @@ document.removeEventListener = (type, listener, options) => {
   }
   return originalRemoveEventListener(type, listener, modOptions);
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  const ws = {};
+
+  ws.cable = ActionCable.createConsumer('/cable');
+
+  ws.cable.subscriptions.create(
+    { channel: 'EntitiesChannel' },
+    {
+      received(data) {
+        processEntities(store.dispatch, data);
+      },
+    },
+  );
+});
 
 ReactDOM.render(
   (

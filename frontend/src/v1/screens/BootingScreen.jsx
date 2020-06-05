@@ -24,7 +24,7 @@ const style = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  users: state.usersStoreV1.store,
+  users: state.usersStoreV1.users,
 });
 
 const mapDispatchToProps = dispatch => ({

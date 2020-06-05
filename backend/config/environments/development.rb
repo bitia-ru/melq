@@ -64,4 +64,6 @@ Rails.application.configure do
   Mail.defaults do
     delivery_method :smtp, options
   end
+
+  config.action_cable.disable_request_forgery_protection = true
 end

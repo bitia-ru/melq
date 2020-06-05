@@ -1,9 +1,8 @@
 import * as R from 'ramda';
-import { acts } from './actions';
-
+import acts from './acts';
 
 const usersReducer = (
-  state = { store: {} },
+  state = { users: {} },
   action,
 ) => {
   switch (action.type) {
@@ -11,15 +10,15 @@ const usersReducer = (
   case acts.LOAD_USERS_SUCCESS:
     if (action.user) {
       return {
-        store: {
-          ...state.store,
+        users: {
+          ...state.users,
           [action.user.id]: action.user,
         },
       };
     }
     return {
-      store: {
-        ...state.store,
+      users: {
+        ...state.users,
         ...R.reduce((l, u) => ({ ...l, [u.id]: u }), {})(action.users),
       },
     };

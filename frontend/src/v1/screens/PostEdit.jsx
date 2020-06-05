@@ -548,17 +548,17 @@ PostEdit.propTypes = {
 
 const mapStateToProps = state => ({
   posts: state.postsStoreV1.posts,
-  tags: state.tagsStoreV1.tags,
+  tags: R.values(state.tagsStoreV1.tags),
 });
 
 const mapDispatchToProps = dispatch => ({
   loadPost: slug => dispatch(loadPost(slug)),
   loadTags: () => dispatch(loadTags()),
-  updatePost: (slug, params, afterSuccess, afterAll) => (
-    dispatch(updatePost(slug, params, afterSuccess, afterAll))
+  updatePost: (slug, attributes, afterSuccess, afterAll) => (
+    dispatch(updatePost(slug, attributes, afterSuccess, afterAll))
   ),
-  createPost: (params, afterSuccess, afterAll) => (
-    dispatch(createPost(params, afterSuccess, afterAll))
+  createPost: (attributes, afterSuccess, afterAll) => (
+    dispatch(createPost(attributes, afterSuccess, afterAll))
   ),
   removePost: (slug, afterSuccess, afterAll) => dispatch(removePost(slug, afterSuccess, afterAll)),
 });

@@ -18,6 +18,10 @@ module Api
         super
       end
 
+      def resource_id_name
+        :slug
+      end
+
       private
 
       def post_params

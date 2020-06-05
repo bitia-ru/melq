@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import FormField from '@/v1/components/FormField/FormField';
 import Button from '@/v1/components/Button/Button';
-import { createComment } from '@/v1/redux/posts/actions';
+import { createComment } from '@/v1/redux/comments/actions';
 
 class CommentForm extends React.PureComponent {
   constructor(props) {
@@ -57,7 +57,7 @@ class CommentForm extends React.PureComponent {
             }
           }
           type="text"
-          value={comment.author_name}
+          value={comment.author_name || ''}
         />
         <textarea
           placeholder="Ваш комментарий"
@@ -73,7 +73,7 @@ class CommentForm extends React.PureComponent {
               );
             }
           }
-          value={comment.content}
+          value={comment.content || ''}
         />
         <Button onClick={this.submit} isWaiting={this.state.isWaiting}>
           Отправить
@@ -94,8 +94,8 @@ CommentForm.propTypes = {
 const mapStateToProps = state => ({ posts: state.postsStoreV1.posts });
 
 const mapDispatchToProps = dispatch => ({
-  createComment: (postSlug, params, afterSuccess, afterAll) => dispatch(
-    createComment(postSlug, params, afterSuccess, afterAll),
+  createComment: (postSlug, attributes, afterSuccess, afterAll) => dispatch(
+    createComment(postSlug, attributes, afterSuccess, afterAll),
   ),
 });
 

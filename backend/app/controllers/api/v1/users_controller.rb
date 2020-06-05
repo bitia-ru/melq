@@ -31,7 +31,7 @@ module Api
         else
           instance_variable_set("@#{resource_name}", User.find(params[:id]))
         end
-        respond_with(metadata: @metadata, payload: resource)
+        purable_respond_with(status: :success)
       end
 
       def update
