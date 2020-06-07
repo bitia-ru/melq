@@ -6,4 +6,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/ci
+      - name: Preparations
+        run: |
+          cp frontend/Dockerfile{.ci,}
+      - uses: ./.github/actions/backend-ci
