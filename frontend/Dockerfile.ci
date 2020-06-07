@@ -1,0 +1,15 @@
+FROM node:11-alpine
+
+RUN npm config set unsafe-perm true
+
+WORKDIR /app
+
+COPY package.json package-lock.json /app/
+
+RUN npm i
+
+COPY . /app
+
+RUN npm run build
+
+COPY ci/ci_entrypoint.sh /
