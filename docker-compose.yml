@@ -11,7 +11,8 @@ services:
     links:
       - auth
       - backend
-      - frontend
+    extra_hosts:
+      - "frontend:172.17.0.1"
   auth:
     build: ./auth
     network_mode: bridge

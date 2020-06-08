@@ -1,1 +1,2 @@
 emailFrom: 'contact@contact.ru'
+postsDir: './storage/posts'

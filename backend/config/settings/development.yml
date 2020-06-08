@@ -1,1 +1,2 @@
 emailFrom: 'maxilex-test@yandex.ru'
+postsDir: './storage/posts'
