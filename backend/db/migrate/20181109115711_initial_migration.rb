@@ -36,7 +36,7 @@ class InitialMigration < ActiveRecord::Migration[5.2]
         ADD CONSTRAINT tag_unique UNIQUE (text);
     DDL
 
-    create_table :posts_tags, id: false do |t|
+    create_table :posts_tags do |t|
       t.string :slug
       t.belongs_to :tag
     end

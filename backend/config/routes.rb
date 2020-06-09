@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :posts, param: :slug do
         resources :comments, module: :posts, only: %i[index]
       end
+      get '/posts/:slug/images', to: 'posts#image'
       resources :comments
       resources :tags
     end

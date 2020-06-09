@@ -25,8 +25,6 @@ class ApplicationController < ActionController::Base
   rescue_from 'ActiveRecord::RecordInvalid' do |exception|
     @exception = exception
 
-    puts "#{exception.class}: #{exception.message}"
-    puts exception.backtrace
     render 'api/v1/errors/bad_request', status: :bad_request
   end
 

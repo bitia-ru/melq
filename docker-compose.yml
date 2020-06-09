@@ -11,8 +11,7 @@ services:
     links:
       - auth
       - backend
-    extra_hosts:
-      - "frontend:172.17.0.1"
+      - frontend
   auth:
     build: ./auth
     network_mode: bridge
@@ -49,7 +48,7 @@ services:
       - redis
     volumes:
       - ${PWD}/storage:/app/storage
-      - ${PWD}/backend:/app
+      - ${PWD}/backend/app:/app/app
   job:
     build: ./backend
     network_mode: bridge

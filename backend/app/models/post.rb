@@ -9,9 +9,9 @@ class Post
                 :num_of_views,
                 :slug,
                 :seo_title,
-                :seo_kw
-  attr_reader :created_at,
-              :updated_at
+                :seo_kw,
+                :created_at,
+                :updated_at
 
   def initialize(*args)
     post = args.empty? ? {} : args[0]
@@ -26,8 +26,8 @@ class Post
     @slug = post[:slug]
     @seo_title = post[:seo_title]
     @seo_kw = post[:seo_kw] || []
-    @created_at = nil
-    @updated_at = nil
+    @created_at = post[:created_at].nil? ? nil : post[:created_at].to_datetime
+    @updated_at = post[:updated_at].nil? ? nil : post[:updated_at].to_datetime
   end
 
   def self.postsDir
@@ -65,7 +65,30 @@ class Post
   end
 
   def images
-    []
+    get_images_list.each_with_index.map do |img, id|
+      {
+          id: id,
+          filename: img,
+          url: "/api/v1/posts/#{self.slug}/images?filename=#{img}"
+      }
+    end
+  end
+
+  def images_attachments_attributes=(*args)
+    params = args.empty? ? [] : args[0]
+    raise Exception.new('Args empty') if params.empty?
+
+    images_list = get_images_list
+    dir = "#{Post.postsDir}/#{self.slug}"
+    params.each do |image|
+      next unless image.include?('id')
+
+      if image.include?('_destroy') && image['_destroy'] == 'true'
+        FileUtils.rm("#{dir}/#{images_list[image['id'].to_i]}")
+      else
+        File.rename("#{dir}/#{images_list[image['id'].to_i]}", "#{dir}/#{image['filename']}")
+      end
+    end
   end
 
   def comments
@@ -87,11 +110,33 @@ class Post
 
     raise Exception.new('Args empty') if params.keys.empty?
 
+    self.slug = params['slug'] unless self.slug
+    if params.include?('images_attachments_attributes')
+      self.images_attachments_attributes = params['images_attachments_attributes']
+    end
     params.each do |k,v|
+      next if k == 'images_attachments_attributes'
       self.send("#{k}=", v)
     end
 
     self
+  end
+
+  def images=(*args)
+    params = args.empty? ? [] : args[0]
+    raise Exception.new('Args empty') if params.empty?
+
+    dir = "#{Settings.postsDir}/#{self.slug}"
+    FileUtils.mkdir_p dir unless Dir.exist?(dir)
+    params.each do |image|
+      # TODO copy file with cp
+      image_data = File.open(image.tempfile.path,'r') do |f|
+        f.read
+      end
+      File.open("#{dir}/#{image.original_filename}",'w') do |f|
+        f.write(image_data)
+      end
+    end
   end
 
   def tag_ids=(*args)
@@ -100,12 +145,11 @@ class Post
 
   def tags_attributes=(*args)
     params = args.empty? ? [] : args[0]
-
     raise Exception.new('Args empty') if params.empty?
 
     params.each do |tag|
       if tag.include?('id')
-        if tag.include?('_destroy') && tag['_destroy']
+        if tag.include?('_destroy') && tag['_destroy'] == 'true'
           PostsTag.where(tag_id: tag['id'], slug: self.slug).destroy_all
           unless PostsTag.where(tag_id: tag['id']).exists?
             Tag.find(tag['id']).destroy!
@@ -159,6 +203,18 @@ class Post
     post.save!
   end
 
+  def destroy!
+    FileUtils.rm_rf("#{Settings.postsDir}/#{self.slug}")
+    PostsTag.where(slug: self.slug).each do |pt|
+      pt.destroy!
+      unless PostsTag.where(tag: pt.tag).exists?
+        pt.tag.destroy!
+      end
+    end
+
+    self
+  end
+
   private
 
   def self.slugs
@@ -182,5 +238,14 @@ class Post
     end
 
     post
+  end
+
+  def get_images_list
+    dir = "#{Post.postsDir}/#{self.slug}"
+    Dir.open(dir) do |d|
+      d.reject do |o|
+        (%w[. .. manifest.json index.md draft_index.md].include?(o)) || File.directory?("#{dir}/#{o}")
+      end
+    end
   end
 end
