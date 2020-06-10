@@ -6,10 +6,6 @@ module Api
     class UsersController < BaseController
       include Purable
 
-      def user
-        resource
-      end
-
       before_action(
         :authenticate_user!,
         only: %i[update]
