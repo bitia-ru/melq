@@ -22,7 +22,7 @@ module Api
           super
         end
 
-        def purable_model
+        def self.purable_model
           Comment
         end
       end
