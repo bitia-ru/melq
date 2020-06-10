@@ -37,6 +37,8 @@ class Post
   end
 
   def self.all
+    puts "FOOOO"
+    puts Post.postsDir
     self.slugs.map do |slug|
       Post.get_by_slug(slug)
     end
@@ -193,6 +195,8 @@ class Post
       f.write(self.content)
     end
 
+    push_to_git
+
     self
   end
 
@@ -211,8 +215,18 @@ class Post
         pt.tag.destroy!
       end
     end
+    push_to_git
 
     self
+  end
+
+  def push_to_git
+    g = Git.open(Post.postsDir, :log => Logger.new(STDOUT))
+    g.config('user.name', 'Root')
+    g.config('user.email', User.first.email)
+    g.add(all: true)
+    g.commit("Update posts #{DateTime.now}")
+    g.push
   end
 
   private
@@ -221,7 +235,7 @@ class Post
     dir = postsDir
     Dir.open(dir) do |d|
       d.select do |o|
-        !(%w[. ..].include?(o)) && File.directory?("#{dir}/#{o}")
+        !(%w[. .. .git].include?(o)) && File.directory?("#{dir}/#{o}")
       end
     end
   end

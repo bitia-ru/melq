@@ -4,12 +4,12 @@ FROM ruby:2.5.3-alpine3.8 AS base
 RUN apk add -U gmp-dev zlib libressl tzdata
 
 # install project-specific packages
-RUN apk add -U libpq postgresql-client imagemagick
+RUN apk add -U libpq postgresql-client imagemagick git
 WORKDIR /app
 
 FROM base AS builder
 
-RUN apk add -U gcc g++ make zlib-dev libressl-dev postgresql-dev git
+RUN apk add -U gcc g++ make zlib-dev libressl-dev postgresql-dev
 
 COPY Gemfile Gemfile.lock ./
 
@@ -32,12 +32,18 @@ COPY config ./config
 COPY db ./db
 COPY lib ./lib
 COPY public ./public
+COPY posts ./posts
 
 RUN mkdir ./tmp ./log ./storage
 RUN mkdir ./tmp/pids
 
+
 COPY .rubocop.yml ./
 COPY ci/ci_entrypoint.sh /
+
+WORKDIR /app/storage
+RUN git clone ../posts
+WORKDIR /app
 
 ENTRYPOINT ["bundle", "exec"]
 
