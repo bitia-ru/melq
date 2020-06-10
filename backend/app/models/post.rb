@@ -69,7 +69,7 @@ class Post
       {
           id: id,
           filename: img,
-          url: "/api/v1/posts/#{self.slug}/images?filename=#{img}"
+          url: "/api/v1/posts/#{self.slug}/images/#{img}"
       }
     end
   end
