@@ -226,7 +226,7 @@ class Post
     g.config('user.email', User.first.email)
     g.add(all: true)
     g.commit("Update posts #{DateTime.now}")
-    g.push
+    g.push(g.remote(Settings.remoteName))
   end
 
   private

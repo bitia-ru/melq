@@ -32,18 +32,12 @@ COPY config ./config
 COPY db ./db
 COPY lib ./lib
 COPY public ./public
-COPY posts ./posts
 
 RUN mkdir ./tmp ./log ./storage
 RUN mkdir ./tmp/pids
 
-
 COPY .rubocop.yml ./
 COPY ci/ci_entrypoint.sh /
-
-WORKDIR /app/storage
-RUN git clone ../posts
-WORKDIR /app
 
 ENTRYPOINT ["bundle", "exec"]
 

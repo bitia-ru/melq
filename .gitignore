@@ -1,5 +1,6 @@
 /backups
 /sandbox
 /storage
+/posts
 /.env
 /db

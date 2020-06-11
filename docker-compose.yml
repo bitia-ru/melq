@@ -44,11 +44,13 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-https://abec18ecbeff4999be7e4202dc8efc38:0910a5fe4f154c17a4f8bfd9206592e4@bugs.bitia.ru/11}
       EMAIL_PASSWORD: ${EMAIL_PASSWORD:-123456}
       GIT_PATH: ${GIT_PATH:-/usr/bin}
+      REMOTE_NAME: ${REMOTE_NAME:-origin}
     links:
       - db
       - redis
     volumes:
       - ${PWD}/storage:/app/storage
+      - ${PWD}/posts:/app/posts
       - ${PWD}/backend/app:/app/app
   job:
     build: ./backend
