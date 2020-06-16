@@ -37,8 +37,6 @@ class Post
   end
 
   def self.all
-    puts "FOOOO"
-    puts Post.postsDir
     self.slugs.map do |slug|
       Post.get_by_slug(slug)
     end
