@@ -6,6 +6,7 @@ import MainPage from './screens/MainPage';
 import PostShow from './screens/PostShow';
 import PostEdit from './screens/PostEdit';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
+import examples from '@/v1/examples';
 
 const V1 = ({ currentUser }) => (
   <>
@@ -15,6 +16,13 @@ const V1 = ({ currentUser }) => (
           <Route exact path="/" component={MainPage} />
           <Route exact path={['/new', '/:slug/edit']} component={PostEdit} />
           <Route exact path="/:slug" component={PostShow} />
+          <Route
+            exact
+            path="/components/:component"
+            render={(props) => React.createElement(
+              examples[props.match.params.component],
+            )}
+          />
         </Switch>
       ) : (
         <BootingScreen />
