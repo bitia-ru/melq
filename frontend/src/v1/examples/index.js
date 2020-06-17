@@ -1,9 +1,5 @@
 import ButtonExample from './ButtonExample';
 
-const examples = () => (
-  {
-    button: ButtonExample,
-  }
-);
+const examples = { button: ButtonExample };
 
-export default examples();
+export default examples;
