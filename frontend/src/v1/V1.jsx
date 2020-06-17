@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import BootingScreen from './screens/BootingScreen';
@@ -19,9 +20,7 @@ const V1 = ({ currentUser }) => (
           <Route
             exact
             path="/components/:component"
-            render={(props) => React.createElement(
-              examples[props.match.params.component],
-            )}
+            render={props => React.createElement(examples[props.match.params.component])}
           />
         </Switch>
       ) : (
@@ -31,8 +30,11 @@ const V1 = ({ currentUser }) => (
   </>
 );
 
-const mapStateToProps = state => ({
-  currentUser: currentUserObtainer(state),
-});
+V1.propTypes = {
+  currentUser: PropTypes.object,
+  match: PropTypes.object,
+};
+
+const mapStateToProps = state => ({ currentUser: currentUserObtainer(state) });
 
 export default connect(mapStateToProps)(V1);
