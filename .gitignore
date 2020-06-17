@@ -4,3 +4,5 @@
 /posts
 /.env
 /db
+/node_modules
+
