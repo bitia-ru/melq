@@ -2,6 +2,7 @@ import ButtonExample from './ButtonExample';
 import SwitchExample from './SwitchExample';
 import IconExample from './IconExample';
 import TooltipExample from './TooltipExample';
+import CheckBoxExample from './CheckBoxExample';
 import CounterExample from './CounterExample';
 import PostCardExample from './PostCardExample';
 import ImageIconExample from './ImageIconExample';
@@ -36,6 +37,7 @@ const examples = {
   social_link: SocialLinkExample,
   textarea_with_photo_loader: TextAreaWithPhotoLoaderExample,
   error: ErrorExample,
+  check_box: CheckBoxExample,
 };
 
 export default examples;
