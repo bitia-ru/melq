@@ -16,15 +16,18 @@ const Counter = ({
 }) => {
   const [counter, setCounter] = useState(0);
 
-  useEffect(() => {
-    if (!value) {
-      setCounter(0);
-      return;
-    }
-    if (value !== counter) {
-      setCounter(value);
-    }
-  }, [value]);
+  useEffect(
+    () => {
+      if (!value) {
+        setCounter(0);
+        return;
+      }
+      if (value !== counter) {
+        setCounter(value);
+      }
+    },
+    [value],
+  );
 
   const onMouseClick = (e) => {
     if (disabled) {
