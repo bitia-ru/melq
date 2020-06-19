@@ -67,9 +67,9 @@ class Post
   def images
     get_images_list.each_with_index.map do |img, id|
       {
-          id: id,
-          filename: img,
-          url: "/api/v1/posts/#{self.slug}/images/#{img}"
+        id: id,
+        filename: img,
+        url: "/api/v1/posts/#{self.slug}/images/#{img}"
       }
     end
   end
@@ -173,23 +173,23 @@ class Post
     @created_at = DateTime.now if self.created_at.nil?
     @updated_at = DateTime.now
     manifest = {
-        title: self.title,
-        published: self.published,
-        can_comment: self.can_comment,
-        add_likes_auth_only: self.add_likes_auth_only,
-        num_of_likes: self.num_of_likes,
-        num_of_reposts: self.num_of_reposts,
-        num_of_views: self.num_of_views,
-        seo_title: self.seo_title,
-        seo_kw: self.seo_kw,
-        created_at: self.created_at,
-        updated_at: self.updated_at,
+      title: self.title,
+      published: self.published,
+      can_comment: self.can_comment,
+      add_likes_auth_only: self.add_likes_auth_only,
+      num_of_likes: self.num_of_likes,
+      num_of_reposts: self.num_of_reposts,
+      num_of_views: self.num_of_views,
+      seo_title: self.seo_title,
+      seo_kw: self.seo_kw,
+      created_at: self.created_at,
+      updated_at: self.updated_at,
     }
-    File.open("#{dir}/manifest.json",'w') do |f|
+    File.open("#{dir}/manifest.json", 'w') do |f|
       f.write(manifest.to_json)
     end
 
-    File.open("#{dir}/#{self.published ? '' : 'draft_'}index.md",'w') do |f|
+    File.open("#{dir}/#{self.published ? '' : 'draft_'}index.md", 'w') do |f|
       f.write(self.content)
     end
 

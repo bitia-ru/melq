@@ -13,18 +13,18 @@ class Tag < ApplicationRecord
 
   def notify_about_changes_to_channel action
     EntitiesChannel.broadcast_to(
-        'all',
-        body: {
-            tag: JSON.parse(
-                ApplicationController.render(
-                    partial: 'api/v1/tags/tag',
-                    locals: {
-                        tag: self,
-                        destroy: action == 'destroy'
-                    }
-                )
-            )
-        }
+      'all',
+      body: {
+        tag: JSON.parse(
+          ApplicationController.render(
+            partial: 'api/v1/tags/tag',
+            locals: {
+              tag: self,
+              destroy: action == 'destroy'
+            }
+          )
+        )
+      }
     )
   end
 end
