@@ -49,6 +49,7 @@ rules:
     - 2
     - indentLogicalExpressions: true
   "react/jsx-closing-tag-location": [0]
+  "react/destructuring-assignment": "off"
   # TODO: enable after refactoring:
   "jsx-a11y/click-events-have-key-events": [0]
   "jsx-a11y/anchor-is-valid": [0]
