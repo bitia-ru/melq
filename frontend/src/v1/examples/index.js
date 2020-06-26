@@ -1,5 +1,6 @@
 import ButtonExample from './ButtonExample';
 import SwitchExample from './SwitchExample';
+import IconExample from './IconExample';
 import TooltipExample from './TooltipExample';
 import CounterExample from './CounterExample';
 import PostCardExample from './PostCardExample';
@@ -13,6 +14,7 @@ import InputExample from './InputExample';
 import LinkExample from './LinkExample';
 
 const examples = {
+  icon: IconExample,
   button: ButtonExample,
   switch: SwitchExample,
   tooltip: TooltipExample,
