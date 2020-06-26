@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'GilroyBold';
+    src: url("../../fonts/GilroyBold/GilroyBold.woff2") format("woff2");
+    font-display: swap;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GilroyMedium';
+    src: url("../../fonts/GilroyMedium/GilroyMedium.woff2") format("woff2");
+    font-display: swap;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GilroyRegular';
+    src: url("../../fonts/GilroyRegular/GilroyRegular.woff2") format("woff2");
+    font-display: swap;
+    font-weight: normal;
+    font-style: normal;
+}
