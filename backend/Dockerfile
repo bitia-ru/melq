@@ -13,8 +13,9 @@ RUN apk add -U gcc g++ make zlib-dev libressl-dev postgresql-dev git
 
 COPY Gemfile Gemfile.lock ./
 
-FROM builder as gem_updater
-RUN bundle install
+# Uncomment this lines to update Gemfile.lock:
+# FROM builder as gem_updater
+# RUN bundle install
 
 FROM builder as gem_installer
 RUN bundle install --frozen --no-cache --clean && rm -rf /usr/local/bundle/cache
@@ -34,6 +35,9 @@ COPY public ./public
 
 RUN mkdir ./tmp ./log ./storage
 RUN mkdir ./tmp/pids
+
+COPY .rubocop.yml ./
+COPY ci/ci_entrypoint.sh /
 
 ENTRYPOINT ["bundle", "exec"]
 
