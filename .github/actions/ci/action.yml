@@ -1,0 +1,4 @@
+runs:
+  using: 'docker'
+  image: '../../../backend/Dockerfile'
+  entrypoint: '/ci_entrypoint.sh'
