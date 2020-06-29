@@ -1,6 +1,7 @@
 import ButtonExample from './ButtonExample';
 import SwitchExample from './SwitchExample';
 import IconExample from './IconExample';
+import LogInFormExample from './LogInFormExample';
 import TooltipExample from './TooltipExample';
 import CheckBoxExample from './CheckBoxExample';
 import CounterExample from './CounterExample';
@@ -42,6 +43,7 @@ const examples = {
   check_box: CheckBoxExample,
   select: SelectExample,
   search: SearchExample,
+  log_in_form: LogInFormExample,
 };
 
 export default examples;
