@@ -1,4 +1,4 @@
-additional_autoload_paths = Dir[File.join(Rails.root, 'lib', 'redis.rb')].each do |l|
+additional_autoload_paths = Dir[File.join(Rails.root, 'lib', 'redis.rb')].sort.each do |l|
   require l
 end
 Rails.application.config.autoload_paths += additional_autoload_paths
@@ -6,16 +6,16 @@ Rails.application.config.autoload_paths += additional_autoload_paths
 Warden::Strategies.add(:user_id) do
   def valid?
     @headers = env.select { |k, _v| k.start_with? 'HTTP_' }
-                   .collect { |key, val| [key.sub(/^HTTP_/, ''), val] }
-                   .each_with_object({}) { |(key, val), a| a[key] = val }
+                  .collect { |key, val| [key.sub(/^HTTP_/, ''), val] }
+                  .each_with_object({}) { |(key, val), a| a[key] = val }
 
     @headers.include? 'X_USER_ID'
   end
 
   def authenticate!
     @headers = env.select { |k, _v| k.start_with? 'HTTP_' }
-                   .collect { |key, val| [key.sub(/^HTTP_/, ''), val] }
-                   .each_with_object({}) { |(key, val), a| a[key] = val }
+                  .collect { |key, val| [key.sub(/^HTTP_/, ''), val] }
+                  .each_with_object({}) { |(key, val), a| a[key] = val }
     @user_id = @headers['X_USER_ID']
     user = User.find(@user_id)
     success!(user)

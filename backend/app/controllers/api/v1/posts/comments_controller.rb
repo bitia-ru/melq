@@ -5,8 +5,8 @@ module Api
         include Purable
 
         before_action(
-            :try_to_authenticate_user!,
-            only: :index
+          :try_to_authenticate_user!,
+          only: :index
         )
 
         before_action only: %i[index] do

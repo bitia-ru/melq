@@ -4,8 +4,8 @@ module Api
       include Purable
 
       before_action(
-          :try_to_authenticate_user!,
-          only: :create
+        :try_to_authenticate_user!,
+        only: :create
       )
 
       def create

@@ -12,13 +12,12 @@ module Api
       end
 
       def update
-        if params.dig(:post, :images_attachments_attributes)
-          params.dig(:post, :images_attachments_attributes).each do |attachment|
-            next unless (%i[id filename] - attachment.keys).empty?
-            blob = post.images.find_by(blob_id: attachment[:id]).blob
-            blob.filename = attachment[:filename]
-            blob.save!
-          end
+        params.dig(:post, :images_attachments_attributes)&.each do |attachment|
+          next unless (%i[id filename] - attachment.keys).empty?
+
+          blob = post.images.find_by(blob_id: attachment[:id]).blob
+          blob.filename = attachment[:filename]
+          blob.save!
         end
         super
       end
