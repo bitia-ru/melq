@@ -15,6 +15,7 @@ export const successColor = '#52C4A9';
 export const errorColor = '#F7523E';
 export const selectedItemColor = '#FFF4F2';
 export const cardColors = ['#FFF4F2', '#F5F4FF', '#F0F1F2'];
+export const dateTopicCounterColor = '#A9B9C1';
 
 export const hoveredSuccessColor = (
   `#${(parseInt(successColor.slice(1), 16) + 1183504).toString(16)}`
