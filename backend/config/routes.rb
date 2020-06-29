@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   get '/alive', to: 'application#alive'
   scope '/api', module: :api, defaults: { format: :json } do
     scope '/v1', module: :v1 do
-
       resources :users
 
       get '/user_sessions/new', to: 'user_sessions#new'

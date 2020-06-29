@@ -12,12 +12,10 @@ module Purable
       filter = purable_model_chain.inject(nil) do |m, pm|
         if m.nil?
           pm.singularize.classify.constantize
+        elsif params.include?("#{m.to_s.underscore}_id")
+          m.find(params["#{m.to_s.underscore}_id"]).send(pm.to_sym)
         else
-          if params.include?("#{m.to_s.underscore}_id")
-            m.find(params["#{m.to_s.underscore}_id"]).send(pm.to_sym)
-          else
-            m.find_by(slug: params["#{m.to_s.underscore}_slug"]).send(pm.to_sym)
-          end
+          m.find_by(slug: params["#{m.to_s.underscore}_slug"]).send(pm.to_sym)
         end
       end
 
