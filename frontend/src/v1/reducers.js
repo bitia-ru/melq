@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
 import { default as usersReducerV1 } from '@/v1/redux/users/reducer';
 import { default as postsReducerV1 } from '@/v1/redux/posts/reducer';
 import { default as commentsReducerV1 } from '@/v1/redux/comments/reducer';
@@ -11,4 +12,5 @@ export default combineReducers({
   commentsStoreV1: commentsReducerV1,
   tagsStoreV1: tagsReducerV1,
   userSessionV1: userSessionReducerV1,
+  form: formReducer,
 });
