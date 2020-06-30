@@ -118,14 +118,11 @@ module Purable
           resource.save!
         end
       end
-
-      respond_with(metadata: @metadata, payload: resources)
     else
       authorize resource
       resource.assign_attributes(purable_resource_params) unless purable_resource_params.nil?
       resource.save!
-
-      respond_with(metadata: @metadata, payload: resource)
     end
+    respond_with(metadata: @metadata, payload: resources)
   end
 end
