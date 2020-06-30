@@ -43,7 +43,7 @@ module Purable
     end
 
     def self.purable_model
-      self.purable_model_chain.first.singularize.classify.constantize
+      purable_model_chain.first.singularize.classify.constantize
     end
 
     def self.purable_model_chain
@@ -63,25 +63,22 @@ module Purable
 
     def create_or_update
       if purable_resource_params.is_a? Array
-        self.purable_model.transaction do
+        purable_model.transaction do
           resources.each_with_index do |resource, i|
             authorize resource
             resource.assign_attributes(purable_resource_params[i])
             resource.save!
           end
         end
-
-        purable_respond_with(status: :success)
       else
         authorize resource
         resource.assign_attributes(purable_resource_params) unless purable_resource_params.nil?
         resource.save!
-
-        purable_respond_with(status: :success)
       end
+      respond_with(metadata: @metadata, payload: resource)
     end
 
-    define_method self.purable_model.name.underscore.to_sym do
+    define_method purable_model.name.underscore.to_sym do
       resource
     end
   end
