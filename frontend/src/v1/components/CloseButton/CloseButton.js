@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, css } from '../../aphrodite';
 
-const CloseButton = ({
-  onClick,
-}) => (
+const CloseButton = ({ onClick }) => (
   <button
     className={css(styles.close)}
     type="button"
@@ -27,14 +25,10 @@ const styles = StyleSheet.create({
     backgroundPosition: 'center',
     backgroundSize: 'cover',
     transition: 'opacity .4s ease-out',
-    ':hover': {
-      opacity: '.6',
-    },
+    ':hover': { opacity: '.6' },
   },
 });
 
-CloseButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-};
+CloseButton.propTypes = { onClick: PropTypes.func.isRequired };
 
 export default CloseButton;

@@ -1,4 +1,4 @@
-export const currentUser = (state) => {
+export const currentUser = (state) => { // eslint-disable-line import/prefer-default-export
   if (state.userSessionV1.user_id === null) {
     return null;
   }

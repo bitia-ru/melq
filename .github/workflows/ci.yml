@@ -10,3 +10,4 @@ jobs:
         run: |
           cp frontend/Dockerfile{.ci,}
       - uses: ./.github/actions/backend-ci
+      - uses: ./.github/actions/frontend-ci

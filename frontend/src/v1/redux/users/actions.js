@@ -10,9 +10,7 @@ export const acts = {
 
 export const loadUsers = () => (
   (dispatch) => {
-    dispatch({
-      type: acts.LOAD_USERS_REQUEST,
-    });
+    dispatch({ type: acts.LOAD_USERS_REQUEST });
 
     Api.get(
       '/v1/users',
@@ -24,9 +22,7 @@ export const loadUsers = () => (
           });
         },
         failed(error) {
-          dispatch({
-            type: acts.LOAD_USERS_FAILED,
-          });
+          dispatch({ type: acts.LOAD_USERS_FAILED });
 
           toastHttpError(error);
         },

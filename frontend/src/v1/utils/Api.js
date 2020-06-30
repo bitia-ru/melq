@@ -51,7 +51,7 @@ const Api = {
       'update',
       'delete',
     ].includes(method)) {
-      throw `ArgumentError: method argument has invalid value ${method}.`;
+      throw new Error(`ArgumentError: method argument has invalid value ${method}.`);
     }
 
     let config = R.propOr({}, 'config')(options);

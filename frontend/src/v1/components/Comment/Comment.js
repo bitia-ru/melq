@@ -36,7 +36,7 @@ class Comment extends React.PureComponent {
     this.props.updateComment(
       slug,
       commentId,
-      { comment: { hidden: !this.props.comment.hidden }},
+      { comment: { hidden: !this.props.comment.hidden } },
     );
   };
 
