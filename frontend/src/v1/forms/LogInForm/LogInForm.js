@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import * as R from 'ramda';
 import Button from '@/v1/components/Button/Button';
 import FormField from '@/v1/components/FormField/FormField';
-import { reEmail } from '@/v1/Constants/Constraints';
 import Modal from '../../layouts/Modal';
 import { createUserSession } from '../../utils/auth';
 
@@ -101,9 +100,7 @@ class LogInForm extends Component {
   };
 
   render() {
-    const {
-      isWaiting, email, password,
-    } = this.state;
+    const { isWaiting, email, password } = this.state;
 
     return (
       <Modal>
@@ -166,7 +163,6 @@ class LogInForm extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-});
+const mapDispatchToProps = _dispatch => ({});
 
 export default withRouter(connect(null, mapDispatchToProps)(LogInForm));

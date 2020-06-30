@@ -1,32 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, css } from '../../aphrodite';
 
 const Button = ({
   disabled,
   isWaiting,
   onClick,
-  children
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={!!disabled}
-      style={disabled ? { cursor: 'not-allowed' } : (isWaiting ? { cursor: 'wait' } : {})}
-    >
-      {children}
-    </button>
-  );
-};
-
-const styles = StyleSheet.create({
-});
+  children,
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={!!disabled}
+    /* eslint-disable no-nested-ternary */
+    style={disabled ? { cursor: 'not-allowed' } : (isWaiting ? { cursor: 'wait' } : {})}
+    /* eslint-disable no-nested-ternary */
+  >
+    {children}
+  </button>
+);
 
 Button.propTypes = {
   disabled: PropTypes.bool,
   isWaiting: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
+  children: PropTypes.object,
 };
 
 Button.defaultProps = {

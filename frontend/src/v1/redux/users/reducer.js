@@ -3,9 +3,7 @@ import { acts } from './actions';
 
 
 const usersReducer = (
-  state = {
-    store: {},
-  },
+  state = { store: {} },
   action,
 ) => {
   switch (action.type) {

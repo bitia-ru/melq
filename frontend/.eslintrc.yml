@@ -5,6 +5,8 @@ extends: airbnb
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
+  mdtoast: readonly
+  confirm: readonly
 parserOptions:
   ecmaFeatures:
     jsx: true
@@ -41,20 +43,35 @@ rules:
       ObjectPattern:
         minProperties: 6
         multiline: true
-  "react/jsx-first-prop-new-line": [1, multiline]
-  "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
-  "react/jsx-wrap-multilines": [1, { "logical": "ignore" }]
+  "react/jsx-first-prop-new-line": [error, multiline]
+  "react/jsx-filename-extension":
+    - error
+    - extensions: [".js", ".jsx"]
+  "react/jsx-wrap-multilines":
+    - error
+    - logical: ignore
   "react/jsx-indent":
     - error
     - 2
     - indentLogicalExpressions: true
-  "react/jsx-closing-tag-location": [0]
-  "react/destructuring-assignment": "off"
+  "react/jsx-closing-tag-location": off
+  "react/destructuring-assignment": off
+  "no-alert": off
+  "no-unused-expressions":
+    - error
+    - allowShortCircuit: true
+      allowTernary: true
+  "no-unused-vars":
+    - error
+    - argsIgnorePattern: "^_"
+  "import/no-named-default": off
   # TODO: enable after refactoring:
-  "jsx-a11y/click-events-have-key-events": [0]
-  "jsx-a11y/anchor-is-valid": [0]
-  "react/forbid-prop-types": [0]
-  "react/no-unused-state": "off"
-  "jsx-a11y/label-has-for": "off"
-  "react/require-default-props": "off"
-  "global-require": "off"
+  "jsx-a11y/click-events-have-key-events": off
+  "jsx-a11y/anchor-is-valid": off
+  "react/forbid-prop-types": off
+  "react/no-unused-state": off
+  "jsx-a11y/label-has-for": off
+  "react/require-default-props": off
+  "global-require": off
+  "no-use-before-define": off
+  "no-restricted-globals": off
