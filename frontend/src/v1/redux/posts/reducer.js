@@ -6,6 +6,54 @@ const postsReducer = (
   state = DEFAULT_STORE_FORMAT,
   action,
 ) => {
+  const findAndUpdateComment1 = (comments) => {
+    const index = R.findIndex(R.propEq('id', action.comment.comment_id))(comments);
+    if (index !== -1) {
+      return [
+        ...R.slice(0, index, comments),
+        {
+          ...comments[index],
+          comments: [...comments[index].comments, action.comment],
+        },
+        ...R.slice(index + 1, Infinity, comments),
+      ];
+    }
+    return R.map(
+      comment => (
+        { ...comment, comments: findAndUpdateComment1(comment.comments) }
+      ),
+      comments,
+    );
+  };
+  const findAndUpdateComment2 = (comments) => {
+    const index = R.findIndex(R.propEq('id', action.comment.id))(comments);
+    if (index !== -1) {
+      return [
+        ...R.slice(0, index, comments),
+        action.comment,
+        ...R.slice(index + 1, Infinity, comments),
+      ];
+    }
+    return R.map(
+      comment => (
+        { ...comment, comments: findAndUpdateComment2(comment.comments) }
+      ),
+      comments,
+    );
+  };
+  const findAndRemoveComment = (comments) => {
+    const index = R.findIndex(R.propEq('id', action.commentId))(comments);
+    if (index !== -1) {
+      return R.remove(index, 1, comments);
+    }
+    return R.map(
+      comment => (
+        { ...comment, comments: findAndRemoveComment(comment.comments) }
+      ),
+      comments,
+    );
+  };
+
   switch (action.type) {
   case acts.LOAD_POSTS_REQUEST:
     return {
@@ -68,77 +116,30 @@ const postsReducer = (
         numOfActiveRequests: state.numOfActiveRequests - 1,
       };
     }
-    let findAndUpdateComment = (comments) => {
-      const index = R.findIndex(R.propEq('id', action.comment.comment_id))(comments);
-      if (index !== -1) {
-        return [
-          ...R.slice(0, index, comments),
-          {
-            ...comments[index],
-            comments: [...comments[index].comments, action.comment],
-          },
-          ...R.slice(index + 1, Infinity, comments),
-        ];
-      }
-      return R.map(
-        comment => (
-          { ...comment, comments: findAndUpdateComment(comment.comments) }
-        ),
-        comments,
-      );
-    };
     return {
       ...state,
       posts: {
         ...state.posts,
         [action.postSlug]: {
           ...state.posts[action.postSlug],
-          comments: findAndUpdateComment(state.posts[action.postSlug].comments),
+          comments: findAndUpdateComment1(state.posts[action.postSlug].comments),
         },
       },
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
   case acts.UPDATE_COMMENT_SUCCESS:
-    findAndUpdateComment = (comments) => {
-      const index = R.findIndex(R.propEq('id', action.comment.id))(comments);
-      if (index !== -1) {
-        return [
-          ...R.slice(0, index, comments),
-          action.comment,
-          ...R.slice(index + 1, Infinity, comments),
-        ];
-      }
-      return R.map(
-        comment => (
-          { ...comment, comments: findAndUpdateComment(comment.comments) }
-        ),
-        comments,
-      );
-    };
     return {
       ...state,
       posts: {
         ...state.posts,
         [action.postSlug]: {
           ...state.posts[action.postSlug],
-          comments: findAndUpdateComment(state.posts[action.postSlug].comments),
+          comments: findAndUpdateComment2(state.posts[action.postSlug].comments),
         },
       },
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
   case acts.REMOVE_COMMENT_SUCCESS:
-    const findAndRemoveComment = (comments) => {
-      const index = R.findIndex(R.propEq('id', action.commentId))(comments);
-      if (index !== -1) {
-        return R.remove(index, 1, comments);
-      }
-      return R.map(
-        comment => (
-          { ...comment, comments: findAndRemoveComment(comment.comments) }
-        ),
-        comments,
-      );
-    };
     return {
       ...state,
       posts: {

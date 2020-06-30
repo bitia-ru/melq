@@ -11,9 +11,7 @@ export const acts = {
 
 export const loadUserSession = () => (
   (dispatch) => {
-    dispatch({
-      type: acts.LOAD_USER_SESSION_REQUEST,
-    });
+    dispatch({ type: acts.LOAD_USER_SESSION_REQUEST });
 
     Api.get(
       '/v1/user_sessions/self',
@@ -29,9 +27,7 @@ export const loadUserSession = () => (
           });
         },
         failed() {
-          dispatch({
-            type: acts.LOAD_USER_SESSION_FAILED,
-          });
+          dispatch({ type: acts.LOAD_USER_SESSION_FAILED });
         },
       },
     );

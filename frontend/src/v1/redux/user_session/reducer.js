@@ -12,9 +12,7 @@ const usersReducer = (
       ...action.user_session,
     };
   case acts.LOAD_USER_SESSION_FAILED:
-    return {
-      user_id: null,
-    };
+    return { user_id: null };
   default:
     return state;
   }
