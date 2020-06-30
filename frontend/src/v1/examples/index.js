@@ -10,6 +10,7 @@ import ItemExample from './ItemExample';
 import ListExample from './ListExample';
 import LanguageSelectExample from './LanguageSelectExample';
 import InputExample from './InputExample';
+import LinkExample from './LinkExample';
 
 const examples = {
   button: ButtonExample,
@@ -24,6 +25,7 @@ const examples = {
   list: ListExample,
   language_select: LanguageSelectExample,
   input: InputExample,
+  link: LinkExample,
 };
 
 export default examples;
