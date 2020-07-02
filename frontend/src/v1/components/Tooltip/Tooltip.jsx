@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     padding: '5px 0',
     position: 'absolute',
     zIndex: 1,
+    backgroundColor: mainFontColor,
+    color: bgColor,
+    border: `1px solid ${mainFontColor}`,
     ':before': {
       content: '\'\'',
       position: 'absolute',
@@ -26,9 +29,6 @@ const styles = StyleSheet.create({
     },
   },
   rightSideTooltip: {
-    backgroundColor: mainFontColor,
-    color: bgColor,
-    border: `1px solid ${mainFontColor}`,
     top: '-5px',
     left: '80%',
     marginLeft: '30px',
@@ -46,9 +46,6 @@ const styles = StyleSheet.create({
     },
   },
   bottomSideTooltip: {
-    backgroundColor: mainFontColor,
-    color: bgColor,
-    border: `1px solid ${mainFontColor}`,
     top: '120%',
     left: '50%',
     marginLeft: '-60px',
