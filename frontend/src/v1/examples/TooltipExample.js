@@ -51,7 +51,6 @@ const TooltipExample = () => (
       <div className={css(styles.checkbox, styles.active)} />
       <Tooltip
         tooltipText="Checkbox#1 Tooltip"
-        tooltipColorStyle="focusBgColorTooltip"
         tooltipSide="bottom"
       />
     </div>
@@ -61,7 +60,6 @@ const TooltipExample = () => (
       <div className={css(styles.checkbox, styles.active)} />
       <Tooltip
         tooltipText="Checkbox#2 Tooltip"
-        tooltipColorStyle="mainFontColorTooltip"
         tooltipSide="bottom"
       />
     </div>
@@ -71,7 +69,6 @@ const TooltipExample = () => (
       <div className={css(styles.checkbox, styles.active)} />
       <Tooltip
         tooltipText="Checkbox#3 Tooltip"
-        tooltipColorStyle="selectedItemColorTooltip"
         tooltipSide="bottom"
       />
     </div>
@@ -81,7 +78,6 @@ const TooltipExample = () => (
       <div className={css(styles.checkbox, styles.active)} />
       <Tooltip
         tooltipText="Checkbox#4 Tooltip"
-        tooltipColorStyle="separatorColorTooltip"
         tooltipSide="bottom"
       />
     </div>
@@ -91,7 +87,6 @@ const TooltipExample = () => (
         <div className={css(styles.checkbox, styles.active)} />
         <Tooltip
           tooltipText="Checkbox#4 Tooltip Tooltip Tooltip Tooltip Tooltip"
-          tooltipColorStyle="separatorColorTooltip"
           tooltipSide="right"
         />
       </div>
@@ -102,7 +97,6 @@ const TooltipExample = () => (
         <button>Send1</button>
         <Tooltip
           tooltipText="Tooltip"
-          tooltipColorStyle="focusBgColorTooltip"
           tooltipSide="bottom"
         />
       </div>
@@ -113,7 +107,6 @@ const TooltipExample = () => (
         <button>Send2</button>
         <Tooltip
           tooltipText="Tooltip"
-          tooltipColorStyle="mainFontColorTooltip"
           tooltipSide="right"
         />
       </div>
@@ -124,7 +117,6 @@ const TooltipExample = () => (
         <a href="">Link</a>
         <Tooltip
           tooltipText="Tooltip"
-          tooltipColorStyle="focusBgColorTooltip"
           tooltipSide="right"
         />
       </div>
@@ -135,7 +127,6 @@ const TooltipExample = () => (
         <a href="">Link</a>
         <Tooltip
           tooltipText="Tooltip Tooltip Tooltip Tooltip Tooltip Tooltip"
-          tooltipColorStyle="focusBgColorTooltip"
           tooltipSide="right"
         />
       </div>
