@@ -4,10 +4,20 @@ on: push
 jobs:
   ci:
     runs-on: ubuntu-18.04
+    services:
+      db:
+        image: postgres:11.6-alpine
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Preparations
         run: |
           cp frontend/Dockerfile{.ci,}
       - uses: ./.github/actions/backend-ci
+        env:
+          DB_HOST: 'db'
       - uses: ./.github/actions/frontend-ci
