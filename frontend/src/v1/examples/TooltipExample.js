@@ -1,25 +1,23 @@
 import React from 'react';
 import Tooltip from '../components/Tooltip/Tooltip';
 import { StyleSheet, css } from '../aphrodite';
-import {
-  successColor,
-  separatorColor,
-  defaultColor,
-  themeStyles,
-  focusBgColor,
-  focusBorderColor,
-  mainFontColor,
-  bgColor,
-  selectedItemColor,
-} from '../theme';
+import { successColor, separatorColor, defaultColor, themeStyles } from '../theme';
 import check from './assets/check.svg';
 
 const styles = StyleSheet.create({
-  wrapper: {
+  checkboxWrapper: {
     display: 'inline-block',
     position: 'relative',
     width: '40px',
     height: '44px',
+    background: 'white',
+    margin: '10px 50px',
+    textAlign: 'center',
+    ':hover': { '>span': { visibility: 'visible' } },
+  },
+  buttonWrapper: {
+    display: 'inline-block',
+    position: 'relative',
     background: 'white',
     margin: '10px 50px',
     textAlign: 'center',
@@ -40,89 +38,107 @@ const styles = StyleSheet.create({
     backgroundPosition: '50% 50%',
   },
   title: { color: defaultColor },
-
-  tooltipCheckboxOne: {
-    backgroundColor: focusBgColor,
-    color: defaultColor,
-    border: `1px solid ${focusBorderColor}`,
-    ':before': {
-      borderColor: `transparent transparent ${focusBgColor} transparent`,
-      borderBottomColor: focusBorderColor,
-    },
-    ':after': { borderColor: `transparent transparent ${focusBgColor} transparent` },
-  },
-
-  tooltipCheckboxTwo: {
-    backgroundColor: mainFontColor,
-    color: bgColor,
-    border: `1px solid ${mainFontColor}`,
-    ':before': {
-      borderColor: `transparent transparent ${mainFontColor} transparent`,
-      borderBottomColor: mainFontColor,
-    },
-    ':after': { borderColor: `transparent transparent ${mainFontColor} transparent` },
-  },
-
-  tooltipCheckboxThree: {
-    backgroundColor: selectedItemColor,
-    color: mainFontColor,
-    border: `1px solid ${selectedItemColor}`,
-    ':before': {
-      borderColor: `transparent transparent ${selectedItemColor} transparent`,
-      borderBottomColor: selectedItemColor,
-    },
-    ':after': { borderColor: `transparent transparent ${selectedItemColor} transparent` },
-  },
-
-  tooltipCheckboxFour: {
-    backgroundColor: separatorColor,
-    color: mainFontColor,
-    border: `1px solid ${separatorColor}`,
-    ':before': {
-      borderColor: `transparent transparent ${separatorColor} transparent`,
-      borderBottomColor: separatorColor,
-    },
-    ':after': { borderColor: `transparent transparent ${separatorColor} transparent` },
+  container: {
+    display: 'flex',
+    ':hover': { '>span': { visibility: 'visible' } },
   },
 });
 
 const TooltipExample = () => (
   <>
-    <div className={css(styles.wrapper)}>
+    <div className={css(styles.checkboxWrapper)}>
       <div className={css(styles.title, themeStyles.defaultFont)}>V1</div>
       <div className={css(styles.checkbox, styles.active)} />
       <Tooltip
         tooltipText="Checkbox#1 Tooltip"
-        tooltipStyles={styles.tooltipCheckboxOne}
+        tooltipColorStyle="focusBgColorTooltip"
+        tooltipSide="bottom"
       />
     </div>
 
-    <div className={css(styles.wrapper)}>
+    <div className={css(styles.checkboxWrapper)}>
       <div className={css(styles.title, themeStyles.defaultFont)}>V2</div>
       <div className={css(styles.checkbox, styles.active)} />
-      <Tooltip tooltipText="Checkbox#2 Tooltip" tooltipStyles={styles.tooltipCheckboxTwo} />
+      <Tooltip
+        tooltipText="Checkbox#2 Tooltip"
+        tooltipColorStyle="mainFontColorTooltip"
+        tooltipSide="bottom"
+      />
     </div>
 
-    <div className={css(styles.wrapper)}>
+    <div className={css(styles.checkboxWrapper)}>
       <div className={css(styles.title, themeStyles.defaultFont)}>V3</div>
       <div className={css(styles.checkbox, styles.active)} />
-      <Tooltip tooltipText="Checkbox#3 Tooltip" tooltipStyles={styles.tooltipCheckboxThree} />
+      <Tooltip
+        tooltipText="Checkbox#3 Tooltip"
+        tooltipColorStyle="selectedItemColorTooltip"
+        tooltipSide="bottom"
+      />
     </div>
 
-    <div className={css(styles.wrapper)}>
+    <div className={css(styles.checkboxWrapper)}>
       <div className={css(styles.title, themeStyles.defaultFont)}>V4</div>
       <div className={css(styles.checkbox, styles.active)} />
-      <Tooltip tooltipText="Checkbox#4 Tooltip" tooltipStyles={styles.tooltipCheckboxFour} />
+      <Tooltip
+        tooltipText="Checkbox#4 Tooltip"
+        tooltipColorStyle="separatorColorTooltip"
+        tooltipSide="bottom"
+      />
     </div>
 
-    <div className={css(styles.wrapper)}>
-      <div>Send</div>
-      <Tooltip tooltipText="Tooltip" tooltipStyles={styles.tooltipCheckboxFour} />
+    <div className={css(styles.container)}>
+      <div className={css(styles.checkboxWrapper)}>
+        <div className={css(styles.checkbox, styles.active)} />
+        <Tooltip
+          tooltipText="Checkbox#4 Tooltip Tooltip Tooltip Tooltip Tooltip"
+          tooltipColorStyle="separatorColorTooltip"
+          tooltipSide="right"
+        />
+      </div>
     </div>
 
-    <div className={css(styles.wrapper)}>
-      <a href="">Link</a>
-      <Tooltip tooltipText="Tooltip" tooltipStyles={styles.tooltipCheckboxFour} />
+    <div className={css(styles.container)}>
+      <div className={css(styles.buttonWrapper)}>
+        <button>Send1</button>
+        <Tooltip
+          tooltipText="Tooltip"
+          tooltipColorStyle="focusBgColorTooltip"
+          tooltipSide="bottom"
+        />
+      </div>
+    </div>
+
+    <div className={css(styles.container)}>
+      <div className={css(styles.buttonWrapper)}>
+        <button>Send2</button>
+        <Tooltip
+          tooltipText="Tooltip"
+          tooltipColorStyle="mainFontColorTooltip"
+          tooltipSide="right"
+        />
+      </div>
+    </div>
+
+    <div className={css(styles.container)}>
+      <div className={css(styles.buttonWrapper)}>
+        <a href="">Link</a>
+        <Tooltip
+          tooltipText="Tooltip"
+          tooltipColorStyle="focusBgColorTooltip"
+          tooltipSide="right"
+        />
+      </div>
+    </div>
+
+    <div className={css(styles.container)}>
+      <div className={css(styles.buttonWrapper)}>
+        <a href="">Link</a>
+        <Tooltip
+          tooltipText="Tooltip Tooltip Tooltip Tooltip Tooltip Tooltip"
+          tooltipColorStyle="focusBgColorTooltip"
+          tooltipSide="right"
+        />
+      </div>
     </div>
   </>
 );
