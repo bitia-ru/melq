@@ -12,6 +12,7 @@ import ListExample from './ListExample';
 import LanguageSelectExample from './LanguageSelectExample';
 import InputExample from './InputExample';
 import LinkExample from './LinkExample';
+import PhotoPreviewExample from './PhotoPreviewExample';
 
 const examples = {
   icon: IconExample,
@@ -28,6 +29,7 @@ const examples = {
   language_select: LanguageSelectExample,
   input: InputExample,
   link: LinkExample,
+  photo_preview: PhotoPreviewExample,
 };
 
 export default examples;
