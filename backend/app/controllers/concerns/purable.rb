@@ -4,6 +4,7 @@ module Purable
   included do
     before_action do
       @resource = self.class.purable_model.name.underscore.to_sym
+      @metadata ||= {}
     end
 
     before_action do
@@ -91,7 +92,6 @@ module Purable
     if params.include? :limit
       instance_variable_set("@#{resources_name}", resources.limit(Integer(params[:limit])))
     end
-    @metadata ||= {}
     @metadata[:all] = all unless @metadata[:all]
     respond_with(metadata: @metadata, payload: resources)
   end
