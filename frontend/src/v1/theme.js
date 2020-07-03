@@ -35,24 +35,36 @@ export const themeStyles = StyleSheet.create({
     border: `1px solid ${focusBgColor}`,
     backgroundColor: focusBgColor,
     color: defaultColor,
-    '> svg': { fill: defaultColor },
+    '> svg': {
+      fill: defaultColor,
+      stroke: defaultColor,
+    },
     ':hover': {
       color: infoColor,
       border: `1px solid ${focusBgColor}`,
-      '> svg': { fill: infoColor },
+      '> svg': {
+        fill: infoColor,
+        stroke: infoColor,
+      },
     },
     ':active': {
       backgroundColor: infoColor,
       color: bgColor,
       border: `1px solid ${infoColor}`,
-      '> svg': { fill: bgColor },
+      '> svg': {
+        fill: bgColor,
+        stroke: infoColor,
+      },
     },
   },
   successColor: {
     border: `1px solid ${successColor}`,
     backgroundColor: successColor,
     color: bgColor,
-    '> svg': { fill: bgColor },
+    '> svg': {
+      fill: bgColor,
+      stroke: bgColor,
+    },
     ':hover': {
       backgroundColor: hoveredSuccessColor,
       border: `1px solid ${hoveredSuccessColor}`,
@@ -61,14 +73,20 @@ export const themeStyles = StyleSheet.create({
       backgroundColor: successColor,
       color: bgColor,
       border: `1px solid ${successColor}`,
-      '> svg': { fill: bgColor },
+      '> svg': {
+        fill: bgColor,
+        stroke: bgColor,
+      },
     },
   },
   infoColor: {
     border: `1px solid ${infoColor}`,
     backgroundColor: infoColor,
     color: bgColor,
-    '> svg': { fill: bgColor },
+    '> svg': {
+      fill: bgColor,
+      stroke: bgColor,
+    },
     ':hover': {
       backgroundColor: hoveredInfoColor,
       border: `1px solid ${hoveredInfoColor}`,
@@ -77,90 +95,138 @@ export const themeStyles = StyleSheet.create({
       backgroundColor: infoColor,
       color: bgColor,
       border: `1px solid ${infoColor}`,
-      '> svg': { fill: bgColor },
+      '> svg': {
+        fill: bgColor,
+        stroke: bgColor,
+      },
     },
   },
   outlinedColor: {
     border: `1px solid ${infoColor}`,
     backgroundColor: 'transparent',
     color: infoColor,
-    '> svg': { fill: infoColor },
+    '> svg': {
+      fill: infoColor,
+      stroke: infoColor,
+    },
     ':hover': {
       border: `1px solid ${infoColor}`,
       backgroundColor: infoColor,
       color: bgColor,
-      '> svg': { fill: bgColor },
+      '> svg': {
+        fill: bgColor,
+        stroke: bgColor,
+      },
     },
     ':active': {
       border: `1px solid ${infoColor}`,
       backgroundColor: 'transparent',
       color: infoColor,
-      '> svg': { fill: infoColor },
+      '> svg': {
+        fill: infoColor,
+        stroke: infoColor,
+      },
     },
   },
   transparentColor: {
     backgroundColor: 'transparent',
     color: defaultColor,
-    '> svg': { fill: defaultColor },
+    '> svg': {
+      fill: defaultColor,
+      stroke: defaultColor,
+    },
     ':hover': {
       color: infoColor,
-      '> svg': { fill: infoColor },
+      '> svg': {
+        fill: infoColor,
+        stroke: infoColor,
+      },
     },
     ':active': {
       color: defaultColor,
-      '> svg': { fill: defaultColor },
+      '> svg': {
+        fill: defaultColor,
+        stroke: defaultColor,
+      },
     },
   },
   transparentWithBorderColor: {
     border: `1px solid ${defaultColor}`,
     backgroundColor: 'transparent',
     color: defaultColor,
-    '> svg': { fill: defaultColor },
+    '> svg': {
+      fill: defaultColor,
+      stroke: defaultColor,
+    },
     ':hover': {
       border: `1px solid ${focusBorderColor}`,
       backgroundColor: 'transparent',
       color: focusBorderColor,
-      '> svg': { fill: focusBorderColor },
+      '> svg': {
+        fill: focusBorderColor,
+        stroke: focusBorderColor,
+      },
     },
     ':active': {
       border: `1px solid ${focusBorderColor}`,
       backgroundColor: focusBorderColor,
       color: bgColor,
-      '> svg': { fill: bgColor },
+      '> svg': {
+        fill: bgColor,
+        stroke: bgColor,
+      },
     },
   },
   defaultColorDisabled: {
     border: `1px solid ${disabledBtnColor}`,
     backgroundColor: disabledBtnColor,
     color: disabledColor,
-    '> svg': { fill: disabledColor },
+    '> svg': {
+      fill: disabledColor,
+      stroke: disabledColor,
+    },
     ':hover': {
       color: disabledColor,
       backgroundColor: disabledBtnColor,
       border: `1px solid ${disabledBtnColor}`,
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':active': {
       backgroundColor: disabledBtnColor,
       color: disabledColor,
       border: `1px solid ${disabledBtnColor}`,
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':focus': { outline: 'none' },
   },
   transparentColorDisabled: {
     backgroundColor: 'transparent',
     color: disabledColor,
-    '> svg': { fill: disabledColor },
+    '> svg': {
+      fill: disabledColor,
+      stroke: disabledColor,
+    },
     ':hover': {
       color: disabledColor,
       backgroundColor: 'transparent',
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':active': {
       backgroundColor: 'transparent',
       color: disabledColor,
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':focus': { outline: 'none' },
   },
@@ -168,18 +234,27 @@ export const themeStyles = StyleSheet.create({
     border: `1px solid ${disabledColor}`,
     backgroundColor: 'transparent',
     color: disabledColor,
-    '> svg': { fill: disabledColor },
+    '> svg': {
+      fill: disabledColor,
+      stroke: disabledColor,
+    },
     ':hover': {
       color: disabledColor,
       backgroundColor: 'transparent',
       border: `1px solid ${disabledColor}`,
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':active': {
       backgroundColor: 'transparent',
       color: disabledColor,
       border: `1px solid ${disabledColor}`,
-      '> svg': { fill: disabledColor },
+      '> svg': {
+        fill: disabledColor,
+        stroke: disabledColor,
+      },
     },
     ':focus': { outline: 'none' },
   },
