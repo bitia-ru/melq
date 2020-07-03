@@ -1,97 +1,153 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, css } from '../../aphrodite';
-import { bgColor, mainFontColor } from '../../theme';
+import { defaultColor, focusBgColor, focusBorderColor } from '../../theme';
 
 const styles = StyleSheet.create({
-  tooltip: {
-    visibility: 'hidden',
-    width: '120px',
+  tooltipWrapper: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     textAlign: 'center',
-    borderRadius: '3px',
-    padding: '5px 0',
+  },
+  targetElement: { cursor: 'help' },
+  tooltip: {
     position: 'absolute',
-    zIndex: 1,
-    backgroundColor: mainFontColor,
-    color: bgColor,
-    border: `1px solid ${mainFontColor}`,
+    display: 'flex',
+    padding: '5px',
+    borderRadius: '3px',
+    backgroundColor: focusBgColor,
+    minWidth: '120px',
+    maxWidth: '200px',
+    color: defaultColor,
+    border: `1px solid ${focusBorderColor}`,
+    zIndex: '999',
     ':before': {
       content: '\'\'',
       position: 'absolute',
       borderWidth: '10px',
       borderStyle: 'solid',
+      zIndex: '998',
     },
     ':after': {
       content: '\'\'',
       position: 'absolute',
+      display: 'block',
       borderWidth: '10px',
       borderStyle: 'solid',
+      zIndex: '998',
+    },
+  },
+  topSideTooltip: {
+    justifyContent: 'center',
+    bottom: 'calc(100% + 20px)',
+    ':before': {
+      bottom: '-20px',
+      borderColor: `${focusBorderColor} transparent transparent transparent`,
+    },
+    ':after': {
+      bottom: '-19px',
+      borderColor: `${focusBgColor} transparent transparent transparent`,
     },
   },
   rightSideTooltip: {
-    top: '-5px',
-    left: '80%',
-    marginLeft: '30px',
+    alignItems: 'center',
+    left: 'calc(100% + 20px)',
     ':before': {
-      top: '5px',
-      left: '0%',
-      marginLeft: '-20px',
-      borderColor: `transparent ${mainFontColor} transparent transparent`,
+      left: '-20px',
+      borderColor: `transparent ${focusBorderColor} transparent transparent`,
     },
     ':after': {
-      top: '5px',
-      left: '1%',
-      marginLeft: '-20px',
-      borderColor: `transparent ${mainFontColor} transparent transparent`,
+      left: '-19px',
+      borderColor: `transparent ${focusBgColor} transparent transparent`,
     },
   },
   bottomSideTooltip: {
-    top: '120%',
-    left: '50%',
-    marginLeft: '-60px',
+    justifyContent: 'center',
+    top: 'calc(100% + 20px)',
     ':before': {
-      bottom: '100%',
-      left: '45%',
-      marginLeft: '-5px',
-      borderColor: `transparent transparent ${mainFontColor} transparent`,
+      top: '-20px',
+      borderColor: `transparent transparent ${focusBorderColor} transparent`,
     },
     ':after': {
-      bottom: '97%',
-      left: '45%',
-      marginLeft: '-5px',
-      borderColor: `transparent transparent ${mainFontColor} transparent`,
+      top: '-19px',
+      borderColor: `transparent transparent ${focusBgColor} transparent`,
+    },
+  },
+  leftSideTooltip: {
+    alignItems: 'center',
+    right: 'calc(100% + 20px)',
+    ':before': {
+      right: '-20px',
+      borderColor: `transparent transparent transparent ${focusBorderColor}`,
+    },
+    ':after': {
+      right: '-19px',
+      borderColor: `transparent transparent transparent ${focusBgColor}`,
     },
   },
 });
 
 const getTooltipSide = (tooltipSide) => {
   switch (tooltipSide) {
-  case 'right': {
-    return styles.rightSideTooltip;
+  case 'top': {
+    return styles.topSideTooltip;
   }
-  case 'bottom':
-  default: {
+  case 'bottom': {
     return styles.bottomSideTooltip;
+  }
+  case 'left': {
+    return styles.leftSideTooltip;
+  }
+  case 'right':
+  default: {
+    return styles.rightSideTooltip;
   }
   }
 };
 
-const Tooltip = ({ tooltipText, tooltipSide }) => (
-  <span
-    className={
-      css(
-        styles.tooltip,
-        getTooltipSide(tooltipSide),
-      )
+const Tooltip = ({ tooltipText, tooltipSide, children, isShowing }) => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!isShowing || isShowing !== visible) {
+      setVisible(isShowing);
     }
-  >
-    {tooltipText}
-  </span>
-);
+  }, [isShowing]);
+
+  const showTooltip = () => {
+    setVisible(true);
+  };
+
+  const hideTooltip = () => {
+    setVisible(false);
+  };
+
+  return (
+    <span className={css(styles.tooltipWrapper)}>
+      {
+        visible
+        && <span className={css(styles.tooltip, getTooltipSide(tooltipSide))}>
+          {tooltipText}
+        </span>
+      }
+      <span
+        className={css(styles.targetElement)}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+      >
+        {children}
+      </span>
+    </span>
+  );
+};
 
 Tooltip.propTypes = {
   tooltipText: PropTypes.string.isRequired,
-  tooltipSide: PropTypes.string,
+  tooltipSide: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+  children: PropTypes.node.isRequired,
+  isShowing: PropTypes.bool,
 };
 
 export default Tooltip;
