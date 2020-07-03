@@ -48,7 +48,7 @@ services:
       - redis
     volumes:
       - ${PWD}/storage:/app/storage
-      - ${PWD}/backend/app:/app/app
+      - ${PWD}/backend:/app
   job:
     build: ./backend
     network_mode: bridge
