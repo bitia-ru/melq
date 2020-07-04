@@ -114,7 +114,13 @@ const TooltipExample = () => {
         <p>Click to activate all tooltip above</p>
         <div className={css(styles.buttonWrapper)}>
           <Tooltip tooltipText="Activate All Tooltip" tooltipSide="top">
-            <button type="button" className={css(styles.button)} onClick={() => setActive(!active)}>Activate</button>
+            <button
+              type="button"
+              className={css(styles.button)}
+              onClick={() => setActive(!active)}
+            >
+              Activate
+            </button>
           </Tooltip>
         </div>
       </div>

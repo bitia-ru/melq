@@ -11,7 +11,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
   },
-  targetElement: { cursor: 'help' },
   tooltip: {
     position: 'absolute',
     display: 'flex',
@@ -132,11 +131,7 @@ const Tooltip = ({ tooltipText, tooltipSide, children, isShowing }) => {
           {tooltipText}
         </span>
       }
-      <span
-        className={css(styles.targetElement)}
-        onMouseEnter={showTooltip}
-        onMouseLeave={hideTooltip}
-      >
+      <span onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
         {children}
       </span>
     </span>
