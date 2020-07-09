@@ -59,6 +59,8 @@ const styles = StyleSheet.create({
     width: '40px',
     height: '44px',
   },
+  inputContainer: { width: '30%' },
+  input: { width: '100%' },
 });
 
 const TooltipExample = () => {
@@ -124,10 +126,25 @@ const TooltipExample = () => {
           </Tooltip>
         </div>
       </div>
-      <div className={css(styles.containerWrapper, styles.title, themeStyles.defaultFont)}>
+      <div
+        className={
+          css(
+            styles.containerWrapper,
+            styles.title,
+            themeStyles.defaultFont,
+            styles.inputContainer,
+          )
+        }
+      >
         <p>Set tooltip for all checkboxes</p>
         <Tooltip tooltipText="Max word length=20" tooltipSide="right">
-          <input type="text" name="tooltip" id="tooltip" onChange={tooltipTextOnChange} />
+          <input
+            className={css(styles.input)}
+            type="text"
+            name="tooltip"
+            id="tooltip"
+            onChange={tooltipTextOnChange}
+          />
         </Tooltip>
       </div>
 
