@@ -10,6 +10,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    width: '100%',
   },
   tooltip: {
     position: 'absolute',
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
       borderColor: `transparent transparent transparent ${focusBgColor}`,
     },
   },
+  childrenWrapper: { width: '100%' },
 });
 
 const getTooltipSide = (tooltipSide) => {
@@ -124,17 +126,22 @@ const Tooltip = ({ tooltipText, tooltipSide, children, isShowing }) => {
   };
 
   return (
-    <span className={css(styles.tooltipWrapper)}>
+    <div className={css(styles.tooltipWrapper)}>
       {
-        visible
-        && <span className={css(styles.tooltip, getTooltipSide(tooltipSide))}>
-          {tooltipText}
-        </span>
+        visible && (
+          <span className={css(styles.tooltip, getTooltipSide(tooltipSide))}>
+            {tooltipText}
+          </span>
+        )
       }
-      <span onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
+      <div
+        className={css(styles.childrenWrapper)}
+        onMouseEnter={isShowing ? null : showTooltip}
+        onMouseLeave={isShowing ? null : hideTooltip}
+      >
         {children}
-      </span>
-    </span>
+      </div>
+    </div>
   );
 };
 
