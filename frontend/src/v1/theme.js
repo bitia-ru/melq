@@ -14,7 +14,7 @@ export const btnBgColor = '#ECECEC';
 export const successColor = '#52C4A9';
 export const errorColor = '#F7523E';
 export const selectedItemColor = '#FFF4F2';
-export const cardColors = ['#FFF4F2', '#F5F4FF', '#F0F1F2'];
+export const cardColors = { 0: '#FFF4F2', 1: '#F5F4FF', 2: '#F0F1F2' };
 export const dateTopicCounterColor = '#A9B9C1';
 
 export const hoveredSuccessColor = (
