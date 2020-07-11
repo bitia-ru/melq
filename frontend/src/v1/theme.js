@@ -30,7 +30,34 @@ export const themeStyles = StyleSheet.create({
     fontSize: '14px',
     lineHeight: '16px',
   },
+  smallFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '12px',
+    lineHeight: '14px',
+  },
+  headerFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '22px',
+    lineHeight: '27px',
+    fontWeight: 'bold',
+  },
+  error: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '14px',
+    lineHeight: '16px',
+    color: errorColor,
+  },
   fontWeight500: { fontWeight: 500 },
+  detailsFont: {
+    fontFamily: 'LoraRegular',
+    fontSize: '18px',
+    lineHeight: '165%',
+  },
+  smallDetailsFont: {
+    fontFamily: 'LoraRegular',
+    fontSize: '16px',
+    lineHeight: '145%',
+  },
   defaultColor: {
     border: `1px solid ${focusBgColor}`,
     backgroundColor: focusBgColor,
@@ -258,5 +285,9 @@ export const themeStyles = StyleSheet.create({
     },
     ':focus': { outline: 'none' },
   },
+  focusable: { ':focus': { outline: `1px solid ${infoColor}` } },
+  focusableParent: { ':focus-within': { outline: `1px solid ${infoColor}` } },
   bordered: { borderRadius: '3px' },
+  shadowed: { boxShadow: '0px 10px 20px rgba(32, 32, 40, 0.05)' },
+  hoverShadowed: { ':hover': { boxShadow: '0px 10px 20px rgba(32, 32, 40, 0.05)' } },
 });
