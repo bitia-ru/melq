@@ -15,6 +15,7 @@ import LinkExample from './LinkExample';
 import PhotoPreviewExample from './PhotoPreviewExample';
 import SocialLinkExample from './SocialLinkExample';
 import TextAreaWithPhotoLoaderExample from './TextAreaWithPhotoLoaderExample';
+import ErrorExample from './ErrorExample';
 
 const examples = {
   icon: IconExample,
@@ -34,6 +35,7 @@ const examples = {
   photo_preview: PhotoPreviewExample,
   social_link: SocialLinkExample,
   textarea_with_photo_loader: TextAreaWithPhotoLoaderExample,
+  error: ErrorExample,
 };
 
 export default examples;
