@@ -11,6 +11,7 @@ import ActionCable from 'actioncable';
 import V1 from '@/v1/V1';
 import store from './store';
 import './index.css';
+import './fonts.css';
 import processEntities from '@/v1/utils/processEntities';
 /* eslint-enable import/first */
 
