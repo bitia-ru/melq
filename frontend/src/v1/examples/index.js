@@ -7,6 +7,7 @@ import ImageIconExample from './ImageIconExample';
 import AvatarRoundExample from './AvatarRoundExample';
 import TextAreaExample from './TextAreaExample';
 import ItemExample from './ItemExample';
+import ListExample from './ListExample';
 
 const examples = {
   button: ButtonExample,
@@ -18,6 +19,7 @@ const examples = {
   avatar_round: AvatarRoundExample,
   textarea: TextAreaExample,
   item: ItemExample,
+  list: ListExample,
 };
 
 export default examples;
