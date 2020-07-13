@@ -9,6 +9,7 @@ import TextAreaExample from './TextAreaExample';
 import ItemExample from './ItemExample';
 import ListExample from './ListExample';
 import LanguageSelectExample from './LanguageSelectExample';
+import InputExample from './InputExample';
 
 const examples = {
   button: ButtonExample,
@@ -22,6 +23,7 @@ const examples = {
   item: ItemExample,
   list: ListExample,
   language_select: LanguageSelectExample,
+  input: InputExample,
 };
 
 export default examples;
