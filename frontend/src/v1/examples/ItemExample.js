@@ -54,7 +54,7 @@ const ItemExample = () => {
         <div className={css(styles.container)}>
           <Item
             text="Русский"
-            iconSrc={require('./images/demoLanguageItemIcon.png')}
+            iconSrc={require('./images/demoLanguageItemIconRu.png')}
             tooltipText="Сменить язык"
             onTriggered={onTriggered}
             width={24}
@@ -73,7 +73,7 @@ const ItemExample = () => {
         <div className={css(styles.container)}>
           <Item
             text="Русский"
-            iconSrc={require('./images/demoLanguageItemIcon.png')}
+            iconSrc={require('./images/demoLanguageItemIconRu.png')}
             size="small"
             width={24}
             height={16}
