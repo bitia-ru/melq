@@ -31,6 +31,10 @@ body {
     outline: none;
 }
 
+.js-focus-visible :focus-within:not(.focus-visible) {
+    outline: none;
+}
+
 @media screen and (max-width: 1100px) {
     .page {
         overflow-x: scroll;
