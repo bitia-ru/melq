@@ -7,6 +7,7 @@ import MainPage from './screens/MainPage';
 import PostShow from './screens/PostShow';
 import PostEdit from './screens/PostEdit';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
+import { default as MainExamplePage } from './examples/Main';
 import examples from '@/v1/examples';
 
 const V1 = ({ currentUser }) => (
@@ -15,6 +16,7 @@ const V1 = ({ currentUser }) => (
       currentUser !== undefined ? (
         <Switch>
           <Route exact path="/" component={MainPage} />
+          <Route exact path="/components" component={MainExamplePage} />
           <Route exact path={['/new', '/:slug/edit']} component={PostEdit} />
           <Route exact path="/:slug" component={PostShow} />
           <Route
