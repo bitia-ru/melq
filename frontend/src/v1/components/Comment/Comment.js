@@ -54,7 +54,7 @@ class Comment extends React.PureComponent {
     const { comment, answer, user } = this.props;
     return (
       <div className={css(styles.container)}>
-        <AvatarRound src={comment.author_url} />
+        <AvatarRound src={comment.author_url} size="small" />
         <div className={css(styles.textBlock)}>
           <div className={css(styles.infoBlock)}>
             {
