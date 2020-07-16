@@ -36,6 +36,11 @@ export const themeStyles = StyleSheet.create({
     fontSize: '12px',
     lineHeight: '14px',
   },
+  xsFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '10px',
+    lineHeight: '12px',
+  },
   headerFont: {
     fontFamily: 'GilroyRegular',
     fontSize: '22px',
