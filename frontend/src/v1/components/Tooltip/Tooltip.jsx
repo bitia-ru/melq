@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, css } from '../../aphrodite';
-import { defaultColor, focusBgColor, focusBorderColor } from '../../theme';
+import { defaultColor, focusBgColor, focusBorderColor, themeStyles } from '../../theme';
 
 const styles = StyleSheet.create({
   tooltipWrapper: {
@@ -129,7 +129,7 @@ const Tooltip = ({ tooltipText, tooltipSide, children, isShowing }) => {
     <div className={css(styles.tooltipWrapper)}>
       {
         visible && (
-          <span className={css(styles.tooltip, getTooltipSide(tooltipSide))}>
+          <span className={css(styles.tooltip, getTooltipSide(tooltipSide), themeStyles.xsFont)}>
             {tooltipText}
           </span>
         )
