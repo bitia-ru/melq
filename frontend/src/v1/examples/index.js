@@ -17,6 +17,7 @@ import PhotoPreviewExample from './PhotoPreviewExample';
 import SocialLinkExample from './SocialLinkExample';
 import TextAreaWithPhotoLoaderExample from './TextAreaWithPhotoLoaderExample';
 import ErrorExample from './ErrorExample';
+import SelectExample from './SelectExample';
 
 const examples = {
   icon: IconExample,
@@ -38,6 +39,7 @@ const examples = {
   textarea_with_photo_loader: TextAreaWithPhotoLoaderExample,
   error: ErrorExample,
   check_box: CheckBoxExample,
+  select: SelectExample,
 };
 
 export default examples;
