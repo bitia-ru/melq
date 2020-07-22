@@ -26,20 +26,30 @@ export const hoveredInfoColor = (
 );
 
 export const themeStyles = StyleSheet.create({
-  defaultFont: {
+  xsFont: {
     fontFamily: 'GilroyRegular',
-    fontSize: '14px',
-    lineHeight: '16px',
+    fontSize: '10px',
+    lineHeight: '12px',
   },
   smallFont: {
     fontFamily: 'GilroyRegular',
     fontSize: '12px',
     lineHeight: '14px',
   },
-  xsFont: {
+  defaultFont: {
     fontFamily: 'GilroyRegular',
-    fontSize: '10px',
-    lineHeight: '12px',
+    fontSize: '14px',
+    lineHeight: '16px',
+  },
+  mediumFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '16px',
+    lineHeight: '19px',
+  },
+  largeFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '18px',
+    lineHeight: '21px',
   },
   headerFont: {
     fontFamily: 'GilroyRegular',
