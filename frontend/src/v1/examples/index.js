@@ -13,6 +13,7 @@ import LanguageSelectExample from './LanguageSelectExample';
 import InputExample from './InputExample';
 import LinkExample from './LinkExample';
 import PhotoPreviewExample from './PhotoPreviewExample';
+import SocialLinkExample from './SocialLinkExample';
 
 const examples = {
   icon: IconExample,
@@ -30,6 +31,7 @@ const examples = {
   input: InputExample,
   link: LinkExample,
   photo_preview: PhotoPreviewExample,
+  social_link: SocialLinkExample,
 };
 
 export default examples;
