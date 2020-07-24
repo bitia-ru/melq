@@ -13,6 +13,7 @@ const Counter = ({
   value,
   tooltipText,
   tooltipSide,
+  size,
 }) => {
   const [counter, setCounter] = useState(0);
 
@@ -58,6 +59,7 @@ const Counter = ({
       value={counter}
       tooltipText={tooltipText}
       tooltipSide={tooltipSide}
+      size={size}
     />
   );
 };
@@ -79,6 +81,7 @@ Counter.propTypes = {
   value: PropTypes.number.isRequired,
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
+  size: PropTypes.string,
 };
 
 export default Counter;

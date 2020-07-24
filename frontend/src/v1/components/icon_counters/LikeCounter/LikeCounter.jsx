@@ -10,6 +10,7 @@ const LikeCounter = ({
   value,
   tooltipText,
   tooltipSide,
+  size,
 }) => (
   <Counter
     src={`${require('./assets/like.svg')}#like`}
@@ -22,6 +23,7 @@ const LikeCounter = ({
     value={value}
     tooltipText={tooltipText || 'Нравится'}
     tooltipSide={tooltipSide || 'bottom'}
+    size={size}
   />
 );
 
@@ -33,6 +35,7 @@ LikeCounter.propTypes = {
   value: PropTypes.number,
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
+  size: PropTypes.string,
 };
 
 export default LikeCounter;
