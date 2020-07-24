@@ -33,6 +33,7 @@
     "actioncable": "^5.2.4-3",
     "aphrodite": "^2.4.0",
     "autoprefixer": "^9.7.1",
+    "autosize": "^4.0.2",
     "axios": "^0.18.0",
     "babel-loader": "^8.0.4",
     "bcryptjs": "^2.4.3",
