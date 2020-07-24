@@ -12,13 +12,21 @@ const styles = StyleSheet.create({
     height: '40px',
     margin: 'auto 50px',
   },
+  smallCounterWrapper: {
+    display: 'flex',
+    width: '50px',
+    height: '40px',
+    margin: 'auto 50px',
+  },
   btnWrapper: { margin: '5px 20px' },
 });
 
 const CounterExample = () => {
   const [disabled, setDisabled] = useState(false);
   const [likeCounterChecked, setLikeCounterChecked] = useState(false);
+  const [smallLikeCounterChecked, setSmallLikeCounterChecked] = useState(false);
   const [numOfLikes, setNumOfLikes] = useState(0);
+  const [numOfLikesSmallCounter, setNumOfLikesSmallCounter] = useState(0);
   const [numOfComments, setNumOfComments] = useState(5);
   const [numOfShares, setNumOfShares] = useState(7);
   const [numOfViews, setNumOfViews] = useState(9);
@@ -34,6 +42,16 @@ const CounterExample = () => {
     setLikeCounterChecked(false);
   };
 
+  const onSmallLikeCounterClick = () => {
+    if (numOfLikesSmallCounter === 0) {
+      setNumOfLikesSmallCounter(1);
+      setSmallLikeCounterChecked(true);
+      return;
+    }
+    setNumOfLikesSmallCounter(0);
+    setSmallLikeCounterChecked(false);
+  };
+
   const onCommentCounterClick = () => {
     setNumOfComments(numOfComments + 1);
     alert('Redirect to comments textarea for type a comment');
@@ -46,6 +64,7 @@ const CounterExample = () => {
 
   const resetCounters = () => {
     setNumOfLikes(0);
+    setNumOfLikesSmallCounter(0);
     setLikeCounterChecked(false);
     setNumOfComments(0);
     setNumOfShares(0);
@@ -54,6 +73,7 @@ const CounterExample = () => {
 
   return (
     <div>
+      <div>Default Counters</div>
       <div className={css(styles.container)}>
         <LikeCounter
           onClick={onLikeCounterClick}
@@ -78,6 +98,17 @@ const CounterExample = () => {
           disabled={disabled}
           value={numOfViews}
           hoverable={false}
+        />
+      </div>
+      <div>Small LikeCounter</div>
+      <div className={css(styles.smallCounterWrapper)}>
+        <LikeCounter
+          onClick={onSmallLikeCounterClick}
+          checked={smallLikeCounterChecked}
+          disabled={disabled}
+          value={numOfLikesSmallCounter}
+          hoverable={hoverable}
+          size="small"
         />
       </div>
       <div className={css(styles.btnWrapper)}>

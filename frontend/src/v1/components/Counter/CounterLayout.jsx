@@ -51,10 +51,9 @@ const styles = StyleSheet.create({
     ':checked': { '> svg': { fill: disabledColor, transform: 'scale(1)' } },
     ':focus': { outline: 'none' },
   },
-  counterValue: {
-    margin: '0px 8px',
-    minWidth: '10px',
-  },
+  counterValue: { minWidth: '10px' },
+  counterValueDefaultMargin: { margin: '0px 8px' },
+  counterValueSmallMargin: { margin: '0px 5px' },
 });
 
 const CounterLayout = ({
@@ -69,18 +68,27 @@ const CounterLayout = ({
   value,
   tooltipText,
   tooltipSide,
-}) => (
-  <ConditionalWrapper
-    condition={tooltipText}
-    wrapper={
-      content => (
-        <Tooltip tooltipText={tooltipText} tooltipSide={tooltipSide}>{content}</Tooltip>
-      )
+  size,
+}) => {
+  const getScaledSize = (sizeType) => {
+    if (size === 'small') {
+      return sizeType * 0.7;
     }
-  >
-    <div className={css(styles.wrapper)}>
-      <div
-        className={
+    return sizeType;
+  };
+
+  return (
+    <ConditionalWrapper
+      condition={tooltipText}
+      wrapper={
+        content => (
+          <Tooltip tooltipText={tooltipText} tooltipSide={tooltipSide}>{content}</Tooltip>
+        )
+      }
+    >
+      <div className={css(styles.wrapper)}>
+        <div
+          className={
             css(
               styles.counterIcon,
               themeStyles.focusable,
@@ -89,21 +97,32 @@ const CounterLayout = ({
               hoverable && styles.counterIsScalable,
               disabled && styles.counterDisabled,
             )}
-        role="button"
-        tabIndex={0}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-      >
-        <svg width={width} height={height}>
-          <use xlinkHref={src} width={width} height={height} />
-        </svg>
-        <span className={css(styles.counterValue, themeStyles.defaultFont)}>
-          {value === 0 ? null : value}
-        </span>
+          role="button"
+          tabIndex={0}
+          onClick={onClick}
+          onKeyDown={onKeyDown}
+        >
+          <svg width={getScaledSize(width)} height={getScaledSize(height)}>
+            <use xlinkHref={src} />
+          </svg>
+          <span
+            className={
+              css(
+                styles.counterValue,
+                size === 'small'
+                  ? styles.counterValueSmallMargin
+                  : styles.counterValueDefaultMargin,
+                themeStyles.defaultFont,
+              )
+            }
+          >
+            {value === 0 ? null : value}
+          </span>
+        </div>
       </div>
-    </div>
-  </ConditionalWrapper>
-);
+    </ConditionalWrapper>
+  );
+};
 
 CounterLayout.propTypes = {
   src: PropTypes.string.isRequired,
@@ -117,6 +136,7 @@ CounterLayout.propTypes = {
   value: PropTypes.number.isRequired,
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
+  size: PropTypes.string,
 };
 
 export default CounterLayout;
