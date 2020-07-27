@@ -97,7 +97,7 @@ const IconLayout = ({
     <div className={css(styles.container)}>
       <div
         role="button"
-        tabIndex={disabled || isWaiting ? -1 : 0}
+        tabIndex={disabled || isWaiting || !onClick ? -1 : 0}
         className={
           css(
             styles.icon,
