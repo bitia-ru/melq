@@ -303,7 +303,8 @@ export const themeStyles = StyleSheet.create({
   },
   focusable: { ':focus': { outline: `1px solid ${infoColor}` } },
   focusableParent: { ':focus-within': { outline: `1px solid ${infoColor}` } },
-  bordered: { borderRadius: '3px' },
+  bordered: { borderRadius: '5px' },
+  borderedWithSmallRadius: { borderRadius: '3px' },
   shadowed: { boxShadow: '0px 10px 20px rgba(32, 32, 40, 0.05)' },
   hoverShadowed: { ':hover': { boxShadow: '0px 10px 20px rgba(32, 32, 40, 0.05)' } },
 });
