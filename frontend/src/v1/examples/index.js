@@ -18,6 +18,7 @@ import SocialLinkExample from './SocialLinkExample';
 import TextAreaWithPhotoLoaderExample from './TextAreaWithPhotoLoaderExample';
 import ErrorExample from './ErrorExample';
 import SelectExample from './SelectExample';
+import SearchExample from './SearchExample';
 
 const examples = {
   icon: IconExample,
@@ -40,6 +41,7 @@ const examples = {
   error: ErrorExample,
   check_box: CheckBoxExample,
   select: SelectExample,
+  search: SearchExample,
 };
 
 export default examples;
