@@ -27,9 +27,7 @@ const LogInFormExample = () => {
     console.log(fields);
   };
 
-  useEffect(() => {
-    update();
-  }, []);
+  useEffect(() => update(), []);
 
   return (
     <>
