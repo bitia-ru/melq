@@ -11,7 +11,7 @@ class Tag < ApplicationRecord
     notify_about_changes_to_channel 'destroy'
   end
 
-  def notify_about_changes_to_channel action
+  def notify_about_changes_to_channel(action)
     EntitiesChannel.broadcast_to(
       'all',
       body: {

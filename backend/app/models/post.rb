@@ -30,14 +30,14 @@ class Post
     @updated_at = post[:updated_at].nil? ? nil : post[:updated_at].to_datetime
   end
 
-  def self.postsDir
+  def self.posts_dir
     FileUtils.mkdir_p Settings.postsDir unless Dir.exist?(Settings.postsDir)
 
     Settings.postsDir
   end
 
   def self.all
-    self.slugs.map do |slug|
+    slugs.map do |slug|
       Post.get_by_slug(slug)
     end
   end
@@ -45,11 +45,9 @@ class Post
   def self.find_by(*args)
     params = args.empty? ? {} : args[0]
 
-    raise Exception.new('Args empty') if params.keys.empty?
+    raise StandardError 'Args empty' if params.keys.empty?
 
-    if params.keys.length > 1 || params.keys[0] != :slug
-      raise Exception.new('Not Implemented')
-    end
+    raise StandardError 'Not Implemented' if params.keys.length > 1 || params.keys[0] != :slug
 
     slug = params.values[0]
 
@@ -57,50 +55,50 @@ class Post
   end
 
   def attributes
-    self.as_json
+    as_json
   end
 
   def tags
-    PostsTag.where(slug: self.slug).map{|pt| pt.tag}
+    PostsTag.where(slug: slug).map(&:tag)
   end
 
   def images
-    get_images_list.each_with_index.map do |img, id|
+    images_list.each_with_index.map do |img, id|
       {
         id: id,
         filename: img,
-        url: "/api/v1/posts/#{self.slug}/images/#{img}"
+        url: "/api/v1/posts/#{slug}/images/#{img}"
       }
     end
   end
 
   def images_attachments_attributes=(*args)
     params = args.empty? ? [] : args[0]
-    raise Exception.new('Args empty') if params.empty?
+    raise StandardError 'Args empty' if params.empty?
 
-    images_list = get_images_list
-    dir = "#{Post.postsDir}/#{self.slug}"
+    list = images_list
+    dir = "#{Post.posts_dir}/#{slug}"
     params.each do |image|
       next unless image.include?('id')
 
       if image.include?('_destroy') && image['_destroy'] == 'true'
-        FileUtils.rm("#{dir}/#{images_list[image['id'].to_i]}")
+        FileUtils.rm("#{dir}/#{list[image['id'].to_i]}")
       else
-        File.rename("#{dir}/#{images_list[image['id'].to_i]}", "#{dir}/#{image['filename']}")
+        File.rename("#{dir}/#{list[image['id'].to_i]}", "#{dir}/#{image['filename']}")
       end
     end
   end
 
   def comments
-    Comment.where(slug: self.slug)
+    Comment.where(slug: slug)
   end
 
   def valid?(context = :create)
-    return false unless self.slug.present?
+    return false unless slug.present?
 
-    return false if context == :create && Post.slugs.include?(self.slug)
+    return false if context == :create && Post.slugs.include?(slug)
 
-    return false unless %w[authorized_only everyone nobody].include?(self.can_comment)
+    return false unless %w[authorized_only everyone nobody].include?(can_comment)
 
     true
   end
@@ -108,15 +106,16 @@ class Post
   def assign_attributes(*args)
     params = args.empty? ? {} : args[0]
 
-    raise Exception.new('Args empty') if params.keys.empty?
+    raise StandardError 'Args empty' if params.keys.empty?
 
-    self.slug = params['slug'] unless self.slug
+    self.slug = params['slug'] unless slug
     if params.include?('images_attachments_attributes')
       self.images_attachments_attributes = params['images_attachments_attributes']
     end
-    params.each do |k,v|
+    params.each do |k, v|
       next if k == 'images_attachments_attributes'
-      self.send("#{k}=", v)
+
+      send("#{k}=", v)
     end
 
     self
@@ -124,16 +123,14 @@ class Post
 
   def images=(*args)
     params = args.empty? ? [] : args[0]
-    raise Exception.new('Args empty') if params.empty?
+    raise StandardError 'Args empty' if params.empty?
 
-    dir = "#{Settings.postsDir}/#{self.slug}"
+    dir = "#{Settings.postsDir}/#{slug}"
     FileUtils.mkdir_p dir unless Dir.exist?(dir)
     params.each do |image|
-      # TODO copy file with cp
-      image_data = File.open(image.tempfile.path,'r') do |f|
-        f.read
-      end
-      File.open("#{dir}/#{image.original_filename}",'w') do |f|
+      # TODO: copy file with cp
+      image_data = File.open(image.tempfile.path, 'r', &:read)
+      File.open("#{dir}/#{image.original_filename}", 'w') do |f|
         f.write(image_data)
       end
     end
@@ -145,52 +142,50 @@ class Post
 
   def tags_attributes=(*args)
     params = args.empty? ? [] : args[0]
-    raise Exception.new('Args empty') if params.empty?
+    raise StandardError 'Args empty' if params.empty?
 
     params.each do |tag|
       if tag.include?('id')
         if tag.include?('_destroy') && tag['_destroy'] == 'true'
-          PostsTag.where(tag_id: tag['id'], slug: self.slug).destroy_all
-          unless PostsTag.where(tag_id: tag['id']).exists?
-            Tag.find(tag['id']).destroy!
-          end
+          PostsTag.where(tag_id: tag['id'], slug: slug).destroy_all
+          Tag.find(tag['id']).destroy! unless PostsTag.where(tag_id: tag['id']).exists?
         else
-          unless PostsTag.where(tag_id: tag['id'], slug: self.slug).exists?
-            PostsTag.create!(tag_id: tag['id'], slug: self.slug)
+          unless PostsTag.where(tag_id: tag['id'], slug: slug).exists?
+            PostsTag.create!(tag_id: tag['id'], slug: slug)
           end
         end
       else
         t = Tag.create!(text: tag['text'])
-        PostsTag.create!(tag: t, slug: self.slug)
+        PostsTag.create!(tag: t, slug: slug)
       end
     end
   end
 
   def save!
-    dir = "#{Settings.postsDir}/#{self.slug}"
+    dir = "#{Settings.postsDir}/#{slug}"
     FileUtils.mkdir_p dir unless Dir.exist?(dir)
 
-    @created_at = DateTime.now if self.created_at.nil?
+    @created_at = DateTime.now if created_at.nil?
     @updated_at = DateTime.now
     manifest = {
-      title: self.title,
-      published: self.published,
-      can_comment: self.can_comment,
-      add_likes_auth_only: self.add_likes_auth_only,
-      num_of_likes: self.num_of_likes,
-      num_of_reposts: self.num_of_reposts,
-      num_of_views: self.num_of_views,
-      seo_title: self.seo_title,
-      seo_kw: self.seo_kw,
-      created_at: self.created_at,
-      updated_at: self.updated_at,
+      title: title,
+      published: published,
+      can_comment: can_comment,
+      add_likes_auth_only: add_likes_auth_only,
+      num_of_likes: num_of_likes,
+      num_of_reposts: num_of_reposts,
+      num_of_views: num_of_views,
+      seo_title: seo_title,
+      seo_kw: seo_kw,
+      created_at: created_at,
+      updated_at: updated_at
     }
     File.open("#{dir}/manifest.json", 'w') do |f|
       f.write(manifest.to_json)
     end
 
-    File.open("#{dir}/#{self.published ? '' : 'draft_'}index.md", 'w') do |f|
-      f.write(self.content)
+    File.open("#{dir}/#{published ? '' : 'draft_'}index.md", 'w') do |f|
+      f.write(content)
     end
 
     push_to_git
@@ -200,18 +195,16 @@ class Post
 
   def self.create!(*args)
     post = Post.new(*args)
-    raise Exception.new('Post not valid') unless post.valid?
+    raise StandardError 'Post not valid' unless post.valid?
 
     post.save!
   end
 
   def destroy!
-    FileUtils.rm_rf("#{Settings.postsDir}/#{self.slug}")
-    PostsTag.where(slug: self.slug).each do |pt|
+    FileUtils.rm_rf("#{Settings.postsDir}/#{slug}")
+    PostsTag.where(slug: slug).each do |pt|
       pt.destroy!
-      unless PostsTag.where(tag: pt.tag).exists?
-        pt.tag.destroy!
-      end
+      pt.tag.destroy! unless PostsTag.where(tag: pt.tag).exists?
     end
     push_to_git
 
@@ -219,7 +212,7 @@ class Post
   end
 
   def push_to_git
-    g = Git.open(Post.postsDir, :log => Logger.new(STDOUT))
+    g = Git.open(Post.posts_dir, log: Logger.new(STDOUT))
     g.config('user.name', 'Root')
     g.config('user.email', User.first.email)
     g.add(all: true)
@@ -227,36 +220,38 @@ class Post
     g.push(g.remote(Settings.remoteName))
   end
 
-  private
+  class << self
+    private
 
-  def self.slugs
-    dir = postsDir
-    Dir.open(dir) do |d|
-      d.select do |o|
-        !(%w[. .. .git].include?(o)) && File.directory?("#{dir}/#{o}")
+    def slugs
+      dir = posts_dir
+      Dir.open(dir) do |d|
+        d.select do |o|
+          !%w[. .. .git].include?(o) && File.directory?("#{dir}/#{o}")
+        end
       end
     end
+
+    def get_by_slug(slug)
+      dir = "#{Settings.postsDir}/#{slug}"
+      manifest = File.open("#{dir}/manifest.json", 'r') do |f|
+        JSON.parse(f.read)
+      end
+      post = Post.new(manifest.symbolize_keys)
+      post.slug = slug
+      post.content = File.open("#{dir}/#{post.published ? '' : 'draft_'}index.md", 'r', &:read)
+
+      post
+    end
   end
 
-  def self.get_by_slug(slug)
-    dir = "#{Settings.postsDir}/#{slug}"
-    manifest = File.open("#{dir}/manifest.json",'r') do |f|
-      JSON.load(f.read)
-    end
-    post = Post.new(manifest.symbolize_keys)
-    post.slug = slug
-    post.content = File.open("#{dir}/#{post.published ? '' : 'draft_'}index.md",'r') do |f|
-      f.read
-    end
+  private
 
-    post
-  end
-
-  def get_images_list
-    dir = "#{Post.postsDir}/#{self.slug}"
+  def images_list
+    dir = "#{Post.posts_dir}/#{slug}"
     Dir.open(dir) do |d|
       d.reject do |o|
-        (%w[. .. manifest.json index.md draft_index.md].include?(o)) || File.directory?("#{dir}/#{o}")
+        %w[. .. manifest.json index.md draft_index.md].include?(o) || File.directory?("#{dir}/#{o}")
       end
     end
   end
