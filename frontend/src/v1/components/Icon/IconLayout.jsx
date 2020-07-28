@@ -113,7 +113,7 @@ const IconLayout = ({
         }
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
-        onClick={onClick}
+        onClick={disabled || isWaiting ? null : onClick}
       >
         <svg width={width} height={height}>
           <use xlinkHref={src} />

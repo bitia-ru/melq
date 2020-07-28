@@ -16,7 +16,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: '19px',
   },
-  linkDisabled: { cursor: 'not-allowed' },
+  linkDisabled: {
+    cursor: 'not-allowed',
+    ':active': { fontWeight: 'normal' },
+  },
   linkWaiting: { cursor: 'wait' },
   darkLink: {
     backgroundColor: 'transparent',
