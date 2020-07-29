@@ -1,33 +1,35 @@
 class Post
-  attr_accessor :title,
-                :content,
-                :published,
-                :can_comment,
-                :add_likes_auth_only,
-                :num_of_likes,
-                :num_of_reposts,
-                :num_of_views,
-                :slug,
-                :seo_title,
-                :seo_kw,
-                :created_at,
-                :updated_at
+  attr_accessor(
+    :title,
+    :content,
+    :published,
+    :can_comment,
+    :add_likes_auth_only,
+    :num_of_likes,
+    :num_of_reposts,
+    :num_of_views,
+    :slug,
+    :seo_title,
+    :seo_kw,
+    :created_at,
+    :updated_at
+  )
 
   def initialize(*args)
     post = args.empty? ? {} : args[0]
     @title = post[:title]
     @content = post[:content]
-    @published = post[:published] || false
-    @can_comment = post[:can_comment] || 'authorized_only'
-    @add_likes_auth_only = post[:add_likes_auth_only] || false
-    @num_of_likes = post[:num_of_likes] || 0
-    @num_of_reposts = post[:num_of_reposts] || 0
-    @num_of_views = post[:num_of_views] || 0
+    @published = post.fetch(:published, false)
+    @can_comment = post.fetch(:can_comment, 'authorized_only')
+    @add_likes_auth_only = post.fetch(:add_likes_auth_only, false)
+    @num_of_likes = post.fetch(:num_of_likes, 0)
+    @num_of_reposts = post.fetch(:num_of_reposts, 0)
+    @num_of_views = post.fetch(:num_of_views, 0)
     @slug = post[:slug]
     @seo_title = post[:seo_title]
     @seo_kw = post[:seo_kw] || []
-    @created_at = post[:created_at].nil? ? nil : post[:created_at].to_datetime
-    @updated_at = post[:updated_at].nil? ? nil : post[:updated_at].to_datetime
+    @created_at = post[:created_at]&.to_datetime
+    @updated_at = post[:updated_at]&.to_datetime
   end
 
   def self.posts_dir
@@ -45,13 +47,12 @@ class Post
   def self.find_by(*args)
     params = args.empty? ? {} : args[0]
 
-    raise StandardError 'Args empty' if params.keys.empty?
+    raise ArgumentError 'Args empty' if params.keys.empty?
 
-    raise StandardError 'Not Implemented' if params.keys.length > 1 || params.keys[0] != :slug
+    primary_key = params.keys.first
+    raise StandardError 'Not Implemented' if params.keys.length > 1 || primary_key != :slug
 
-    slug = params.values[0]
-
-    Post.get_by_slug(slug)
+    Post.get_by_slug(params[:slug])
   end
 
   def attributes
@@ -138,6 +139,7 @@ class Post
 
   def tag_ids=(*args)
     # Rails use this method for nested CRUD
+    # We don't use accepts_nested_attributes_for for tags, so this method is unused
   end
 
   def tags_attributes=(*args)
@@ -146,7 +148,7 @@ class Post
 
     params.each do |tag|
       if tag.include?('id')
-        if tag.include?('_destroy') && tag['_destroy'] == 'true'
+        if tag['_destroy'] == 'true'
           PostsTag.where(tag_id: tag['id'], slug: slug).destroy_all
           Tag.find(tag['id']).destroy! unless PostsTag.where(tag_id: tag['id']).exists?
         else
@@ -155,8 +157,7 @@ class Post
           end
         end
       else
-        t = Tag.create!(text: tag['text'])
-        PostsTag.create!(tag: t, slug: slug)
+        PostsTag.create!(tag: Tag.create!(text: tag['text']), slug: slug)
       end
     end
   end
@@ -220,29 +221,26 @@ class Post
     g.push(g.remote(Settings.remoteName))
   end
 
-  class << self
-    private
-
-    def slugs
-      dir = posts_dir
-      Dir.open(dir) do |d|
-        d.select do |o|
-          !%w[. .. .git].include?(o) && File.directory?("#{dir}/#{o}")
-        end
+  def self.slugs
+    dir = posts_dir
+    Dir.open(dir) do |d|
+      d.select do |o|
+        !%w[. .. .git].include?(o) and File.directory?("#{dir}/#{o}")
       end
     end
+  end
 
-    def get_by_slug(slug)
-      dir = "#{Settings.postsDir}/#{slug}"
-      manifest = File.open("#{dir}/manifest.json", 'r') do |f|
-        JSON.parse(f.read)
-      end
-      post = Post.new(manifest.symbolize_keys)
-      post.slug = slug
-      post.content = File.open("#{dir}/#{post.published ? '' : 'draft_'}index.md", 'r', &:read)
-
-      post
+  def self.get_by_slug(slug)
+    dir = "#{Settings.postsDir}/#{slug}"
+    manifest = File.open("#{dir}/manifest.json", 'r') do |f|
+      JSON.parse(f.read)
     end
+    Post.new(
+      manifest.symbolize_keys.merge(
+        slug: slug,
+        content: File.open("#{dir}/#{manifest['published'] ? '' : 'draft_'}index.md", 'r', &:read)
+      )
+    )
   end
 
   private
@@ -251,7 +249,7 @@ class Post
     dir = "#{Post.posts_dir}/#{slug}"
     Dir.open(dir) do |d|
       d.reject do |o|
-        %w[. .. manifest.json index.md draft_index.md].include?(o) || File.directory?("#{dir}/#{o}")
+        %w[. .. manifest.json index.md draft_index.md].include?(o) or File.directory?("#{dir}/#{o}")
       end
     end
   end
