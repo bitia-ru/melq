@@ -1,8 +1,6 @@
 module Api
   module V1
     class CommentsController < BaseController
-      include Purable
-
       before_action(
         :try_to_authenticate_user!,
         only: :create

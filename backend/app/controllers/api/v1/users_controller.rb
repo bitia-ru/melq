@@ -4,8 +4,6 @@ require 'open-uri'
 module Api
   module V1
     class UsersController < BaseController
-      include Purable
-
       before_action(
         :authenticate_user!,
         only: %i[update]

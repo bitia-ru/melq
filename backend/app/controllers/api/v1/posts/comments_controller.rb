@@ -2,8 +2,6 @@ module Api
   module V1
     module Posts
       class CommentsController < BaseController
-        include Purable
-
         before_action(
           :try_to_authenticate_user!,
           only: :index
@@ -19,10 +17,6 @@ module Api
           @metadata[:all] = @comments.count
           @comments = @comments.where(hidden: false) unless user_signed_in?
           super
-        end
-
-        def self.purable_model
-          Comment
         end
       end
     end

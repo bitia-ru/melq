@@ -1,8 +1,6 @@
 module Api
   module V1
     class LikesController < BaseController
-      include Purable
-
       private
 
       def like_params
