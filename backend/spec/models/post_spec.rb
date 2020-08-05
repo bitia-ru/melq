@@ -4,9 +4,13 @@ require 'fakefs/spec_helpers'
 RSpec.describe Post, type: :model do
   include FakeFS::SpecHelpers
 
+  let(:dir_name) { 'posts_dir' }
+  before do
+    allow_any_instance_of(Config::Options)
+      .to receive(:method_missing).with(:postsDir).and_return(dir_name)
+  end
   before { FakeFS.activate! }
   after { FakeFS.deactivate! }
-  let(:dir_name) { 'posts_dir' }
   let(:manifest) do
     {
       title: 'Post title',
@@ -22,16 +26,13 @@ RSpec.describe Post, type: :model do
       updated_at: DateTime.now
     }
   end
-  let(:post) { manifest.merge!({ content: 'Post content' }) }
+  let(:post_data) { manifest.merge!({ content: 'Post content' }) }
   let(:slugs) { %w[slug1 slug2 slug3] }
   let(:slug) { slugs.first }
+  let(:post) { described_class.new(post_data.merge!(slug: slug)) }
+  let(:images) { %w[image1 image2 image3] }
 
   describe '#posts_dir' do
-    before do
-      allow_any_instance_of(Config::Options)
-        .to receive(:method_missing).with(:postsDir).and_return(dir_name)
-    end
-
     context 'when dir exists' do
       before do
         FileUtils.mkdir_p(dir_name)
@@ -75,55 +76,61 @@ RSpec.describe Post, type: :model do
   end
 
   describe '#get_by_slug' do
-    before do
-      allow_any_instance_of(Config::Options)
-        .to receive(:method_missing).with(:postsDir).and_return(dir_name)
-      FileUtils.mkdir_p("#{dir_name}/#{slug}")
-      File.open("#{dir_name}/#{slug}/manifest.json", 'w') do |f|
-        f.write(manifest.merge!({ published: published }).to_json)
+    context "when post doesn't exist" do
+      it 'should return nil' do
+        expect(described_class.get_by_slug("wrong_#{slug}")).to be_nil
       end
     end
 
-    context 'when post is published' do
-      let(:published) { true }
+    context 'when post exists' do
       before do
-        File.open("#{dir_name}/#{slug}/index.md", 'w') do |f|
-          f.write(post[:content])
+        FileUtils.mkdir_p("#{dir_name}/#{slug}")
+        File.open("#{dir_name}/#{slug}/manifest.json", 'w') do |f|
+          f.write(manifest.merge!({ published: published }).to_json)
         end
       end
 
-      it 'should return post' do
-        expect(described_class.get_by_slug(slug)).to be_instance_of(described_class)
-      end
+      context 'and post is published' do
+        let(:published) { true }
+        before do
+          File.open("#{dir_name}/#{slug}/index.md", 'w') do |f|
+            f.write(post.content)
+          end
+        end
 
-      it 'should have right title' do
-        expect(described_class.get_by_slug(slug).title).to eq(manifest[:title])
-      end
+        it 'should return post' do
+          expect(described_class.get_by_slug(slug)).to be_instance_of(described_class)
+        end
 
-      it 'should load content from index.md' do
-        expect(described_class.get_by_slug(slug).content).to eq(post[:content])
-      end
-    end
+        it 'should have right title' do
+          expect(described_class.get_by_slug(slug).title).to eq(manifest[:title])
+        end
 
-    context "when post isn't published" do
-      let(:published) { false }
-      let(:draft_content) { "Draft #{post[:content]}" }
-      before do
-        File.open("#{dir_name}/#{slug}/draft_index.md", 'w') do |f|
-          f.write(draft_content)
+        it 'should load content from index.md' do
+          expect(described_class.get_by_slug(slug).content).to eq(post.content)
         end
       end
 
-      it 'should return post' do
-        expect(described_class.get_by_slug(slug)).to be_instance_of(described_class)
-      end
+      context "and post isn't published" do
+        let(:published) { false }
+        let(:draft_content) { "Draft #{post.content}" }
+        before do
+          File.open("#{dir_name}/#{slug}/draft_index.md", 'w') do |f|
+            f.write(draft_content)
+          end
+        end
 
-      it 'should have right title' do
-        expect(described_class.get_by_slug(slug).title).to eq(manifest[:title])
-      end
+        it 'should return post' do
+          expect(described_class.get_by_slug(slug)).to be_instance_of(described_class)
+        end
 
-      it 'should load content from draft_index.md' do
-        expect(described_class.get_by_slug(slug).content).to eq(draft_content)
+        it 'should have right title' do
+          expect(described_class.get_by_slug(slug).title).to eq(manifest[:title])
+        end
+
+        it 'should load content from draft_index.md' do
+          expect(described_class.get_by_slug(slug).content).to eq(draft_content)
+        end
       end
     end
   end
@@ -134,18 +141,16 @@ RSpec.describe Post, type: :model do
     end
 
     it 'should have right title' do
-      expect(described_class.new(title: post[:title]).title).to eq(post[:title])
+      expect(described_class.new(title: post_data[:title]).title).to eq(post_data[:title])
     end
 
     it 'should have published false' do
-      expect(described_class.new(title: post[:title]).published).to be false
+      expect(described_class.new(title: post_data[:title]).published).to be false
     end
   end
 
   describe '#slugs' do
     before do
-      allow_any_instance_of(Config::Options)
-        .to receive(:method_missing).with(:postsDir).and_return(dir_name)
       slugs.each { |slug| FileUtils.mkdir_p("#{dir_name}/#{slug}") }
     end
 
@@ -155,10 +160,7 @@ RSpec.describe Post, type: :model do
   end
 
   describe '#images_list' do
-    let(:images) { %w[image1 image2 image3] }
     before do
-      allow_any_instance_of(Config::Options)
-        .to receive(:method_missing).with(:postsDir).and_return(dir_name)
       FileUtils.mkdir_p("#{dir_name}/#{slug}")
       images.each { |image| File.open("#{dir_name}/#{slug}/#{image}", 'w') }
     end
@@ -169,14 +171,37 @@ RSpec.describe Post, type: :model do
   end
 
   describe '#push_to_git' do
-    # TODO: test push_to_git
+    before { FakeFS.deactivate! }
+    after { FakeFS.activate! }
+    Dir.mktmpdir do |dir|
+      let(:filename) { 'filename' }
+      let(:git_ref_dir) { 'git_ref_dir' }
+      let(:dir_copy_name) { 'posts_dir_copy' }
+      before do
+        allow_any_instance_of(Config::Options)
+          .to receive(:method_missing).with(:postsDir).and_return("#{dir}/#{dir_name}")
+        allow_any_instance_of(Config::Options)
+          .to receive(:method_missing).with(:remoteName).and_return('origin')
+        User.create!(email: 'email@email.ru', password_digest: BCrypt::Password.create('123456'))
+        FileUtils.mkdir_p("#{dir}/#{git_ref_dir}")
+        # TODO: Find out why this fails
+        # Git.init("#{dir}/#{git_ref_dir}", { bare: true })
+        `git init --bare #{dir}/#{git_ref_dir}`
+        Git.clone("#{dir}/#{git_ref_dir}", "#{dir}/#{dir_name}")
+        File.open("#{dir}/#{dir_name}/#{filename}", 'w')
+        post.push_to_git
+        Git.clone("#{dir}/#{git_ref_dir}", "#{dir}/#{dir_copy_name}")
+      end
+
+      it 'should push to git repository' do
+        expect(File.exist?("#{dir}/#{dir_copy_name}/#{filename}")).to be true
+      end
+    end
   end
 
   describe '#save!' do
     let(:new_post) { described_class.new(slug: slug, published: published) }
     before do
-      allow_any_instance_of(Config::Options)
-        .to receive(:method_missing).with(:postsDir).and_return(dir_name)
       allow_any_instance_of(described_class).to receive(:push_to_git).and_return(true)
       new_post.save!
     end
@@ -222,6 +247,166 @@ RSpec.describe Post, type: :model do
         expect(new_post)
           .to have_received(:push_to_git).once
       end
+    end
+  end
+
+  describe '#find_by' do
+    it 'should raise error if no arguments passed' do
+      expect { described_class.find_by }.to raise_error(ArgumentError)
+    end
+
+    it "shouldn't raise error when only slug passed" do
+      expect { described_class.find_by(slug: slug) }.not_to raise_error
+    end
+
+    context 'when post exists' do
+      before do
+        allow(described_class)
+          .to receive(:get_by_slug).with(slug).and_return(described_class.new(slug: slug))
+      end
+
+      it 'should return post' do
+        expect(described_class.get_by_slug(slug)).to be_instance_of(described_class)
+      end
+
+      it 'should return post with right slug' do
+        expect(described_class.get_by_slug(slug).slug).to eq slug
+      end
+    end
+  end
+
+  describe '#images_attachments_attributes=' do
+    it 'should raise error if no arguments passed' do
+      expect { post.images_attachments_attributes = [] }.to raise_error(ArgumentError)
+    end
+
+    context 'when arguments passed' do
+      let(:updated_image) { 'updated_image' }
+      before do
+        FileUtils.mkdir_p("#{dir_name}/#{slug}")
+        images.each { |image| File.open("#{dir_name}/#{slug}/#{image}", 'w') }
+        post.images_attachments_attributes = [
+          { id: 1, filename: updated_image }.stringify_keys,
+          { id: 2, _destroy: 'true' }.stringify_keys
+        ]
+      end
+
+      it 'should update images' do
+        expect(post.send(:images_list)).to match_array [images.first, updated_image]
+      end
+    end
+  end
+
+  describe '#valid?' do
+    it 'should return false when slug not present' do
+      expect(described_class.new.valid?).to eq false
+    end
+
+    context 'when slug is already used' do
+      before do
+        allow_any_instance_of(described_class).to receive(:push_to_git).and_return(true)
+        described_class.new(slug: slug).save!
+      end
+
+      it 'should return false' do
+        expect(described_class.new(slug: slug).valid?).to eq false
+      end
+    end
+
+    it 'should return false when can_comment is invalid' do
+      expect(described_class.new(slug: slug, can_comment: 'invalid_value').valid?).to eq false
+    end
+
+    it 'should return true when all args are valid' do
+      expect(described_class.new(slug: slug).valid?).to eq true
+    end
+  end
+
+  describe '#assign_attributes' do
+    it 'should raise error if no arguments passed' do
+      expect { post.assign_attributes }.to raise_error(ArgumentError)
+    end
+
+    it "shouldn't change slug if it's already set" do
+      expect(post.assign_attributes('slug' => 'updated_slug').slug).to eq slug
+    end
+
+    it 'should assign right values' do
+      expect(post.assign_attributes(title: 'updated_title').title).to eq 'updated_title'
+      expect(post.assign_attributes(content: 'updated_content').content).to eq 'updated_content'
+      expect(post.assign_attributes(published: true).published).to eq true
+    end
+  end
+
+  describe '#images=' do
+    it 'should raise error if no arguments passed' do
+      expect { post.images = [] }.to raise_error(ArgumentError)
+    end
+
+    context 'when arguments passed' do
+      let(:filename) { 'filename' }
+      before do
+        File.open('tempfile', 'w')
+        post.images = [
+          ActionDispatch::Http::UploadedFile.new(
+            {
+              tempfile: File.open('tempfile', 'r'),
+              filename: filename
+            }
+          )
+        ]
+      end
+
+      it 'should add image file to post dir' do
+        expect(File.exist?("#{dir_name}/#{slug}/#{filename}")).to eq true
+      end
+    end
+  end
+
+  describe '#tags_attributes=' do
+    it 'should raise error if no arguments passed' do
+      expect { post.tags_attributes = [] }.to raise_error(ArgumentError)
+    end
+
+    context 'when arguments passed' do
+      let(:tag) { 'tag' }
+      before do
+        allow_any_instance_of(Tag).to receive(:notify_about_changes_to_channel).and_return(true)
+        post.tags_attributes = [
+          { text: tag }.stringify_keys
+        ]
+      end
+
+      context 'but no id passed' do
+        it 'should create tag' do
+          expect(post.tags.last.text).to eq tag
+        end
+      end
+
+      context 'id passed and _destroy flag passed' do
+        let(:tag_id) { post.tags.last.id }
+        before do
+          post.tags_attributes = [
+            { id: tag_id, _destroy: 'true' }.stringify_keys
+          ]
+        end
+
+        it 'should update tag' do
+          expect(post.tags.map(&:id)).not_to include tag_id
+        end
+      end
+    end
+  end
+
+  describe '#destroy!' do
+    before do
+      allow_any_instance_of(described_class).to receive(:push_to_git).and_return(true)
+      post.save!
+      post.destroy!
+    end
+
+    it 'should destroy post' do
+      expect(described_class.get_by_slug(slug)).to be_nil
     end
   end
 end

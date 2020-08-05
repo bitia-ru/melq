@@ -43,13 +43,11 @@ class Post
     end
   end
 
-  def self.find_by(*args)
-    params = args.empty? ? {} : args[0]
-
-    raise ArgumentError 'Args empty' if params.keys.empty?
+  def self.find_by(params = {}, *_args)
+    raise ArgumentError, 'Args empty' if params.keys.empty?
 
     primary_key = params.keys.first
-    raise StandardError 'Not Implemented' if params.keys.length > 1 || primary_key != :slug
+    raise StandardError, 'Not Implemented' if params.keys.length > 1 || primary_key != :slug
 
     Post.get_by_slug(params[:slug])
   end
@@ -72,9 +70,8 @@ class Post
     end
   end
 
-  def images_attachments_attributes=(*args)
-    params = args.empty? ? [] : args[0]
-    raise StandardError 'Args empty' if params.empty?
+  def images_attachments_attributes=(params = [], *_args)
+    raise ArgumentError, 'Args empty' if params.empty?
 
     list = images_list
     dir = "#{Post.posts_dir}/#{slug}"
@@ -103,17 +100,15 @@ class Post
     true
   end
 
-  def assign_attributes(*args)
-    params = args.empty? ? {} : args[0]
-
-    raise StandardError 'Args empty' if params.keys.empty?
+  def assign_attributes(params = {}, *_args)
+    raise ArgumentError, 'Args empty' if params.keys.empty?
 
     self.slug = params['slug'] unless slug
     if params.include?('images_attachments_attributes')
       self.images_attachments_attributes = params['images_attachments_attributes']
     end
     params.each do |k, v|
-      next if k == 'images_attachments_attributes'
+      next if %w[images_attachments_attributes slug].include? k
 
       send("#{k}=", v)
     end
@@ -121,9 +116,8 @@ class Post
     self
   end
 
-  def images=(*args)
-    params = args.empty? ? [] : args[0]
-    raise StandardError 'Args empty' if params.empty?
+  def images=(params = [], *_args)
+    raise ArgumentError, 'Args empty' if params.empty?
 
     dir = "#{Settings.postsDir}/#{slug}"
     FileUtils.mkdir_p dir unless Dir.exist?(dir)
@@ -141,9 +135,8 @@ class Post
     # We don't use accepts_nested_attributes_for for tags, so this method is unused
   end
 
-  def tags_attributes=(*args)
-    params = args.empty? ? [] : args[0]
-    raise StandardError 'Args empty' if params.empty?
+  def tags_attributes=(params = [], *_args)
+    raise ArgumentError, 'Args empty' if params.empty?
 
     params.each do |tag|
       if tag.include?('id')
@@ -222,7 +215,6 @@ class Post
 
   def self.slugs
     dir = posts_dir
-    puts dir
     Dir.open(dir).select do |o|
       !%w[. .. .git].include?(o) and File.directory?("#{dir}/#{o}")
     end
@@ -230,6 +222,8 @@ class Post
 
   def self.get_by_slug(slug)
     dir = "#{Settings.postsDir}/#{slug}"
+    return nil unless Dir.exist?(dir)
+
     manifest = File.open("#{dir}/manifest.json", 'r') do |f|
       JSON.parse(f.read)
     end
