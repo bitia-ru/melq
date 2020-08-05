@@ -15,8 +15,7 @@ class Post
     :updated_at
   )
 
-  def initialize(*args)
-    post = args.compact.empty? ? {} : args[0]
+  def initialize(post = {}, *_args)
     @title = post[:title]
     @content = post[:content]
     @published = post.fetch(:published, false)
@@ -223,10 +222,9 @@ class Post
 
   def self.slugs
     dir = posts_dir
-    Dir.open(dir) do |d|
-      d.select do |o|
-        !%w[. .. .git].include?(o) and File.directory?("#{dir}/#{o}")
-      end
+    puts dir
+    Dir.open(dir).select do |o|
+      !%w[. .. .git].include?(o) and File.directory?("#{dir}/#{o}")
     end
   end
 
@@ -247,10 +245,8 @@ class Post
 
   def images_list
     dir = "#{Post.posts_dir}/#{slug}"
-    Dir.open(dir) do |d|
-      d.reject do |o|
-        %w[. .. manifest.json index.md draft_index.md].include?(o) or File.directory?("#{dir}/#{o}")
-      end
+    Dir.open(dir).reject do |o|
+      %w[. .. manifest.json index.md draft_index.md].include?(o) or File.directory?("#{dir}/#{o}")
     end
   end
 end

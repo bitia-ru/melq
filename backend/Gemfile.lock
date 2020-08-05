@@ -110,6 +110,7 @@ GEM
     factory_bot_rails (6.1.0)
       factory_bot (~> 6.1.0)
       railties (>= 5.0.0)
+    fakefs (0.20.1)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.13.1)
@@ -329,6 +330,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   config
   factory_bot_rails
+  fakefs
   git
   google-cloud-storage
   image_processing (~> 1.2)
