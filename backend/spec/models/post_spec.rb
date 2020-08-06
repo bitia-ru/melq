@@ -31,6 +31,7 @@ RSpec.describe Post, type: :model do
   let(:slug) { slugs.first }
   let(:post) { described_class.new(post_data.merge!(slug: slug)) }
   let(:images) { %w[image1 image2 image3] }
+  let!(:user) { create(:user) }
 
   describe '#posts_dir' do
     context 'when dir exists' do
@@ -182,7 +183,6 @@ RSpec.describe Post, type: :model do
           .to receive(:method_missing).with(:postsDir).and_return("#{dir}/#{dir_name}")
         allow_any_instance_of(Config::Options)
           .to receive(:method_missing).with(:remoteName).and_return('origin')
-        User.create!(email: 'email@email.ru', password_digest: BCrypt::Password.create('123456'))
         FileUtils.mkdir_p("#{dir}/#{git_ref_dir}")
         # TODO: Find out why this fails
         # Git.init("#{dir}/#{git_ref_dir}", { bare: true })
