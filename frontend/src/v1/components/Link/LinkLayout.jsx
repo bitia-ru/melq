@@ -91,10 +91,10 @@ const LinkLayout = ({
           themeStyles.defaultFont,
           themeStyles.fontWeight500,
           themeStyles.transparentColor,
+          disabled && styles.linkDisabled,
           linkStyle === 'dark' && styles.darkLink,
           size === 'big' && styles.linkBig,
           linkStyle === 'dark' && active && styles.iconActive,
-          disabled && styles.linkDisabled,
           isWaiting && styles.linkWaiting,
           (disabled || isWaiting) && themeStyles.transparentColorDisabled,
         )
