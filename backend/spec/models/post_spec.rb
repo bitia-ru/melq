@@ -371,7 +371,10 @@ RSpec.describe Post, type: :model do
     context 'when arguments passed' do
       let(:tag) { 'tag' }
       before do
-        allow_any_instance_of(Tag).to receive(:notify_about_changes_to_channel).and_return(true)
+        allow_any_instance_of(Tag)
+          .to receive(:notify_about_create_update_to_channel).and_return(true)
+        allow_any_instance_of(Tag)
+          .to receive(:notify_about_destroy_to_channel).and_return(true)
         post.tags_attributes = [
           { text: tag }.stringify_keys
         ]
