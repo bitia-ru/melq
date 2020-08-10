@@ -16,10 +16,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: '19px',
   },
-  linkDisabled: {
-    cursor: 'not-allowed',
-    ':active': { fontWeight: 'normal' },
-  },
+  linkDisabled: { cursor: 'not-allowed' },
   linkWaiting: { cursor: 'wait' },
   darkLink: {
     backgroundColor: 'transparent',
@@ -44,6 +41,7 @@ const styles = StyleSheet.create({
       },
     },
   },
+  darkLinkDisabled: { ':active': { fontWeight: 'normal' } },
   iconActive: {
     color: infoColor,
     fontWeight: 'bold',
@@ -91,11 +89,12 @@ const LinkLayout = ({
           themeStyles.defaultFont,
           themeStyles.fontWeight500,
           themeStyles.transparentColor,
-          disabled && styles.linkDisabled,
           linkStyle === 'dark' && styles.darkLink,
           size === 'big' && styles.linkBig,
           linkStyle === 'dark' && active && styles.iconActive,
           isWaiting && styles.linkWaiting,
+          disabled && styles.linkDisabled,
+          linkStyle === 'dark' && (disabled || isWaiting) && !active && styles.darkLinkDisabled,
           (disabled || isWaiting) && themeStyles.transparentColorDisabled,
         )
       }
