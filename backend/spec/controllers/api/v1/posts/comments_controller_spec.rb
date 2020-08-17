@@ -5,6 +5,7 @@ require 'fakefs/spec_helpers'
 
 RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
   include ControllersHelpers
+  include UserHelpers
   include FakeFS::SpecHelpers
   render_views
 
@@ -21,26 +22,24 @@ RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
   before { FakeFS.activate! }
   after { FakeFS.deactivate! }
   let!(:user) { create(:user) }
-  num_of_comments = 3
-  num_of_hidden_comments = 2
+  NUM_OF_COMMENTS = 3
+  NUM_OF_HIDDEN_COMMENTS = 2
 
   describe ':index' do
     let(:slug) { 'slug' }
-    (1..num_of_comments).each do |i|
+    (1..NUM_OF_COMMENTS).each do |i|
       let!("comment#{i}".to_sym) { create(:comment, slug: slug, content: "Comment content#{i}") }
     end
-    (1..num_of_hidden_comments).each do |i|
-      let!("comment#{i + num_of_comments}".to_sym) do
+    (1..NUM_OF_HIDDEN_COMMENTS).each do |i|
+      let!("comment#{i + NUM_OF_COMMENTS}".to_sym) do
         create(:comment, slug: slug, content: "Hidden comment content#{i}", hidden: true)
       end
     end
-    comments_content = (1..num_of_comments).map { |i| "Comment content#{i}" }
-    hidden_comments_content = (1..num_of_hidden_comments).map { |i| "Hidden comment content#{i}" }
+    comments_content = (1..NUM_OF_COMMENTS).map { |i| "Comment content#{i}" }
+    hidden_comments_content = (1..NUM_OF_HIDDEN_COMMENTS).map { |i| "Hidden comment content#{i}" }
 
     before do
-      # TODO: Change to right route, after switch to bitia-rails gem
-      FakeFS::FileSystem.clone('./bitia-rails/app/views')
-      FakeFS::FileSystem.clone('./app/views')
+      clone_views
       allow_any_instance_of(Post).to receive(:push_to_git).and_return(true)
       allow_any_instance_of(Authentication).to receive(:try_to_authenticate_user!).and_return(true)
       Post.create!(slug: slug)
@@ -48,8 +47,7 @@ RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
 
     context "when user isn't signed in" do
       before do
-        allow_any_instance_of(Authentication).to receive(:user_signed_in?).and_return(false)
-        allow_any_instance_of(Authentication).to receive(:current_user).and_return(nil)
+        stub_user_not_authenticated
         get :index, params: { post_slug: slug }
       end
 
@@ -59,7 +57,7 @@ RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
 
       it 'should contain metadata with key all equals number of not hidden comments' do
         expect(parsed_response_body.dig('metadata', 'all'))
-          .to eq num_of_comments + num_of_hidden_comments
+          .to eq NUM_OF_COMMENTS + NUM_OF_HIDDEN_COMMENTS
       end
 
       it 'should contain entities with key comments and value type array' do
@@ -77,8 +75,7 @@ RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
 
     context 'when user is signed in' do
       before do
-        allow_any_instance_of(Authentication).to receive(:user_signed_in?).and_return(true)
-        allow_any_instance_of(Authentication).to receive(:current_user).and_return(user)
+        stub_user_authenticated(user)
         get :index, params: { post_slug: slug }
       end
 
@@ -88,7 +85,7 @@ RSpec.describe Api::V1::Posts::CommentsController, type: :controller do
 
       it 'should contain metadata with key all equals number of all comments' do
         expect(parsed_response_body.dig('metadata', 'all'))
-          .to eq num_of_comments + num_of_hidden_comments
+          .to eq NUM_OF_COMMENTS + NUM_OF_HIDDEN_COMMENTS
       end
 
       it 'should contain entities with key comments and value type array' do

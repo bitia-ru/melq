@@ -44,10 +44,10 @@ class Post
   end
 
   def self.find_by(params = {}, *_args)
-    raise ArgumentError, 'Args empty' if params.keys.empty?
+    raise ArgumentError, 'Parameters empty' if params.keys.empty?
 
     primary_key = params.keys.first
-    raise StandardError, 'Not Implemented' if params.keys.length > 1 || primary_key != :slug
+    raise NotImplementedError if params.keys.length > 1 || primary_key != :slug
 
     Post.get_by_slug(params[:slug])
   end
@@ -71,7 +71,7 @@ class Post
   end
 
   def images_attachments_attributes=(params = [], *_args)
-    raise ArgumentError, 'Args empty' if params.empty?
+    raise ArgumentError, 'Parameters empty' if params.empty?
 
     list = images_list
     dir = "#{Post.posts_dir}/#{slug}"
@@ -101,7 +101,7 @@ class Post
   end
 
   def assign_attributes(params = {}, *_args)
-    raise ArgumentError, 'Args empty' if params.keys.empty?
+    raise ArgumentError, 'Parameters empty' if params.keys.empty?
 
     self.slug = params['slug'] unless slug
     if params.include?('images_attachments_attributes')
@@ -117,7 +117,7 @@ class Post
   end
 
   def images=(params = [], *_args)
-    raise ArgumentError, 'Args empty' if params.empty?
+    raise ArgumentError, 'Parameters empty' if params.empty?
 
     dir = "#{Settings.postsDir}/#{slug}"
     FileUtils.mkdir_p dir unless Dir.exist?(dir)
@@ -136,7 +136,7 @@ class Post
   end
 
   def tags_attributes=(params = [], *_args)
-    raise ArgumentError, 'Args empty' if params.empty?
+    raise ArgumentError, 'Parameters empty' if params.empty?
 
     params.each do |tag|
       if tag.include?('id')
@@ -188,7 +188,7 @@ class Post
 
   def self.create!(*args)
     post = Post.new(*args)
-    raise StandardError 'Post not valid' unless post.valid?
+    raise StandardError, 'Post not valid' unless post.valid?
 
     post.save!
   end
@@ -221,16 +221,21 @@ class Post
   end
 
   def self.get_by_slug(slug)
-    dir = "#{Settings.postsDir}/#{slug}"
-    return nil unless Dir.exist?(dir)
+    return nil unless Dir.exist?("#{Settings.postsDir}/#{slug}")
 
-    manifest = File.open("#{dir}/manifest.json", 'r') do |f|
+    dir = Dir.new("#{Settings.postsDir}/#{slug}")
+
+    manifest = File.open("#{dir.path}/manifest.json", 'r') do |f|
       JSON.parse(f.read)
     end
     Post.new(
       manifest.symbolize_keys.merge(
         slug: slug,
-        content: File.open("#{dir}/#{manifest['published'] ? '' : 'draft_'}index.md", 'r', &:read)
+        content: File.open(
+          "#{dir.path}/#{manifest['published'] ? '' : 'draft_'}index.md",
+          'r',
+          &:read
+        )
       )
     )
   end

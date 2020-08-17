@@ -3,12 +3,17 @@ require 'fakefs/spec_helpers'
 
 RSpec.describe Tag, type: :model do
   let!(:tag) { create(:tag) }
+  before do
+    allow(EntitiesChannel).to receive(:broadcast_to).and_return(true)
+  end
 
   describe '#notify_about_create_update_to_channel' do
+    before do
+      allow(ApplicationController).to receive(:render).and_return('{}')
+    end
+
     context 'when tag is created' do
       before do
-        allow(EntitiesChannel).to receive(:broadcast_to).and_return(true)
-        allow(ApplicationController).to receive(:render).and_return('{}')
         Tag.create!(text: 'new_tag')
       end
 
@@ -24,8 +29,6 @@ RSpec.describe Tag, type: :model do
 
     context 'when tag is updated' do
       before do
-        allow(EntitiesChannel).to receive(:broadcast_to).and_return(true)
-        allow(ApplicationController).to receive(:render).and_return('{}')
         tag.update(text: 'updated_tag')
       end
 
@@ -43,7 +46,6 @@ RSpec.describe Tag, type: :model do
   describe '#notify_about_destroy_to_channel' do
     context 'when tag is destroyed' do
       before do
-        allow(EntitiesChannel).to receive(:broadcast_to).and_return(true)
         tag.destroy!
       end
 

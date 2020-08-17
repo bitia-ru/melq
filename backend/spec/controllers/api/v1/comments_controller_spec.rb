@@ -5,6 +5,7 @@ require 'fakefs/spec_helpers'
 
 RSpec.describe Api::V1::CommentsController, type: :controller do
   include ControllersHelpers
+  include UserHelpers
   include FakeFS::SpecHelpers
   render_views
 
@@ -26,9 +27,7 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
     let(:slug) { 'slug' }
 
     before do
-      # TODO: Change to right route, after switch to bitia-rails gem
-      FakeFS::FileSystem.clone('./bitia-rails/app/views')
-      FakeFS::FileSystem.clone('./app/views')
+      clone_views
       allow_any_instance_of(Post).to receive(:push_to_git).and_return(true)
       allow_any_instance_of(Authentication).to receive(:try_to_authenticate_user!).and_return(true)
       Post.create!(slug: slug)
@@ -36,8 +35,7 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
 
     context "when user isn't signed in" do
       before do
-        allow_any_instance_of(Authentication).to receive(:user_signed_in?).and_return(false)
-        allow_any_instance_of(Authentication).to receive(:current_user).and_return(nil)
+        stub_user_not_authenticated
         post :create, params: { post_slug: slug, comment: { content: 'content' } }
       end
 
@@ -53,8 +51,7 @@ RSpec.describe Api::V1::CommentsController, type: :controller do
 
     context 'when user is signed in' do
       before do
-        allow_any_instance_of(Authentication).to receive(:user_signed_in?).and_return(true)
-        allow_any_instance_of(Authentication).to receive(:current_user).and_return(user)
+        stub_user_authenticated(user)
         get :create, params: { post_slug: slug, comment: { content: 'content' } }
       end
 
