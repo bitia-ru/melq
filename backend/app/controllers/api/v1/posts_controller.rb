@@ -3,7 +3,7 @@ module Api
     class PostsController < BaseController
       def image
         send_file(
-          "#{Rails.root}/storage/posts/#{params[:slug]}/#{params[:filename]}",
+          "#{Rails.root}/#{Settings.postsDir}/#{params[:slug]}/#{params[:filename]}",
           disposition: 'inline'
         )
       end
