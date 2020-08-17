@@ -16,7 +16,7 @@ class Post
   )
 
   def initialize(*args)
-    post = args.empty? ? {} : args[0]
+    post = args.compact.empty? ? {} : args[0]
     @title = post[:title]
     @content = post[:content]
     @published = post.fetch(:published, false)

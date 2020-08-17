@@ -1,16 +1,6 @@
 module Api
   module V1
     class PostsController < BaseController
-      include Purable
-
-      before_action only: %i[show update destroy] do
-        @post = Post.find_by(slug: params[:slug])
-      end
-
-      def post
-        resource
-      end
-
       def image
         send_file(
           "#{Rails.root}/storage/posts/#{params[:slug]}/#{params[:filename]}",
