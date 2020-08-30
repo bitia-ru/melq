@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ -f .env ]]; then
+  DEPLOY_ENV=$(cat .env | grep 'DEPLOY_ENV=')
+  DEPLOY_ENV=${DEPLOY_ENV#DEPLOY_ENV=}
+fi
+
+if [[ -n $DEPLOY_ENV ]] && [[ ! $DEPLOY_ENV =~ (production|staging|development) ]]; then
+  echo "Bad DEPLOY_ENV: $DEPLOY_ENV" >&2
+  exit 1
+fi
+
+DOCKER_COMPOSE_FILE=docker-compose${DEPLOY_ENV+.$DEPLOY_ENV}.yml
+
+if (( $# == 1 )) && [[ $1 == "filename" ]]; then
+  echo $DOCKER_COMPOSE_FILE
+  exit 0
+fi
+
+docker-compose -f $DOCKER_COMPOSE_FILE "$@"

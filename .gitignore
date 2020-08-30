@@ -3,3 +3,6 @@
 /storage
 /.env
 /db
+/.idea
+/gw-staging/frontends-playbook.yml
+/docker-compose.staging.yml

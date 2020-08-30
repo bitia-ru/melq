@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+set -u
+
+BRANCH_NAME=${1}
+FRONTEND_NAME=$(basename $BRANCH_NAME)
+
+if [[ ! $FRONTEND_NAME =~ ^[a-zA-Z0-9_-]{3,16}$ ]]; then
+  echo "Branch $BRANCH_NAME skipped to deploy."
+  exit 0
+fi
+
+git remote prune origin
+
+ALL_BRANCHES=$(git branch -a | grep -E 'remotes/origin/([a-zA-Z0-9_-]+/)?[a-zA-Z0-9_-]+$' | sed 's,remotes/origin/,,')
+ALL_FRONTENDS=$(python3 scripts/private/frontends-list.py)
+
+for frontend in $ALL_FRONTENDS; do
+  __skip_frontend=0
+
+  for branch in $ALL_BRANCHES; do
+    if [[ $(basename $branch) == $frontend ]]; then
+      __skip_frontend=1
+      break
+    fi
+  done
+
+  (( __skip_frontend )) && continue
+
+  scripts/frontends-del $frontend
+done
+
+scripts/frontends-add-by-branch $BRANCH_NAME

@@ -1,0 +1,53 @@
+name: DeployFeatureBranch
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: nelonoel/branch-name@v1
+      # for feature/MELQ-N produces BRANCH_NAME=MELQ-N
+      # for MELQ-N produces BRANCH_NAME=MELQ-N
+      - name: Install SSH key
+        env:
+          SSH_KEY_GPG_PASSPHRASE: ${{ secrets.ssh_key_gpg_passphrase }}
+        run: |
+          mkdir -p ~/.ssh
+          gpg --quiet --batch --yes --decrypt --passphrase="${SSH_KEY_GPG_PASSPHRASE}" \
+            --output ~/.ssh/id_rsa.deploy deploy/secrets/deploy.id_rsa.gpg
+          chmod 600 ~/.ssh/id_rsa.deploy
+          cat << EOF >>~/.ssh/config
+          Host deploy
+            StrictHostKeyChecking no
+            IdentityFile ~/.ssh/id_rsa.deploy
+            HostName peclet.infra.lxd.pw
+            Port 22001
+            User peclet
+          EOF
+      - name: Deploy
+        run: |
+          cat << EOF >deploy_script.DeployFeatureBranch.sh
+            cd services/melq-staging && \
+            TMPDIR=\$(mktemp -d) && \
+            git fetch && \
+            git archive --format=tar origin/feature/${BRANCH_NAME} ./scripts | \
+              tar -xv --strip-components=1 -C \${TMPDIR} -f - && \
+            \${TMPDIR}/hooks/after_push feature/${BRANCH_NAME} && \
+            rm -rvf /tmp/\$(basename \${TMPDIR})
+          EOF
+          ssh deploy "$(cat deploy_script.DeployFeatureBranch.sh)"
+      - name: Purge CloudFlare cache
+        env:
+          CLOUDFLARE_STAGING_ZONE: ${{ secrets.cloudflare_staging_zone }}
+          CLOUDFLARE_STAGING_PURGE_TOKEN: ${{ secrets.cloudflare_staging_purge_token }}
+        run: |
+          curl -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_STAGING_ZONE/purge_cache" \
+            -d '{ "purge_everything": true }' \
+            -H "Authorization: Bearer $CLOUDFLARE_STAGING_PURGE_TOKEN" \
+            -H "Content-Type: application/json"
