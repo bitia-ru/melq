@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
       },
     },
   },
+  darkLinkDisabled: { ':active': { fontWeight: 'normal' } },
   iconActive: {
     color: infoColor,
     fontWeight: 'bold',
@@ -91,8 +92,9 @@ const LinkLayout = ({
           linkStyle === 'dark' && styles.darkLink,
           size === 'big' && styles.linkBig,
           linkStyle === 'dark' && active && styles.iconActive,
-          disabled && styles.linkDisabled,
           isWaiting && styles.linkWaiting,
+          disabled && styles.linkDisabled,
+          linkStyle === 'dark' && (disabled || isWaiting) && !active && styles.darkLinkDisabled,
           (disabled || isWaiting) && themeStyles.transparentColorDisabled,
         )
       }
