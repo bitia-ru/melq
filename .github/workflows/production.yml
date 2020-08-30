@@ -1,0 +1,54 @@
+name: DeployForProduction
+
+on:
+  push:
+    branches:
+      - master_SWITCHED_OFF_NOW
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install SSH key
+        env:
+          SSH_KEY_GPG_PASSPHRASE: ${{ secrets.ssh_key_gpg_passphrase }}
+        run: |
+          mkdir -p ~/.ssh
+          gpg --quiet --batch --yes --decrypt --passphrase="${SSH_KEY_GPG_PASSPHRASE}" \
+            --output ~/.ssh/id_rsa.deploy deploy/secrets/deploy.id_rsa.gpg
+          chmod 600 ~/.ssh/id_rsa.deploy
+          cat << EOF >>~/.ssh/config
+          Host deploy
+            StrictHostKeyChecking no
+            IdentityFile ~/.ssh/id_rsa.deploy
+            HostName peclet.infra.lxd.pw
+            Port 22001
+            User peclet
+          EOF
+      - name: Deploy
+        run: |
+          cat << EOF >deploy_script.DeployForProduction.sh
+            cd services/melq-production && \
+              git fetch && \
+              git reset --hard HEAD && \
+              git checkout master && \
+              git reset --hard origin/master && \
+              ./dc build && \
+              ./dc up -d && \
+              ./dc exec -T backend bin/rake db:migrate && \
+              ./dc stop backend job && \
+              ./dc rm -f backend job && \
+              ./dc up -d
+          EOF
+          ssh deploy "$(cat deploy_script.DeployForProduction.sh)"
+      - name: Purge CloudFlare cache
+        env:
+          CLOUDFLARE_STAGING_ZONE: ${{ secrets.cloudflare_zone }}
+          CLOUDFLARE_STAGING_PURGE_TOKEN: ${{ secrets.cloudflare_purge_token }}
+        run: |
+          curl -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE/purge_cache" \
+            -d '{ "purge_everything": true }' \
+            -H "Authorization: Bearer $CLOUDFLARE_PURGE_TOKEN" \
+            -H "Content-Type: application/json"
