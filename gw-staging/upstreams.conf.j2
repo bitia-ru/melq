@@ -1,0 +1,8 @@
+{% for frontend in frontends %}
+
+  upstream {{ frontend }}_upstream {
+    server {{ frontend }}:80;
+  }
+
+{% endfor %}
+

@@ -1,0 +1,14 @@
+- connection: local
+  gather_facts: false
+  hosts: all
+  tasks:
+  - name: NGINX upstreams
+    template:
+      dest: ./generated-upstreams.conf
+      src: upstreams.conf.j2
+  - name: NGINX hosts
+    template:
+      dest: ./generated-servers.conf
+      src: servers.conf.j2
+  vars:
+    frontends: []

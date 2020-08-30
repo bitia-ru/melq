@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+set -u
+
+FRONTEND_NAME=${1}
+
+./dc stop ${FRONTEND_NAME,,} || true
+./dc rm -f ${FRONTEND_NAME,,} || true
+
+rm -rf ./${FRONTEND_NAME}
+
+python3 scripts/private/frontends-del.py ${FRONTEND_NAME}
+
+echo "Frontend ${FRONTEND_NAME} removed."
+
+./dc build gw
+./dc up -d
