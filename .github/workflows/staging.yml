@@ -39,7 +39,8 @@ jobs:
               ./dc exec -T backend bin/rake db:migrate && \
               ./dc stop backend job && \
               ./dc rm -f backend job && \
-              ./dc up -d
+              ./dc up -d && \
+              ./dc exec -T gw nginx -s reload
           EOF
           ssh deploy "$(cat deploy_script.DeployForStaging.sh)"
       - name: Purge CloudFlare cache
