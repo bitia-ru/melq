@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 class Anonymou
   def self.all
     [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377]
@@ -10,7 +9,6 @@ class Anonymou
     all[id.to_i]
   end
 end
-
 
 RSpec.describe Purable, type: :controller do
   controller(ActionController::Base) do
