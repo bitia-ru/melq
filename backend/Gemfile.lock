@@ -106,6 +106,8 @@ GEM
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
+    git (1.7.0)
+      rchardet (~> 1.8)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     google-api-client (0.28.7)
@@ -216,6 +218,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    rchardet (1.8.0)
     redis (4.0.3)
     redis-actionpack (5.1.0)
       actionpack (>= 4.0, < 7)
@@ -320,6 +323,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   config
   factory_bot_rails
+  git
   google-cloud-storage
   image_processing (~> 1.2)
   jbuilder (~> 2.5)
