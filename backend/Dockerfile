@@ -4,12 +4,12 @@ FROM ruby:2.5.3-alpine3.8 AS base
 RUN apk add -U gmp-dev zlib libressl tzdata
 
 # install project-specific packages
-RUN apk add -U libpq postgresql-client imagemagick
+RUN apk add -U libpq postgresql-client imagemagick git openssh
 WORKDIR /app
 
 FROM base AS builder
 
-RUN apk add -U gcc g++ make zlib-dev libressl-dev postgresql-dev git
+RUN apk add -U gcc g++ make zlib-dev libressl-dev postgresql-dev
 
 COPY Gemfile Gemfile.lock ./
 

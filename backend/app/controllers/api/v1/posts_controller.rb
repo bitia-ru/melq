@@ -7,15 +7,8 @@ module Api
         @post = Post.find_by(slug: params[:slug])
       end
 
-      def update
-        params.dig(:post, :images_attachments_attributes)&.each do |attachment|
-          next unless (%i[id filename] - attachment.keys).empty?
-
-          blob = post.images.find_by(blob_id: attachment[:id]).blob
-          blob.filename = attachment[:filename]
-          blob.save!
-        end
-        super
+      def post
+        resource
       end
 
       def resource_id_name

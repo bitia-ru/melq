@@ -27,33 +27,6 @@ class InitialMigration < ActiveRecord::Migration[5.2]
         ADD CONSTRAINT user_password_digest_length CHECK(char_length(password_digest) = 60);
     DDL
 
-    execute <<-DDL
-      CREATE TYPE can_comment AS ENUM (
-        'authorized_only', 'everyone', 'nobody'
-      );
-    DDL
-
-    create_table :posts do |t|
-      t.string :title
-      t.text :content
-      t.boolean :published, default: false
-      t.column :can_comment, :can_comment, default: 'authorized_only'
-      t.boolean :add_likes_auth_only, default: false
-      t.integer :num_of_likes
-      t.integer :num_of_reposts
-      t.integer :num_of_views
-      t.string :slug, null: false
-      t.string :seo_title
-      t.jsonb :seo_kw, default: []
-
-      t.timestamps
-    end
-
-    execute <<-DDL
-      ALTER TABLE posts
-        ADD CONSTRAINT post_slug_unique UNIQUE (slug);
-    DDL
-
     create_table :tags do |t|
       t.string :text
     end
@@ -76,7 +49,7 @@ class InitialMigration < ActiveRecord::Migration[5.2]
     DDL
 
     create_table :comments do |t|
-      t.belongs_to :post
+      t.string :post_slug
       t.belongs_to :comment
       t.belongs_to :user
       t.text :content, null: false
@@ -94,7 +67,7 @@ class InitialMigration < ActiveRecord::Migration[5.2]
     DDL
 
     create_table :likes do |t|
-      t.belongs_to :post
+      t.string :post_slug
       t.jsonb :user_data
     end
 
