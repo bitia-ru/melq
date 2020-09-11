@@ -1,1 +1,3 @@
 emailFrom: 'contact@contact.ru'
+postsDir: './storage/posts'
+remoteName: <%= ENV.fetch('REMOTE_NAME', 'origin') %>
