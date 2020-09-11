@@ -1,8 +1,11 @@
 /backups
 /sandbox
 /storage
+/posts
 /.env
 /db
 /.idea
 /gw-staging/frontends-playbook.yml
 /docker-compose.staging.yml
+/node_modules
+/package-lock.json
