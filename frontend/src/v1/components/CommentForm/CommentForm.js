@@ -24,7 +24,7 @@ class CommentForm extends React.PureComponent {
         comment: {
           ...this.state.comment,
           comment_id: this.props.responseToCommentId,
-          post_id: this.props.posts[slug].id,
+          post_slug: slug,
         },
       },
       () => {
@@ -88,7 +88,6 @@ CommentForm.propTypes = {
   createComment: PropTypes.func,
   responseToCommentId: PropTypes.number,
   afterSubmit: PropTypes.func,
-  posts: PropTypes.object,
 };
 
 const mapStateToProps = state => ({ posts: state.postsStoreV1.posts });
