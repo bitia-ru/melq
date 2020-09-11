@@ -35,6 +35,12 @@ const tagsReducer = (
       ),
       numOfActiveRequests: state.numOfActiveRequests - 1,
     };
+  case acts.REMOVE_TAG_SUCCESS:
+    return {
+      ...state,
+      tags: R.dissoc(action.id, state.tags),
+      numOfActiveRequests: state.numOfActiveRequests - 1,
+    };
   default:
     return state;
   }

@@ -74,8 +74,8 @@ class PostEdit extends React.PureComponent {
             existingTags = R.append(tag, existingTags);
             formData.append('post[tag_ids][]', tag.id);
             formData.append('post[tags_attributes][][id]', tag.id);
+            formData.append('post[tags_attributes][][text]', tag.text);
           }
-          formData.append('post[tags_attributes][][text]', tag.text);
         },
         // sort is needed for tag_ids go before tags_attributes, without it rails will fail!
         R.sort(diff, post.tags),
@@ -85,11 +85,20 @@ class PostEdit extends React.PureComponent {
           (removedTag) => {
             formData.append('post[tag_ids][]', removedTag.id);
             formData.append('post[tags_attributes][][id]', removedTag.id);
+            formData.append('post[tags_attributes][][text]', removedTag.text);
             formData.append('post[tags_attributes][][_destroy]', true);
           },
           R.difference(this.props.posts[slug].tags, existingTags),
         );
       }
+      R.forEach(
+        (tag) => {
+          if (!tag.id) {
+            formData.append('post[tags_attributes][][text]', tag.text);
+          }
+        },
+        post.tags,
+      );
     }
     if (post.slug) {
       formData.append('post[slug]', post.slug);
@@ -120,19 +129,19 @@ class PostEdit extends React.PureComponent {
       },
       this.state.images,
     );
-    R.forEach(
-      (id) => {
-        formData.append('post[images_attachments_attributes][][id]', id);
-        formData.append('post[images_attachments_attributes][][_destroy]', true);
-      },
-      this.state.removedImagesIds,
-    );
     R.forEachObjIndexed(
       (filename, id) => {
         formData.append('post[images_attachments_attributes][][id]', id);
         formData.append('post[images_attachments_attributes][][filename]', filename);
       },
       this.state.imagesUpdatedNames,
+    );
+    R.forEach(
+      (id) => {
+        formData.append('post[images_attachments_attributes][][id]', id);
+        formData.append('post[images_attachments_attributes][][_destroy]', true);
+      },
+      this.state.removedImagesIds,
     );
     if (slug) {
       this.props.updatePost(
@@ -338,7 +347,10 @@ class PostEdit extends React.PureComponent {
                   const existingTag = R.find(R.propEq('text', t))(this.props.tags);
                   return { text: t, ...(existingTag && { id: existingTag.id }) };
                 },
-                R.split(', ', event.target.value),
+                R.reject(
+                  t => (t === ''),
+                  R.split(', ', event.target.value),
+                ),
               );
               this.setState({ post: { ...postState, tags } });
             }
