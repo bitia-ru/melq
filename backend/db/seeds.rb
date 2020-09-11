@@ -16,11 +16,13 @@ Setting.create!(
 Post.create!(
   slug: 'about-blog-slug',
   title: 'About blog',
-  content: 'About blog'
+  content: 'About blog',
+  published: true
 )
 
 Post.create!(
   slug: 'privacy-policy-slug',
   title: 'Privacy policy',
-  content: 'Privacy policy'
+  content: 'Privacy policy',
+  published: true
 )
