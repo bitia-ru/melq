@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 RSpec.describe Resourceable do
   let(:resource_example) { 42 }
   let(:resources_example) { [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377] }
