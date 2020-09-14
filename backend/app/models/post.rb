@@ -1,4 +1,4 @@
-class Post
+class Post < NoDbModel::Base
   attr_accessor(
     :title,
     :content,
@@ -13,6 +13,14 @@ class Post
     :seo_kw,
     :created_at,
     :updated_at
+  )
+
+  validates :slug, presence: true
+  validates(
+    :slug,
+    uniqueness: {
+      message: 'Slug должен быть уникален'
+    }
   )
 
   def initialize(*args)
@@ -94,15 +102,15 @@ class Post
     Comment.where(post_slug: slug)
   end
 
-  def valid?(context = :create)
-    return false unless slug.present?
+  #def valid?(context = :create)
+  #  return false unless slug.present?
 
-    return false if context == :create && Post.slugs.include?(slug)
+  #  return false if context == :create && Post.slugs.include?(slug)
 
-    return false unless %w[authorized_only everyone nobody].include?(can_comment)
+  #  return false unless %w[authorized_only everyone nobody].include?(can_comment)
 
-    true
-  end
+  #  true
+  #end
 
   def assign_attributes(*args)
     params = args.empty? ? {} : args[0]
