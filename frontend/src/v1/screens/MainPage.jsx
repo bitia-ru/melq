@@ -4,11 +4,8 @@ import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MainScreen from '../layouts/MainScreen/MainScreen';
-import { notReady, notExist } from '@/v1/utils';
 import { currentUser } from '@/v1/redux/user_session/utils';
-import { closeUserSession } from '@/v1/utils/auth';
 import { loadPosts } from '@/v1/redux/posts/actions';
-import Button from '@/v1/components/Button/Button';
 
 
 class MainPage extends React.PureComponent {
@@ -17,22 +14,10 @@ class MainPage extends React.PureComponent {
   }
 
   render() {
-    const { user, history, posts } = this.props;
+    const { user, posts } = this.props;
 
     return (
-      <MainScreen header="">
-        {
-          (!notReady(user) && notExist(user))
-            ? (
-              <Button onClick={() => history.push('#signin')}>Войти</Button>
-            )
-            : (
-              <Button onClick={closeUserSession}>Выйти</Button>
-            )
-        }
-        <div>
-          <Link to="/new">New</Link>
-        </div>
+      <MainScreen header="" user={user}>
         {
           R.map(
             post => (
