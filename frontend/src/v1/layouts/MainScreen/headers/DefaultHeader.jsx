@@ -4,8 +4,8 @@ import { css, StyleSheet } from '../../../aphrodite';
 
 import HeaderLayout from './HeaderLayout';
 import Link from '../../../components/Link/Link';
-import Search from "../../../components/Search/Search";
-import LanguageSelect from "../../../components/LanguageSelect/LanguageSelect";
+import Search from '../../../components/Search/Search';
+import LanguageSelect from '../../../components/LanguageSelect/LanguageSelect';
 
 const styles = StyleSheet.create({
   leftBlock: {
@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   },
   blogLinkWrapper: { marginRight: 45 },
   aboutBlogLinkWrapper: { marginRight: 48 },
+  languageSelectWrapper: { textAlign: 'right' },
 });
 
 const DefaultHeader = () => (
@@ -29,7 +30,7 @@ const DefaultHeader = () => (
         <Search onChange={() => {}} variants={[]} />
       </div>
     </div>
-    <div>
+    <div className={css(styles.languageSelectWrapper)}>
       <LanguageSelect onChange={() => {}} languageId="ru" />
     </div>
   </HeaderLayout>

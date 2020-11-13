@@ -122,7 +122,6 @@ const PostComments = ({
         postSlug={slug}
         comments={comments}
         user={user}
-        width="960px"
         onChange={onChange}
         isWaiting={isWaiting}
         responseToCommentId={responseToCommentId}
