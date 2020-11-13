@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
   commentBlockContainer: {
     display: 'flex',
     flexDirection: 'column',
-    width: '960px',
     background: bgColor,
   },
   commentBlockContent: {
