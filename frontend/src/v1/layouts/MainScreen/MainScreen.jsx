@@ -1,8 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { css, StyleSheet } from '../../aphrodite';
 import withModals, { ModalContainerContext } from '../../modules/modalable';
 import { closeUserSession } from '@/v1/utils/auth';
+
+import { setEditMode as setEditModeAction } from '../../redux/editMode/actions';
 
 import LogInForm from '../../forms/LogInForm/LogInForm';
 import AdminPanel from './panels/AdminPanel';
@@ -43,18 +47,13 @@ class MainScreen extends React.PureComponent {
     };
   }
 
-  constructor(props) {
-    super(props);
-    this.state = { editMode: false };
-  }
-
   renderPanel = () => {
-    const { editMode } = this.state;
-    if (this.props.user) {
+    const { editMode, user, setEditMode } = this.props;
+    if (user) {
       return (
         <AdminPanel
           editMode={editMode}
-          switchEditMode={() => this.setState({ editMode: !editMode })}
+          switchEditMode={() => setEditMode(!editMode) }
           logOut={closeUserSession}
         />
       );
@@ -63,14 +62,14 @@ class MainScreen extends React.PureComponent {
   };
 
   renderHeader = () => {
-    if (this.state.editMode) {
+    if (this.props.editMode) {
       return <EditModeHeader addNewPost={() => this.props.history.push('/new')} />;
     }
     return <DefaultHeader />;
   };
 
   render() {
-    const { children, header } = this.props;
+    const { children } = this.props;
 
     return (
       <ModalContainerContext.Consumer>
@@ -101,4 +100,18 @@ class MainScreen extends React.PureComponent {
   }
 }
 
-export default withRouter(withModals(MainScreen));
+MainScreen.propTypes = {
+  editMode: PropTypes.bool,
+  setEditMode: PropTypes.func,
+  children: PropTypes.node,
+  history: PropTypes.object,
+  user: PropTypes.object,
+};
+
+const mapStateToProps = state => ({ editMode: state.editMode });
+
+const mapDispatchToProps = dispatch => (
+  { setEditMode: editMode => dispatch(setEditModeAction(editMode)) }
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(MainScreen)));
