@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import buildTreeFromArray from '@/v1/utils/buildTreeFromArray';
 
-const getCommentsTreeOfPost = (post, comments) => {
+const getCommentsTreeOfPost = (postSlug, comments) => {
   const postComments = R.values(
     R.filter(
-      comment => (comment.post_id === post.id),
+      comment => (comment.post_slug === postSlug),
       comments,
     ),
   );
