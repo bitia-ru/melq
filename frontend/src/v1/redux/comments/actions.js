@@ -20,7 +20,7 @@ export const loadComments = postSlug => (
   }
 );
 
-export const createComment = (postSlug, attributes, afterSuccess, afterAll) => (
+export const createComment = (attributes, afterSuccess, afterAll) => (
   (dispatch) => {
     dispatch({ type: acts.LOAD_COMMENTS_REQUEST });
 
@@ -45,7 +45,7 @@ export const createComment = (postSlug, attributes, afterSuccess, afterAll) => (
   }
 );
 
-export const updateComment = (postSlug, id, attributes, afterSuccess, afterAll) => (
+export const updateComment = (id, attributes, afterSuccess, afterAll) => (
   (dispatch) => {
     dispatch({ type: acts.LOAD_COMMENTS_REQUEST });
 
@@ -70,7 +70,7 @@ export const updateComment = (postSlug, id, attributes, afterSuccess, afterAll) 
   }
 );
 
-export const removeComment = (postSlug, id, afterSuccess, afterAll) => (
+export const removeComment = (id, afterSuccess, afterAll) => (
   (dispatch) => {
     dispatch({ type: acts.LOAD_COMMENTS_REQUEST });
 
