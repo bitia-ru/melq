@@ -9,6 +9,7 @@ import PostCardExample from './PostCardExample';
 import ImageIconExample from './ImageIconExample';
 import AvatarRoundExample from './AvatarRoundExample';
 import TextAreaExample from './TextAreaExample';
+import CommentExample from './CommentExample';
 import ItemExample from './ItemExample';
 import ListExample from './ListExample';
 import LanguageSelectExample from './LanguageSelectExample';
@@ -31,6 +32,7 @@ const examples = {
   image_icon: ImageIconExample,
   avatar_round: AvatarRoundExample,
   textarea: TextAreaExample,
+  comment: CommentExample,
   item: ItemExample,
   list: ListExample,
   language_select: LanguageSelectExample,
