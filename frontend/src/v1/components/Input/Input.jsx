@@ -15,6 +15,8 @@ const Input = ({
   tooltipText,
   tooltipSide,
   disabled,
+  size,
+  fontSize,
 }) => {
   const [inputRef, setInputRef] = useState(undefined);
   const [listRef, setListRef] = useState(undefined);
@@ -67,6 +69,8 @@ const Input = ({
       tooltipSide={tooltipSide}
       tooltipText={tooltipText}
       disabled={disabled}
+      size={size}
+      fontSize={fontSize}
     />
   );
 };
@@ -87,6 +91,8 @@ Input.propTypes = {
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
   disabled: PropTypes.bool,
+  size: PropTypes.string,
+  fontSize: PropTypes.string,
 };
 
 export default Input;
