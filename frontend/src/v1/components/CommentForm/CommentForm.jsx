@@ -1,101 +1,64 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import FormField from '@/v1/components/FormField/FormField';
-import Button from '@/v1/components/Button/Button';
-import { createComment } from '@/v1/redux/comments/actions';
+import CommentFormLayout from './CommentFormLayout';
+import CommentContext from '@/v1/contexts/CommentContext';
 
-class CommentForm extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      comment: {},
-      isWaiting: false,
-    };
-  }
+const CommentForm = ({
+  onChange,
+  isWaiting,
+  currentComment,
+  formState,
+}) => {
+  const [authorName, setAuthorName] = useState('Гость');
+  const [commentText, setCommentText] = useState('');
+  const { submit, update } = useContext(CommentContext);
 
-  submit = () => {
-    this.setState({ isWaiting: true });
-    const { slug } = this.props.match.params;
-    this.props.createComment(
-      slug,
-      {
-        comment: {
-          ...this.state.comment,
-          comment_id: this.props.responseToCommentId,
-          post_slug: slug,
+  useEffect(() => {
+    setAuthorName(currentComment.author_name);
+    setCommentText(currentComment.content);
+  }, [currentComment.author_name, currentComment.content]);
+
+  const handleInputChange = (e) => {
+    onChange('author_name', e.target.value);
+  };
+
+  const handleTextareaChange = (e) => {
+    onChange('content', e.target.value);
+  };
+
+  const onClick = () => {
+    if (formState === 'edits') {
+      update(
+        currentComment.id,
+        {
+          comment: {
+            ...currentComment,
+            author_name: currentComment.author_name || null,
+          },
         },
-      },
-      () => {
-        this.setState({ comment: { author_name: undefined, content: undefined } });
-        this.props.afterSubmit && this.props.afterSubmit();
-      },
-      () => {
-        this.setState({ isWaiting: false });
-      },
-    );
-  }
+      );
+    } else {
+      submit();
+    }
+  };
 
-  render() {
-    const { comment } = this.state;
-    return (
-      <>
-        <FormField
-          placeholder="Ваше имя (необязательно)"
-          id="author_name"
-          onChange={
-            (event) => {
-              this.setState(
-                {
-                  comment: {
-                    ...comment,
-                    author_name: event.target.value,
-                  },
-                },
-              );
-            }
-          }
-          type="text"
-          value={comment.author_name || ''}
-        />
-        <textarea
-          placeholder="Ваш комментарий"
-          onChange={
-            (event) => {
-              this.setState(
-                {
-                  comment: {
-                    ...comment,
-                    content: event.target.value,
-                  },
-                },
-              );
-            }
-          }
-          value={comment.content || ''}
-        />
-        <Button onClick={this.submit} isWaiting={this.state.isWaiting}>
-          Отправить
-        </Button>
-      </>
-    );
-  }
-}
-
-CommentForm.propTypes = {
-  match: PropTypes.object,
-  createComment: PropTypes.func,
-  responseToCommentId: PropTypes.number,
-  afterSubmit: PropTypes.func,
+  return (
+    <CommentFormLayout
+      handleInputChange={handleInputChange}
+      handleTextareaChange={handleTextareaChange}
+      onClick={onClick}
+      isWaiting={isWaiting}
+      authorName={authorName}
+      commentText={commentText}
+    />
+  );
 };
 
-const mapStateToProps = state => ({ posts: state.postsStoreV1.posts });
+CommentForm.propTypes = {
+  onChange: PropTypes.func,
+  isWaiting: PropTypes.bool,
+  currentComment: PropTypes.object,
+  formState: PropTypes.string,
+};
 
-const mapDispatchToProps = dispatch => ({
-  createComment: (postSlug, attributes, afterSuccess, afterAll) => dispatch(
-    createComment(postSlug, attributes, afterSuccess, afterAll),
-  ),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(CommentForm));
+export default CommentForm;
