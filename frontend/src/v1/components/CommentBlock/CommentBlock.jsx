@@ -1,64 +1,41 @@
 import React from 'react';
-import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import { StyleSheet, css } from '../../aphrodite';
-import CommentForm from '@/v1/components/CommentForm/CommentForm';
-import Comment from '@/v1/components/Comment/Comment';
+import CommentBlockLayout from './CommentBlockLayout';
+import getCommentsTreeOfPost from '@/v1/utils/getCommentsTreeOfPost';
 
-const styles = StyleSheet.create({ container: { marginLeft: '48px' } });
+const CommentBlock = ({
+  postSlug,
+  comments,
+  user,
+  width,
+  onChange,
+  isWaiting,
+  responseToCommentId,
+  currentComment,
+  formState,
+}) => (
+  <CommentBlockLayout
+    comments={getCommentsTreeOfPost(postSlug, comments)}
+    user={user}
+    width={width}
+    onChange={onChange}
+    isWaiting={isWaiting}
+    responseToCommentId={responseToCommentId}
+    currentComment={currentComment}
+    formState={formState}
+  />
+);
 
-class CommentBlock extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = { responseToCommentId: null };
-  }
-
-  answer = (commentId) => {
-    this.setState({ responseToCommentId: commentId });
-  }
-
-  renderComments = comments => (
-    <>
-      {
-        R.map(
-          comment => (
-            <div key={comment.id}>
-              <Comment comment={comment} answer={this.answer} />
-              {
-                this.state.responseToCommentId === comment.id && (
-                  <CommentForm
-                    responseToCommentId={this.state.responseToCommentId}
-                    afterSubmit={() => this.setState({ responseToCommentId: null })}
-                  />
-                )
-              }
-              <div className={css(styles.container)}>
-                {
-                  this.renderComments(comment.comments)
-                }
-              </div>
-            </div>
-          ),
-          comments,
-        )
-      }
-    </>
-  )
-
-  render() {
-    return (
-      <>
-        <CommentForm />
-        {
-          this.renderComments(this.props.comments)
-        }
-      </>
-    );
-  }
-}
-
-CommentBlock.propTypes = { comments: PropTypes.array };
-
-CommentBlock.defaultProps = { comments: [] };
+CommentBlock.propTypes = {
+  postSlug: PropTypes.string,
+  comments: PropTypes.object,
+  user: PropTypes.object,
+  width: PropTypes.string,
+  onChange: PropTypes.func,
+  isWaiting: PropTypes.bool,
+  responseToCommentId: PropTypes.number,
+  currentComment: PropTypes.object,
+  formState: PropTypes.string,
+};
 
 export default CommentBlock;
