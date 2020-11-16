@@ -57,6 +57,17 @@ export const themeStyles = StyleSheet.create({
     lineHeight: '27px',
     fontWeight: 'bold',
   },
+  lgLineHeightHeaderFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '15px',
+    lineHeight: '18px',
+    fontWeight: 'bold',
+  },
+  lgLineHeightFont: {
+    fontFamily: 'GilroyRegular',
+    fontSize: '15px',
+    lineHeight: '20px',
+  },
   error: {
     fontFamily: 'GilroyRegular',
     fontSize: '14px',

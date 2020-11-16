@@ -22,10 +22,12 @@ const styles = StyleSheet.create({
   imageIcon: {
     width: 87,
     height: 87,
+    minWidth: 87,
   },
   small: {
     width: 48,
     height: 48,
+    minWidth: 48,
   },
 });
 
