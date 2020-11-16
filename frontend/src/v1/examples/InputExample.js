@@ -7,6 +7,8 @@ const maxLength = 36;
 
 const InputExample = () => {
   const [value, setValue] = useState(undefined);
+  const [size, setSize] = useState(null);
+  const [fontSize, setFontSize] = useState(null);
   const [disabled, setDisabled] = useState(false);
   const [withCounter, setWithCounter] = useState(true);
   const [withDropdownList, setWithDropdownList] = useState(false);
@@ -54,6 +56,57 @@ const InputExample = () => {
           onClick={() => setDisabled(!disabled)}
         />
       </div>
+      <div>
+        Размер:
+        <input
+          type="radio"
+          id="small"
+          name="size"
+          value="small"
+          checked={size === 'small'}
+          onClick={() => setSize('small')}
+        />
+        <span>Small</span>
+        <input
+          type="radio"
+          id="default"
+          name="size"
+          value="default"
+          checked={size === null}
+          onClick={() => setSize(null)}
+        />
+        <span>Default</span>
+        <input
+          type="radio"
+          id="large"
+          name="size"
+          value="large"
+          checked={size === 'large'}
+          onClick={() => setSize('large')}
+        />
+        <span>Large</span>
+      </div>
+      <div>
+        Размер шрифта:
+        <input
+          type="radio"
+          id="smallFont"
+          name="fontSize"
+          value="small"
+          checked={fontSize === 'small'}
+          onClick={() => setFontSize('small')}
+        />
+        <span>Small</span>
+        <input
+          type="radio"
+          id="defaultFont"
+          name="fontSize"
+          value="default"
+          checked={fontSize === null}
+          onClick={() => setFontSize(null)}
+        />
+        <span>Default</span>
+      </div>
       <Input
         input={{ value, onChange }}
         label="Input"
@@ -63,6 +116,8 @@ const InputExample = () => {
         errorsVisible={errorsVisible}
         tooltipText="Введите текст"
         disabled={disabled}
+        size={size}
+        fontSize={fontSize}
         items={withDropdownList ? ['item1', 'item2', 'item3', 'item4'] : null}
       />
     </div>

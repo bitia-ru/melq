@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   container: {
     outlineOffset: 1,
     position: 'relative',
+    width: '100%',
   },
   label: {
     color: defaultColor,
@@ -29,14 +30,18 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     outline: 'none',
-    paddingLeft: 20,
+    paddingLeft: 30,
     border: `1px solid ${focusBorderColor}`,
     display: 'block',
     boxSizing: 'border-box',
     width: '100%',
     color: mainFontColor,
     ':focus': { backgroundColor: focusBgColor },
+    '::placeholder': { color: defaultColor },
   },
+  inputSmall: { height: 44 },
+  inputLarge: { height: 50 },
+  inputSmallPadding: { paddingLeft: 20 },
   disabledInput: {
     border: `1px solid ${disabledColor}`,
     backgroundColor: bgColor,
@@ -81,6 +86,8 @@ const InputLayout = ({
   tooltipText,
   tooltipSide,
   disabled,
+  size,
+  fontSize,
 }) => {
   const hasErrorOrWarnings = (touched && (error || warning)) || externalErrors;
 
@@ -157,9 +164,13 @@ const InputLayout = ({
               disabled={disabled}
               className={
                 css(
-                  themeStyles.smallFont,
+                  themeStyles.defaultFont,
                   themeStyles.bordered,
                   styles.input,
+                  size === 'small' && styles.inputSmall,
+                  size === 'large' && styles.inputLarge,
+                  fontSize === 'small' && themeStyles.smallFont,
+                  fontSize === 'small' && styles.inputSmallPadding,
                   errorsVisible && hasErrorOrWarnings && styles.inputError,
                   disabled && styles.disabledInput,
                 )
@@ -217,6 +228,8 @@ InputLayout.propTypes = {
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
   disabled: PropTypes.bool,
+  size: PropTypes.string,
+  fontSize: PropTypes.string,
 };
 
 export default InputLayout;
