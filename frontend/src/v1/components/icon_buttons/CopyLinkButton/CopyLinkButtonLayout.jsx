@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 });
 
 const CopyLinkButtonLayout = ({
-  onClick,
+  onTriggered,
   disabled,
   isWaiting,
   tooltipText,
@@ -66,7 +66,7 @@ const CopyLinkButtonLayout = ({
 }) => (
   <Icon
     src={`${require('./images/copy_link.svg')}#copy_link`}
-    onClick={onClick}
+    onTriggered={onTriggered}
     disabled={disabled}
     isWaiting={isWaiting}
     iconStyle={styles.copyLinkIcon}
@@ -80,7 +80,7 @@ const CopyLinkButtonLayout = ({
 );
 
 CopyLinkButtonLayout.propTypes = {
-  onClick: PropTypes.func,
+  onTriggered: PropTypes.func,
   disabled: PropTypes.bool,
   isWaiting: PropTypes.bool,
   tooltipText: PropTypes.string,

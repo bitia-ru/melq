@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import CopyLinkButtonLayout from './CopyLinkButtonLayout';
 
 const CopyLinkButton = ({
-  onClick,
+  onTriggered,
   disabled,
   isWaiting,
   tooltipText,
   tooltipSide,
 }) => (
   <CopyLinkButtonLayout
-    onClick={onClick}
+    onTriggered={onTriggered}
     disabled={disabled}
     isWaiting={isWaiting}
     tooltipText={tooltipText}
@@ -19,7 +19,7 @@ const CopyLinkButton = ({
 );
 
 CopyLinkButton.propTypes = {
-  onClick: PropTypes.func,
+  onTriggered: PropTypes.func,
   disabled: PropTypes.bool,
   isWaiting: PropTypes.bool,
   tooltipText: PropTypes.string,
