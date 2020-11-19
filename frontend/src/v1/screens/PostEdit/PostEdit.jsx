@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import MainScreen from '../layouts/MainScreen/MainScreen';
+import MainScreen from '../../layouts/MainScreen/MainScreen';
 import { loadPost, updatePost, createPost, removePost } from '@/v1/redux/posts/actions';
 import { loadTags } from '@/v1/redux/tags/actions';
 import FormField from '@/v1/components/FormField/FormField';
