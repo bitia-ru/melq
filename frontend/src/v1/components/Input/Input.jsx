@@ -17,6 +17,7 @@ const Input = ({
   disabled,
   size,
   fontSize,
+  setInputRef: setInputRefProp,
 }) => {
   const [inputRef, setInputRef] = useState(undefined);
   const [listRef, setListRef] = useState(undefined);
@@ -60,7 +61,12 @@ const Input = ({
       maxLength={maxLength}
       items={items}
       setListRef={setListRef}
-      setInputRef={setInputRef}
+      setInputRef={
+        (ref) => {
+          setInputRef(ref);
+          setInputRefProp && setInputRefProp(ref);
+        }
+      }
       onItemTriggered={onItemTriggered}
       onFocus={onFocus}
       onBlur={onBlur}
@@ -93,6 +99,7 @@ Input.propTypes = {
   disabled: PropTypes.bool,
   size: PropTypes.string,
   fontSize: PropTypes.string,
+  setInputRef: PropTypes.func,
 };
 
 export default Input;
