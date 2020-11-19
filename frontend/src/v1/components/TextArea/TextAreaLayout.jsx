@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+import TextareaAutosize from 'react-textarea-autosize';
 import { StyleSheet, css } from '../../aphrodite';
 import {
   mainFontColor,
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
     outline: 'none',
     paddingLeft: 20,
     paddingTop: 18,
+    paddingBottom: 18,
     border: `1px solid ${focusBorderColor}`,
     display: 'block',
     boxSizing: 'border-box',
@@ -70,6 +72,7 @@ const TextAreaLayout = ({
   onFocus,
   setTextAreaRef,
   disabled,
+  autoResize,
 }) => {
   const hasErrorOrWarnings = (touched && (error || warning)) || externalErrors;
 
@@ -88,6 +91,21 @@ const TextAreaLayout = ({
       list = R.append(externalErrors, list);
     }
     return R.flatten(list);
+  };
+
+  const props = {
+    ...input,
+    placeholder,
+    type,
+    disabled,
+    ref: setTextAreaRef,
+    className: css(
+      themeStyles.smallFont,
+      themeStyles.bordered,
+      styles.textarea,
+      errorsVisible && hasErrorOrWarnings && styles.textareaError,
+      disabled && styles.disabledTextArea,
+    ),
   };
 
   return (
@@ -136,22 +154,15 @@ const TextAreaLayout = ({
           }
         >
           <div className={css(styles.textareaContainer)}>
-            <textarea
-              {...input}
-              ref={setTextAreaRef}
-              placeholder={placeholder}
-              type={type}
-              disabled={disabled}
-              className={
-                css(
-                  themeStyles.smallFont,
-                  themeStyles.bordered,
-                  styles.textarea,
-                  errorsVisible && hasErrorOrWarnings && styles.textareaError,
-                  disabled && styles.disabledTextArea,
+            {
+              autoResize
+                ? (
+                  <TextareaAutosize {...props} />
                 )
-              }
-            />
+                : (
+                  <textarea {...props} />
+                )
+            }
             {
               maxLength && (
                 <span
@@ -191,6 +202,7 @@ TextAreaLayout.propTypes = {
   onFocus: PropTypes.func,
   setTextAreaRef: PropTypes.func,
   disabled: PropTypes.bool,
+  autoResize: PropTypes.bool,
 };
 
 export default TextAreaLayout;

@@ -14,6 +14,7 @@ const TextArea = ({
   tooltipText,
   tooltipSide,
   disabled,
+  autoResize,
 }) => {
   const [textareaRef, setTextAreaRef] = useState(undefined);
 
@@ -36,6 +37,7 @@ const TextArea = ({
       onFocus={onFocus}
       setTextAreaRef={setTextAreaRef}
       disabled={disabled}
+      autoResize={autoResize}
     />
   );
 };
@@ -55,6 +57,7 @@ TextArea.propTypes = {
   tooltipText: PropTypes.string,
   tooltipSide: PropTypes.string,
   disabled: PropTypes.bool,
+  autoResize: PropTypes.bool,
 };
 
 export default TextArea;
