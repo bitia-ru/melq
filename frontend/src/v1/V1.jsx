@@ -5,7 +5,7 @@ import { Switch, Route } from 'react-router-dom';
 import BootingScreen from './screens/BootingScreen';
 import MainPage from './screens/MainPage';
 import PostShow from './screens/PostShow';
-import PostEdit from './screens/PostEdit';
+import PostEdit from './screens/PostEdit/PostEdit';
 import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import { default as MainExamplePage } from './examples/Main';
 import examples from '@/v1/examples';
