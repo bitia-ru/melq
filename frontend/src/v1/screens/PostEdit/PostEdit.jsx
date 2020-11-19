@@ -1,25 +1,57 @@
 import React from 'react';
 import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
-import marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MainScreen from '../../layouts/MainScreen/MainScreen';
 import { loadPost, updatePost, createPost, removePost } from '@/v1/redux/posts/actions';
 import { loadTags } from '@/v1/redux/tags/actions';
-import FormField from '@/v1/components/FormField/FormField';
 import Button from '@/v1/components/Button/Button';
 import { StyleSheet, css } from '@/v1/aphrodite';
-import prepareImageUrls from '@/v1/utils/prepareImageUrls';
 import showToastr from '@/v1/utils/showToastr';
+import { currentUser } from '@/v1/redux/user_session/utils';
+import TwoColumnsLayout from '../../layouts/TwoColumnsLayout';
+import Link from '../../components/Link/Link';
+import CardLayout from '../../layouts/CardLayout';
+import Select from '../../components/Select/Select';
+import PostCardInfo from './PostCardInfo';
+import PostContentInfo from './PostContentInfo';
+import PostLinkInfo from './PostLinkInfo';
+import AutopostInfo from './AutopostInfo';
+import SeoInfo from './SeoInfo';
+import Item from '../../components/Item/Item';
 
 const styles = StyleSheet.create({
-  container: {
+  container: { marginTop: '40px' },
+  rightBlock: {
     display: 'flex',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
   },
-  column: { flex: 1 },
-  textarea: { width: '80%' },
+  leftBlock: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  twoColumnRow: {
+    display: 'grid',
+    gridTemplateColumns: '50% 50%',
+  },
+  leftColumn: { marginRight: '12px' },
+  rightColumn: { marginLeft: '12px' },
+  deletePreviewBtnWrapper: {
+    textAlign: 'center',
+    marginTop: '24px',
+    marginBottom: '24px',
+  },
+  deletePreviewBtnLinkText: {
+    marginLeft: '7px',
+    marginTop: '1px',
+  },
+  deletePreviewBtnInnerContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  publishBtnWrapper: { marginTop: '16px' },
+  cardWrapper: { marginTop: '24px' },
 });
 
 class PostEdit extends React.PureComponent {
@@ -91,14 +123,6 @@ class PostEdit extends React.PureComponent {
           R.difference(this.props.posts[slug].tags, existingTags),
         );
       }
-      R.forEach(
-        (tag) => {
-          if (!tag.id) {
-            formData.append('post[tags_attributes][][text]', tag.text);
-          }
-        },
-        post.tags,
-      );
     }
     if (post.slug) {
       formData.append('post[slug]', post.slug);
@@ -186,10 +210,6 @@ class PostEdit extends React.PureComponent {
     }
   };
 
-  addImage = () => {
-    this.inputRef.click();
-  };
-
   onFileRead = () => {
     const { images } = this.state;
     this.setState(
@@ -258,31 +278,6 @@ class PostEdit extends React.PureComponent {
     this.setState({ images: R.remove(index, 1, images) });
   };
 
-  prepareImageUrls = (content) => {
-    if (!content) {
-      return '';
-    }
-    const { posts } = this.props;
-    const { images, imagesUpdatedNames } = this.state;
-    const { slug } = this.props.match.params;
-    let lookUp;
-    if (slug) {
-      const post = posts[slug];
-      lookUp = R.fromPairs(
-        R.concat(
-          R.map(
-            image => [imagesUpdatedNames[image.id] || image.original_filename, image.url],
-            R.reject(a => R.contains(a.id, this.state.removedImagesIds), post.images || []),
-          ),
-          R.map(image => [image.name, image.content], images),
-        ),
-      );
-    } else {
-      lookUp = R.fromPairs(R.map(image => [image.name, image.content], images));
-    }
-    return prepareImageUrls(lookUp, content);
-  };
-
   checkNameUniq = (name) => {
     const existingNames = this.getImageNames();
     if (R.reject(n => n !== name, existingNames).length > 1) {
@@ -291,262 +286,197 @@ class PostEdit extends React.PureComponent {
     return false;
   };
 
-  render() {
+  onChangePostParams = (fieldName, fieldValue, callback) => {
+    this.setState(
+      { post: { ...this.state.post, [fieldName]: fieldValue } },
+      callback,
+    );
+  };
+
+  onAnnouncementPhotoLoad = (socialNetwork, data) => {
+    console.log(`${socialNetwork} photo loaded`);
+  };
+
+  onAnnouncementPhotoRemove = (socialNetwork, index) => {
+    console.log(`${socialNetwork} photo removed`);
+  };
+
+  preparedTags = () => (
+    R.map(
+      tag => ({
+        id: tag.id,
+        component: Item,
+        componentProps: {
+          text: tag.text,
+          iconSrc: require('../../examples/images/demoItemIcon.png'),
+          size: 'small',
+        },
+      }),
+      this.props.tags,
+    )
+  );
+
+  onTagsChange = (e) => {
     const { posts } = this.props;
+    const { post: postState } = this.state;
+
+    const { slug } = this.props.match.params;
+    const post = {
+      ...posts[slug],
+      ...postState,
+    };
+    const currentTagId = e?.target?.value !== undefined ? e.target.value : e;
+    const currentTag = R.find(R.propEq('id', currentTagId))(this.props.tags);
+    if (R.contains(currentTagId, R.map(t => t.id, post.tags || []))) {
+      this.onChangePostParams('tags', R.reject(t => t.id === currentTagId, post.tags));
+    } else {
+      this.onChangePostParams('tags', R.append(currentTag, post.tags || []));
+    }
+  };
+
+  render() {
+    const { posts, user } = this.props;
     const { images, imagesUpdatedNames, post: postState, isWaiting } = this.state;
 
     const { slug } = this.props.match.params;
     const post = {
       can_comment: 'authorized_only',
       ...posts[slug],
-      ...this.state.post,
+      ...postState,
     };
-    const mapIndexed = R.addIndex(R.map);
-    const validFileNameRe = new RegExp('^[а-яА-Яa-zA-Z0-9-_.]*$');
+
     return (
-      <MainScreen header="">
-        <h2>{slug ? 'Редактирование поста' : 'Создание поста'}</h2>
-        <FormField
-          placeholder="Title"
-          id="title"
-          onChange={
-            event => this.setState(
-              { post: { ...postState, title: event.target.value } },
-            )
-          }
-          type="text"
-          value={post.title}
-        />
+      <MainScreen header="" user={user}>
         <div className={css(styles.container)}>
-          <div className={css(styles.column)}>
-            <textarea
-              className={css(styles.textarea)}
-              rows={30}
-              value={post.content}
-              onChange={
-                event => this.setState(
-                  { post: { ...postState, content: event.target.value } },
-                )
-              }
-            />
-          </div>
-          <div
-            className={css(styles.column)}
-            dangerouslySetInnerHTML={
-              { __html: marked(this.prepareImageUrls(post.content || '')) }
-            }
-          />
-        </div>
-        <FormField
-          placeholder="Tags"
-          id="tags"
-          onChange={
-            (event) => {
-              const tags = R.map(
-                (t) => {
-                  const existingTag = R.find(R.propEq('text', t))(this.props.tags);
-                  return { text: t, ...(existingTag && { id: existingTag.id }) };
-                },
-                R.reject(
-                  t => (t === ''),
-                  R.split(', ', event.target.value),
-                ),
-              );
-              this.setState({ post: { ...postState, tags } });
-            }
-          }
-          type="text"
-          value={R.join(', ', R.map(tag => tag.text, post.tags || []))}
-        />
-        <FormField
-          placeholder="Slug"
-          id="slug"
-          onChange={
-            event => this.setState({ post: { ...postState, slug: event.target.value } })
-          }
-          type="text"
-          value={post.slug}
-        />
-        <FormField
-          placeholder="Seo title"
-          id="seo_title"
-          onChange={
-            event => this.setState(
-              { post: { ...postState, seo_title: event.target.value } },
-            )
-          }
-          type="text"
-          value={post.seo_title}
-        />
-        <FormField
-          placeholder="Seo key words"
-          id="seo_kw"
-          onChange={
-            event => this.setState(
-              { post: { ...postState, seo_kw: event.target.value } },
-            )
-          }
-          type="text"
-          value={post.seo_kw}
-        />
-        <div>
-          <input
-            type="checkbox"
-            disabled={posts[slug]?.published}
-            checked={post.published}
-            onChange={
-              () => this.setState(
-                { post: { ...postState, published: !post.published } },
-              )
-            }
-          />
-          Published
-        </div>
-        <div>
-          Allow comment:
-          <input
-            type="radio"
-            checked={post.can_comment === 'authorized_only'}
-            onChange={
-              () => this.setState(
-                { post: { ...postState, can_comment: 'authorized_only' } },
-              )
-            }
-          />
-          Auth only
-          <input
-            type="radio"
-            checked={post.can_comment === 'everyone'}
-            onChange={
-              () => this.setState(
-                { post: { ...postState, can_comment: 'everyone' } },
-              )
-            }
-          />
-          All
-          <input
-            type="radio"
-            checked={post.can_comment === 'nobody'}
-            onChange={
-              () => this.setState({ post: { ...postState, can_comment: 'nobody' } })
-            }
-          />
-          Not allowed
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={post.add_likes_auth_only}
-            onChange={
-              () => {
-                this.setState(
-                  { post: { ...postState, add_likes_auth_only: !post.add_likes_auth_only } },
-                );
-              }
-            }
-          />
-          Allow likes for auth only
-        </div>
-        {
-          R.map(
-            image => (
-              <div key={image.id}>
-                <img height="100" src={image.url} alt="" />
-                <Button onClick={() => this.removeImage(image.id)}>Remove</Button>
-                <FormField
-                  placeholder="File Name"
-                  onChange={
-                    (event) => {
-                      if (!R.test(validFileNameRe, event.target.value)) {
-                        return;
-                      }
-                      this.setState(
+          <TwoColumnsLayout>
+            <div className={css(styles.leftBlock)}>
+              <div className={css(styles.twoColumnRow)}>
+                <div className={css(styles.leftColumn)}>
+                  <CardLayout title="Темы поста">
+                    <Select
+                      items={this.preparedTags()}
+                      input={
                         {
-                          imagesUpdatedNames: {
-                            ...imagesUpdatedNames,
-                            [image.id]: event.target.value,
-                          },
-                        },
-                      );
+                          value: R.map(t => t.id, post.tags || []),
+                          onChange: this.onTagsChange,
+                        }
+                      }
+                      multiple
+                    />
+                  </CardLayout>
+                </div>
+                <div className={css(styles.rightColumn)}>
+                  <CardLayout title="Кто может комментировать">
+                    <Select
+                      items={
+                        [
+                          { id: 'everyone', text: 'Все' },
+                          { id: 'authorized_only', text: 'Только авторизованные пользователи' },
+                          { id: 'nobody', text: 'Никто' },
+                        ]
+                      }
+                      input={
+                        {
+                          value: post.can_comment,
+                          onChange: value => this.onChangePostParams('can_comment', value),
+                        }
+                      }
+                    />
+                  </CardLayout>
+                </div>
+              </div>
+              <div className={css(styles.cardWrapper)}>
+                <PostContentInfo
+                  post={post}
+                  removedImagesIds={this.state.removedImagesIds}
+                  onChangePostParams={this.onChangePostParams}
+                  images={images}
+                  imagesUpdatedNames={imagesUpdatedNames}
+                  removeImage={this.removeImage}
+                  checkNameUniq={this.checkNameUniq}
+                  removeJustLoadedImage={this.removeJustLoadedImage}
+                  loadImage={this.onFileChosen}
+                  setImages={newImages => this.setState({ images: newImages })}
+                  setImagesUpdatedNames={
+                    (newImagesUpdatedNames) => {
+                      this.setState({ imagesUpdatedNames: newImagesUpdatedNames })
                     }
                   }
-                  onBlur={
-                    () => {
-                      this.checkNameUniq(
-                        imagesUpdatedNames[image.id] || image.original_filename,
-                      );
-                    }
-                  }
-                  type="text"
-                  value={imagesUpdatedNames[image.id] || image.original_filename}
                 />
               </div>
-            ),
-            R.reject(a => R.contains(a.id, this.state.removedImagesIds), post.images || []),
-          )
-        }
-        {
-          mapIndexed(
-            (image, index) => (
-              <div key={index}>
-                <img height="100" src={image.content} alt="" />
-                <Button onClick={() => this.removeJustLoadedImage(index)}>Remove</Button>
-                <FormField
-                  placeholder="File Name"
-                  onChange={
-                    (event) => {
-                      if (!R.test(validFileNameRe, event.target.value)) {
-                        return;
-                      }
-                      this.setState(
-                        {
-                          images: [
-                            ...R.slice(0, index, images),
-                            { ...image, name: event.target.value },
-                            ...R.slice(index + 1, Infinity, images),
-                          ],
-                        },
-                      );
-                    }
-                  }
-                  onBlur={
-                    () => {
-                      this.checkNameUniq(image.name);
-                    }
-                  }
-                  type="text"
-                  value={image.name}
+              <div className={css(styles.cardWrapper)}>
+                <PostCardInfo post={post} loadCardImage={() => {}} removeCardImage={() => {}} />
+              </div>
+              <div className={css(styles.cardWrapper)}>
+                <PostLinkInfo link="some link" />
+              </div>
+              <div className={css(styles.cardWrapper)}>
+                <AutopostInfo
+                  post={post}
+                  onChange={this.onChangePostParams}
+                  onRemovePhoto={this.onAnnouncementPhotoRemove}
+                  onLoadPhoto={this.onAnnouncementPhotoLoad}
                 />
               </div>
-            ),
-            images,
-          )
-        }
-        <Button onClick={this.addImage}>Add image</Button>
-        <div>
-          <input
-            ref={(ref) => { this.inputRef = ref; }}
-            type="file"
-            hidden
-            onChange={event => this.onFileChosen(event.target.files[0])}
-          />
+              <div className={css(styles.cardWrapper)}>
+                <SeoInfo onChange={this.onChangePostParams} post={post} />
+              </div>
+            </div>
+            <div className={css(styles.rightBlock)}>
+              <div className={css(styles.btnContainer)}>
+                <Button onClick={this.submit} isWaiting={isWaiting.submitBtn}>
+                  Сохранить в черновик
+                </Button>
+                <div className={css(styles.publishBtnWrapper)}>
+                  <Button
+                    isWaiting={isWaiting.submitBtn}
+                    onClick={() => this.onChangePostParams('published', true, this.submit)}
+                    btnStyle="info"
+                  >
+                    Опубликовать
+                  </Button>
+                </div>
+                <div className={css(styles.deletePreviewBtnWrapper)}>
+                  <Link onTriggered={() => {}}>
+                    <div className={css(styles.deletePreviewBtnInnerContainer)}>
+                      <svg width={16} height={16}>
+                        <use
+                          xlinkHref={
+                            `${require('../../components/Link/images/preview.svg')}#preview`
+                          }
+                        />
+                      </svg>
+                      <span className={css(styles.deletePreviewBtnLinkText)}>Предпросмотр</span>
+                    </div>
+                  </Link>
+                </div>
+                {
+                  slug && (
+                    <div className={css(styles.deletePreviewBtnWrapper)}>
+                      <Link onTriggered={this.remove} isWaiting={isWaiting.removeBtn}>
+                        <div className={css(styles.deletePreviewBtnInnerContainer)}>
+                          <svg width={16} height={16}>
+                            <use
+                              xlinkHref={`${require('../../components/Link/images/trash.svg')}#trash`}
+                            />
+                          </svg>
+                          <span className={css(styles.deletePreviewBtnLinkText)}>Удалить</span>
+                        </div>
+                      </Link>
+                    </div>
+                  )
+                }
+              </div>
+            </div>
+          </TwoColumnsLayout>
         </div>
-        {
-          slug && (
-            <Button isWaiting={isWaiting.removeBtn} onClick={this.remove}>
-              Удалить
-            </Button>
-          )
-        }
-        <Button isWaiting={isWaiting.submitBtn} onClick={this.submit}>
-          Сохранить
-        </Button>
       </MainScreen>
     );
   }
 }
 
 PostEdit.propTypes = {
+  user: PropTypes.object,
   posts: PropTypes.object,
   tags: PropTypes.array,
   match: PropTypes.object,
@@ -559,6 +489,7 @@ PostEdit.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  user: currentUser(state),
   posts: state.postsStoreV1.posts,
   tags: R.values(state.tagsStoreV1.tags),
 });
