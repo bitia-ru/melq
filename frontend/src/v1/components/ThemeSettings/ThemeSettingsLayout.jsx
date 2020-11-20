@@ -6,7 +6,7 @@ import { StyleSheet, css } from '../../aphrodite';
 
 import Icon from '../Icon/Icon';
 import Link from '../Link/Link';
-import Item from '../Item/Item';
+import Theme from '../Theme/Theme';
 
 import { themeStyles } from '../../theme';
 
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   itemWrapper: { marginBottom: 16 },
 });
 
-const ThemeSettingsLayout = ({ items, onItemTriggered, showMoreCount, onShowMore }) => (
+const ThemeSettingsLayout = ({ themes, onItemTriggered, showMoreCount, onShowMore }) => (
   <div className={css(styles.container)}>
     <div className={css(styles.header)}>
       <span className={css(themeStyles.headerFont)}>Настроить ленту по темам</span>
@@ -42,12 +42,12 @@ const ThemeSettingsLayout = ({ items, onItemTriggered, showMoreCount, onShowMore
     <div>
       {
         R.map(
-          item => (
-            <div className={css(styles.itemWrapper)} key={item.id}>
-              <Item {...{ onTriggered: () => onItemTriggered(item.id), ...item.props }} />
+          theme => (
+            <div className={css(styles.itemWrapper)} key={theme.id}>
+              <Theme theme={theme} onTriggered={() => onItemTriggered(theme.id)} />
             </div>
           ),
-          items,
+          themes,
         )
       }
     </div>
@@ -60,7 +60,7 @@ const ThemeSettingsLayout = ({ items, onItemTriggered, showMoreCount, onShowMore
 );
 
 ThemeSettingsLayout.propTypes = {
-  items: PropTypes.array,
+  themes: PropTypes.array,
   onItemTriggered: PropTypes.func,
   showMoreCount: PropTypes.number,
   onShowMore: PropTypes.func,
