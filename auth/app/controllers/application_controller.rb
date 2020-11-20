@@ -31,6 +31,8 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActiveRecord::RecordNotFound do |exception|
+    @exception = exception
+
     render 'errors/not_found', status: :not_found
   end
 

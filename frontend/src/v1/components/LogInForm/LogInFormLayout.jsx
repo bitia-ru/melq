@@ -11,7 +11,7 @@ import Error from '@/v1/components/Error/Error';
 import Button from '@/v1/components/Button/Button';
 
 const styles = StyleSheet.create({
-  container: { width: 432, padding: '28px 48px 56px 48px' },
+  container: { width: 336 },
   errorBlockContainer: { marginTop: 32 },
   bntContainer: { marginTop: 15 },
   fieldContainer: { marginTop: 19 },
@@ -53,7 +53,11 @@ const LogInFormLayout = ({
           label="Email"
           onChange={hideErrors}
           errorsVisible={errorsVisible}
-          externalErrors={externalErrors.email}
+          externalErrors={
+            typeof externalErrors.email === 'object'
+              ? externalErrors.email.join(', ')
+              : externalErrors.email
+          }
           validate={[required, email]}
         />
       </div>
@@ -65,7 +69,11 @@ const LogInFormLayout = ({
           label="Пароль"
           onChange={hideErrors}
           errorsVisible={errorsVisible}
-          externalErrors={externalErrors.password}
+          externalErrors={
+            typeof externalErrors.password_digest === 'object'
+              ? externalErrors.password_digest.join(', ')
+              : externalErrors.password_digest
+          }
           validate={[required]}
         />
       </div>
