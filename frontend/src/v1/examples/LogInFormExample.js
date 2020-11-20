@@ -13,7 +13,7 @@ const LogInFormExample = () => {
   const [externalErrorsData, setExternalErrorsData] = useState(
     JSON.stringify({
       email: 'Invalid email',
-      password: 'Invalid password',
+      password_digest: 'Invalid password',
     }),
   );
 

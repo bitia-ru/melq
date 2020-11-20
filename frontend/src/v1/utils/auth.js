@@ -7,7 +7,6 @@ import toastHttpError from '@/v1/utils/toastHttpError';
 export const createUserSession = (
   loginCredential, // TODO: check structure: should be {login:...} or {email:...}
   password,
-  longDuration,
   afterLogInSuccess,
   afterLogInFail,
 ) => {
@@ -25,7 +24,6 @@ export const createUserSession = (
                 password_digest: bcrypt.hashSync(password, payload),
               },
             },
-            rememberMe: longDuration,
           },
           {
             success() {
