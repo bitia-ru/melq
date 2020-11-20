@@ -120,7 +120,7 @@ const withModals = (BaseComponent) => {
             position: 'fixed',
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(32, 32, 40, 0.25)',
             zIndex: 990,
             display: 'flex',
             alignItems: 'center',
