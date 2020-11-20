@@ -50,17 +50,19 @@ Modal.propTypes = {
 const style = StyleSheet.create({
   modal: {
     position: 'relative',
-    margin: '20px auto',
     backgroundColor: 'white',
-    padding: '0',
+    paddingTop: '67px',
+    paddingLeft: '48px',
+    paddingRight: '48px',
+    paddingBottom: '56px',
     color: '#393C51',
     minHeight: '64px',
   },
   controlsContainer: {
     position: 'absolute',
     content: '',
-    right: '-40px',
-    top: 0,
+    right: '23px',
+    top: '24px',
     width: '17px',
     height: '100%',
     alignItems: 'center',
