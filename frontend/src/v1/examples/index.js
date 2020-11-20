@@ -22,6 +22,7 @@ import TextAreaWithPhotoLoaderExample from './TextAreaWithPhotoLoaderExample';
 import ErrorExample from './ErrorExample';
 import SelectExample from './SelectExample';
 import SearchExample from './SearchExample';
+import ThemeExample from './ThemeExample';
 
 const examples = {
   icon: IconExample,
@@ -48,6 +49,7 @@ const examples = {
   select: SelectExample,
   search: SearchExample,
   log_in_form: LogInFormExample,
+  theme: ThemeExample,
 };
 
 export default examples;
