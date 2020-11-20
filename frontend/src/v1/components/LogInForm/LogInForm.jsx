@@ -15,7 +15,7 @@ const LogInForm = ({ onSubmit, externalErrors, isWaiting }) => {
 
   return (
     <LogInFormLayout
-      onSubmit={onSubmit}
+      onSubmit={fields => onSubmit(fields, showErrors)}
       isWaiting={isWaiting}
       errorsVisible={errorsVisible}
       externalErrors={externalErrors}
@@ -31,8 +31,6 @@ LogInForm.propTypes = {
   isWaiting: PropTypes.bool,
 };
 
-LogInForm.defaultProps = {
-  externalErrors: {}
-};
+LogInForm.defaultProps = { externalErrors: {} };
 
 export default LogInForm;
