@@ -18,7 +18,7 @@ import Link from '../components/Link/Link';
 import TwoColumnsLayout from '../layouts/TwoColumnsLayout';
 import ShareCounter from '../components/icon_counters/ShareCounter/ShareCounter';
 import ViewCounter from '../components/icon_counters/ViewCounter/ViewCounter';
-import Item from '../components/Item/Item';
+import Theme from '../components/Theme/Theme';
 
 import { StyleSheet, css } from '../aphrodite';
 
@@ -164,11 +164,10 @@ class PostShow extends React.PureComponent {
                     R.map(
                       tag => (
                         <div className={css(styles.itemWrapper)}>
-                          <Item
+                          <Theme
                             onTriggered={() => {}}
                             size="small"
-                            iconSrc={require('../examples/images/demoItemIcon.png')}
-                            text={tag.text}
+                            theme={tag}
                           />
                         </div>
                       ),
