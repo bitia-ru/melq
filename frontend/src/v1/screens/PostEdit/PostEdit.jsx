@@ -19,7 +19,7 @@ import PostContentInfo from './PostContentInfo';
 import PostLinkInfo from './PostLinkInfo';
 import AutopostInfo from './AutopostInfo';
 import SeoInfo from './SeoInfo';
-import Item from '../../components/Item/Item';
+import Theme from '../../components/Theme/Theme';
 
 const styles = StyleSheet.create({
   container: { marginTop: '40px' },
@@ -305,10 +305,9 @@ class PostEdit extends React.PureComponent {
     R.map(
       tag => ({
         id: tag.id,
-        component: Item,
+        component: Theme,
         componentProps: {
-          text: tag.text,
-          iconSrc: require('../../examples/images/demoItemIcon.png'),
+          theme: tag,
           size: 'small',
         },
       }),

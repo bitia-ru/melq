@@ -13,9 +13,9 @@ import withModals from '../modules/modalable';
 
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import Link from '../components/Link/Link';
-import Item from '../components/Item/Item';
 import CheckBox from '../components/CheckBox/CheckBox';
 import TagNewForm from '../forms/TagNewForm';
+import Theme from '../components/Theme/Theme';
 
 import { bgColor } from '../theme';
 
@@ -163,7 +163,7 @@ class ThemesIndex extends React.PureComponent {
                       checked={R.contains(tag.id, selectedTagsIds)}
                     />
                   </div>
-                  <Item text={tag.text} iconSrc={require('../examples/images/demoItemIcon.png')} />
+                  <Theme theme={tag} />
                 </div>
               ),
               tags,
