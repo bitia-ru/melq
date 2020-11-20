@@ -1,40 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import * as R from 'ramda';
+
+import { loadTags as loadTagsAction } from '@/v1/redux/tags/actions';
 
 import ThemeSettingsLayout from './ThemeSettingsLayout';
 
-const itemsWithIcons = R.map(
-  e => (
-    {
-      id: e,
-      props: {
-        text: `Тема ${e}`,
-        iconSrc: require('./assets/demoItemIcon.png'),
-        tooltipText: `Показать посты по теме ${e}`,
-      },
-    }
-  ),
-  Array.from(Array(20).keys()),
-);
-
 const DEFAULT_DISPLAYED_LENGTH = 7;
 
-const ThemeSettings = () => {
-  const [items] = useState(itemsWithIcons);
+const ThemeSettings = ({ themes, loadTags }) => {
   const [showMoreBtnVisible, setShowMoreBtnVisible] = useState(
-    itemsWithIcons.length > DEFAULT_DISPLAYED_LENGTH,
+    themes.length > DEFAULT_DISPLAYED_LENGTH,
   );
+
+  useEffect(() => setShowMoreBtnVisible(themes.length > DEFAULT_DISPLAYED_LENGTH), [themes]);
+
+  useEffect(loadTags, []);
 
   return (
     <ThemeSettingsLayout
-      items={
-        showMoreBtnVisible ? R.slice(0, DEFAULT_DISPLAYED_LENGTH, items) : items
+      themes={
+        showMoreBtnVisible ? R.slice(0, DEFAULT_DISPLAYED_LENGTH, themes) : themes
       }
       onItemTriggered={() => {}}
       onShowMore={() => setShowMoreBtnVisible(false)}
-      showMoreCount={showMoreBtnVisible ? items.length - DEFAULT_DISPLAYED_LENGTH : 0}
+      showMoreCount={showMoreBtnVisible ? themes.length - DEFAULT_DISPLAYED_LENGTH : 0}
     />
   );
 };
 
-export default ThemeSettings;
+ThemeSettings.propTypes = {
+  themes: PropTypes.array,
+  loadTags: PropTypes.func,
+};
+
+ThemeSettings.defaultProps = { themes: [] };
+
+const mapStateToProps = state => ({ themes: R.values(state.tagsStoreV1.tags) });
+
+const mapDispatchToProps = dispatch => ({ loadTags: () => dispatch(loadTagsAction()) });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ThemeSettings);
