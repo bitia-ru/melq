@@ -60,7 +60,7 @@ class Post
   end
 
   def tags
-    PostsTag.where(post_slug: slug).map(&:tag)
+    PostsTag.where(post_slug: slug).map(&:tag).compact
   end
 
   def images
