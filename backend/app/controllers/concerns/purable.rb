@@ -115,9 +115,17 @@ module Purable
   end
 
   def destroy
-    authorize resource
-    resource.destroy!
-
+    if purable_resource_params.is_a? Array
+      purable_model.transaction do
+        resources.each_with_index do |resource, _|
+          authorize resource
+          resource.destroy!
+        end
+      end
+    else
+      authorize resource
+      resource.destroy!
+    end
     purable_respond_with(status: :success)
   end
 

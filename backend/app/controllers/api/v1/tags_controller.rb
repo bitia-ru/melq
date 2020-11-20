@@ -6,7 +6,11 @@ module Api
       private
 
       def tag_params
-        params.permit![:tag]
+        if params.include? :tags
+          params.permit![:tags]
+        else
+          params.permit![:tag]
+        end
       end
     end
   end
