@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get '/posts/:slug/images/:filename', to: 'posts#image', constraints: { filename: /.+/ }
       resources :comments
       resources :tags
+      delete '/tags', to: 'tags#destroy'
     end
   end
 end
