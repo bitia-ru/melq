@@ -94,6 +94,20 @@ class Post
     Comment.where(post_slug: slug)
   end
 
+  def card
+    PostCard.find_by(post_slug: slug) || PostCard.new(post_slug: slug)
+  end
+
+  def card_attributes=(*args)
+    params = args.empty? ? {} : args[0]
+
+    raise StandardError, 'Args empty' if params.keys.empty?
+
+    post_card = card
+    post_card.assign_attributes(params)
+    post_card.save!
+  end
+
   def valid?(context = :create)
     return false unless slug.present?
 
