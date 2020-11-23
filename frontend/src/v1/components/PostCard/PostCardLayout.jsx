@@ -80,7 +80,7 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
   <Card
     height="468px"
     width="390px"
-    backgroundColor={cardColors[post.card_color_id] || bgColor}
+    backgroundColor={post.card?.fill_color || bgColor}
     onClick={onClick}
   >
     <div className={css(styles.headerWrapper)}>
@@ -89,21 +89,21 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
           dayjs(post.created_at).format('DD.MM.YYYY')
         }
       </span>
-      <span className={css(styles.header)}>{post.topic}</span>
+      <span className={css(styles.header)}>{post?.card?.main_tag?.text}</span>
     </div>
     {
-      post.card_image
+      post.card?.image
         ? (
           <div className={css(styles.contentWrapper)}>
             <div className={css(styles.mainContainer)}>
-              <img src={post.card_image.url} alt="" />
+              <img src={post.card.image.url} alt="" />
             </div>
             <div className={css(styles.secondaryContainer)}>
               <div className={css(styles.title)}>
-                {post.title}
+                {post.card.title}
               </div>
               <div className={css(styles.content, themeStyles.smallDetailsFont)}>
-                {post.content}
+                {post.card.description}
               </div>
             </div>
           </div>
@@ -111,10 +111,10 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
           <div className={css(styles.contentWrapper)}>
             <div className={css(styles.mainContainer)}>
               <div className={css(styles.title)}>
-                {post.title}
+                {post.card.title}
               </div>
               <div className={css(styles.content, themeStyles.smallDetailsFont)}>
-                {post.content}
+                {post.card.description}
               </div>
             </div>
           </div>
