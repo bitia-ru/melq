@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :comments
       resources :tags
       delete '/tags', to: 'tags#destroy'
+      resources :settings
     end
   end
 end
