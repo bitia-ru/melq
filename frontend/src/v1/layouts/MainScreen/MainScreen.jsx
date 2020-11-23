@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { css, StyleSheet } from '../../aphrodite';
 import withModals, { ModalContainerContext } from '../../modules/modalable';
+import SettingsContext from '../../contexts/SettingsContext';
 import { closeUserSession } from '@/v1/utils/auth';
 
 import { setEditMode as setEditModeAction } from '../../redux/editMode/actions';
+import { loadSettings } from '../../redux/settings/actions';
 
 import LogInForm from '../../forms/LogInForm/LogInForm';
 import AdminPanel from './panels/AdminPanel';
@@ -47,6 +49,10 @@ class MainScreen extends React.PureComponent {
     };
   }
 
+  componentDidMount() {
+    this.props.loadSettings();
+  }
+
   renderPanel = () => {
     const { editMode, user, setEditMode } = this.props;
     if (user) {
@@ -69,33 +75,35 @@ class MainScreen extends React.PureComponent {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, settings } = this.props;
 
     return (
-      <ModalContainerContext.Consumer>
-        {
-          ({ isModalShown }) => (
-            <div
-              className={
-                css(
-                  styles.container,
-                  isModalShown ? styles.unscrollable : styles.scrollable,
-                )
-              }
-            >
-              <div className={css(styles.wrapper)}>
-                { this.renderPanel() }
-                <div className={css(styles.mainContent)}>
-                  { this.renderHeader() }
-                  <div>
-                    {children && children}
+      <SettingsContext.Provider value={{ settings }}>
+        <ModalContainerContext.Consumer>
+          {
+            ({ isModalShown }) => (
+              <div
+                className={
+                  css(
+                    styles.container,
+                    isModalShown ? styles.unscrollable : styles.scrollable,
+                  )
+                }
+              >
+                <div className={css(styles.wrapper)}>
+                  { this.renderPanel() }
+                  <div className={css(styles.mainContent)}>
+                    { this.renderHeader() }
+                    <div>
+                      {children && children}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )
-        }
-      </ModalContainerContext.Consumer>
+            )
+          }
+        </ModalContainerContext.Consumer>
+      </SettingsContext.Provider>
     );
   }
 }
@@ -106,12 +114,18 @@ MainScreen.propTypes = {
   children: PropTypes.node,
   history: PropTypes.object,
   user: PropTypes.object,
+  settings: PropTypes.object,
+  loadSettings: PropTypes.func,
 };
 
-const mapStateToProps = state => ({ editMode: state.editMode });
+const mapStateToProps = state => ({
+  editMode: state.editMode,
+  settings: state.settingsStoreV1.settings[1],
+});
 
-const mapDispatchToProps = dispatch => (
-  { setEditMode: editMode => dispatch(setEditModeAction(editMode)) }
-);
+const mapDispatchToProps = dispatch => ({
+  setEditMode: editMode => dispatch(setEditModeAction(editMode)),
+  loadSettings: () => dispatch(loadSettings()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(MainScreen)));
