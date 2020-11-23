@@ -7,6 +7,7 @@ import Input from '../../components/Input/Input';
 import CardLayout from '../../layouts/CardLayout';
 import Button from '../../components/Button/Button';
 import PhotoPreview from '../../components/PhotoPreview/PhotoPreview';
+import Theme from '../../components/Theme/Theme';
 
 import { css, StyleSheet } from '../../aphrodite';
 import { cardColors, defaultColor, mainFontColor, themeStyles, focusBorderColor } from '../../theme';
@@ -46,20 +47,46 @@ const styles = StyleSheet.create({
   colorItemSelected: { border: `2px solid ${focusBorderColor}` },
 });
 
-const PostCardInfo = ({ post, removeCardImage, loadCardImage }) => {
-  const [viewMode, setViewMode] = useState('photo');
-  const [selectedColor, setSelectedColor] = useState(undefined);
+const PostCardInfo = ({
+  post,
+  removeCardImage,
+  loadCardImage,
+  onChangePostCardParams,
+}) => {
   const [fileInputRef, setFileInputRef] = useState(undefined);
+
+  const preparedTags = () => (
+    R.map(
+      tag => ({
+        id: tag.id,
+        component: Theme,
+        componentProps: {
+          theme: tag,
+          size: 'small',
+        },
+      }),
+      post.tags,
+    )
+  );
 
   return (
     <CardLayout title="Наполнение карточки поста">
       <div className={css(styles.cardThemeWrapper)}>
-        <Select
-          input={{}}
-          items={[]}
-          placeholder="Выберите темы"
-          label="Главная тема поста"
-        />
+        {
+          post?.card && post?.tags && (
+            <Select
+              items={preparedTags()}
+              input={
+                {
+                  value: post?.card?.main_tag_id,
+                  onChange: id => onChangePostCardParams('main_tag_id', id),
+                }
+              }
+              placeholder="Выберите темы"
+              label="Главная тема поста"
+            />
+          )
+        }
       </div>
       <div className={css(styles.cardView)}>
         <div className={css(styles.cardViewLabel, themeStyles.defaultFont)}>
@@ -68,16 +95,16 @@ const PostCardInfo = ({ post, removeCardImage, loadCardImage }) => {
         <div className={css(styles.cardViewItems)}>
           <div className={css(styles.cardViewPhotoBtn)}>
             <Button
-              onClick={() => setViewMode('photo')}
-              btnStyle={viewMode === 'photo' ? 'info' : null}
+              onClick={() => onChangePostCardParams('style', 'image')}
+              btnStyle={post?.card?.style === 'image' || post?.card?.style === null ? 'info' : null}
             >
               Фотография
             </Button>
           </div>
           <div className={css(styles.cardViewBgBtn)}>
             <Button
-              onClick={() => setViewMode('background')}
-              btnStyle={viewMode === 'background' ? 'info' : null}
+              onClick={() => onChangePostCardParams('style', 'fill')}
+              btnStyle={post?.card?.style === 'fill' ? 'info' : null}
             >
               Заливка
             </Button>
@@ -85,8 +112,31 @@ const PostCardInfo = ({ post, removeCardImage, loadCardImage }) => {
         </div>
         <div>
           {
-            viewMode === 'photo'
+            post?.card?.style === 'fill'
               ? (
+                <div className={css(styles.colorPicker)}>
+                  {
+                    R.map(
+                      color => (
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => onChangePostCardParams('fill_color', color)}
+                          className={
+                            css(
+                              styles.colorPickerItem,
+                              color === post?.card?.fill_color && styles.colorItemSelected,
+                            )
+                          }
+                          style={{ backgroundColor: color }}
+                        />
+                      ),
+                      R.values(cardColors),
+                    )
+                  }
+                </div>
+              )
+              : (
                 <div className={css(styles.photoBlock)}>
                   <div>
                     <span className={css(styles.photoLabelText, themeStyles.defaultFont)}>
@@ -102,10 +152,10 @@ const PostCardInfo = ({ post, removeCardImage, loadCardImage }) => {
                       />
                     </div>
                     {
-                      post.card_image && (
+                      post?.card?.image && (
                         <div className={css(styles.photosContainer)}>
                           <PhotoPreview
-                            src={post.card_image}
+                            src={post.card.image.content || post.card.image.url}
                             remove={() => removeCardImage()}
                           />
                         </div>
@@ -114,37 +164,32 @@ const PostCardInfo = ({ post, removeCardImage, loadCardImage }) => {
                   </div>
                 </div>
               )
-              : (
-                <div className={css(styles.colorPicker)}>
-                  {
-                    R.map(
-                      color => (
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => setSelectedColor(color)}
-                          className={
-                            css(
-                              styles.colorPickerItem,
-                              color === selectedColor && styles.colorItemSelected
-                            )
-                          }
-                          style={{ backgroundColor: color }}
-                        />
-                      ),
-                      R.values(cardColors),
-                    )
-                  }
-                </div>
-              )
           }
         </div>
       </div>
       <div className={css(styles.inputWrapper)}>
-        <Input input={{ value: post.card_title }} maxLength={56} label="Заголовок карточки" />
+        <Input
+          input={
+            {
+              value: post?.card?.title,
+              onChange: event => onChangePostCardParams('title', event.target.value),
+            }
+          }
+          maxLength={56}
+          label="Заголовок карточки"
+        />
       </div>
       <div className={css(styles.inputWrapper)}>
-        <Input input={{}} maxLength={58} label="Краткое описание" />
+        <Input
+          input={
+            {
+              value: post?.card?.description,
+              onChange: event => onChangePostCardParams('description', event.target.value),
+            }
+          }
+          maxLength={58}
+          label="Краткое описание"
+        />
       </div>
     </CardLayout>
   );
@@ -154,6 +199,7 @@ PostCardInfo.propTypes = {
   post: PropTypes.object,
   removeCardImage: PropTypes.func,
   loadCardImage: PropTypes.func,
+  onChangePostCardParams: PropTypes.func,
 };
 
 export default PostCardInfo;
