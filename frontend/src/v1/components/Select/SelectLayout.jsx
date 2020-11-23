@@ -129,10 +129,13 @@ const SelectLayout = ({
     if (item && item.text) {
       return item.text;
     }
-    return React.createElement(
-      item.component,
-      { ...item.componentProps, disabled },
-    );
+    if (item && item.component) {
+      return React.createElement(
+        item.component,
+        { ...item.componentProps, disabled },
+      );
+    }
+    return null;
   };
 
   const renderSelected = (data) => {

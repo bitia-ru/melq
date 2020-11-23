@@ -124,6 +124,34 @@ class PostEdit extends React.PureComponent {
         );
       }
     }
+    if (post.card) {
+      const { card } = post;
+      if (card.title) {
+        formData.append('post[card_attributes][title]', card.title);
+      }
+      if (card.description) {
+        formData.append('post[card_attributes][description]', card.description);
+      }
+      if (card.fill_color) {
+        formData.append('post[card_attributes][fill_color]', card.fill_color);
+      }
+      if (card.style) {
+        formData.append('post[card_attributes][style]', card.style);
+      }
+      if (card.main_tag_id) {
+        formData.append('post[card_attributes][main_tag_id]', card.main_tag_id);
+      }
+      if (card.image?.file) {
+        formData.append('post[card_attributes][image]', card.image.file);
+      }
+      if (card.image === null) {
+        formData.append(
+          'post[card_attributes][image_attachment_attributes][id]',
+          this.props.posts[slug].card.image.id,
+        );
+        formData.append('post[card_attributes][image_attachment_attributes][_destroy]', true);
+      }
+    }
     if (post.slug) {
       formData.append('post[slug]', post.slug);
     }
@@ -293,6 +321,14 @@ class PostEdit extends React.PureComponent {
     );
   };
 
+  onChangePostCardParams = (fieldName, fieldValue, callback) => {
+    const { post } = this.state;
+    this.setState(
+      { post: { ...post, card: { ...post.card, [fieldName]: fieldValue } } },
+      callback,
+    );
+  };
+
   onAnnouncementPhotoLoad = (socialNetwork, data) => {
     console.log(`${socialNetwork} photo loaded`);
   };
@@ -333,6 +369,23 @@ class PostEdit extends React.PureComponent {
     }
   };
 
+  onCardImageFileRead = (file) => {
+    this.onChangePostCardParams(
+      'image',
+      { file, content: this.fileReader.result },
+    );
+  };
+
+  onCardImageLoad = (file) => {
+    this.fileReader = new FileReader();
+    this.fileReader.onloadend = () => this.onCardImageFileRead(file);
+    this.fileReader.readAsDataURL(file);
+  };
+
+  onCardImageRemove = () => {
+    this.onChangePostCardParams('image', null);
+  };
+
   render() {
     const { posts, user } = this.props;
     const { images, imagesUpdatedNames, post: postState, isWaiting } = this.state;
@@ -342,6 +395,10 @@ class PostEdit extends React.PureComponent {
       can_comment: 'authorized_only',
       ...posts[slug],
       ...postState,
+      card: {
+        ...posts[slug]?.card,
+        ...(postState?.card ? postState.card : {}),
+      },
     };
 
     return (
@@ -352,16 +409,20 @@ class PostEdit extends React.PureComponent {
               <div className={css(styles.twoColumnRow)}>
                 <div className={css(styles.leftColumn)}>
                   <CardLayout title="Темы поста">
-                    <Select
-                      items={this.preparedTags()}
-                      input={
-                        {
-                          value: R.map(t => t.id, post.tags || []),
-                          onChange: this.onTagsChange,
-                        }
-                      }
-                      multiple
-                    />
+                    {
+                      this.props.tags && (
+                        <Select
+                          items={this.preparedTags()}
+                          input={
+                            {
+                              value: R.map(t => t.id, post.tags || []),
+                              onChange: this.onTagsChange,
+                            }
+                          }
+                          multiple
+                        />
+                      )
+                    }
                   </CardLayout>
                 </div>
                 <div className={css(styles.rightColumn)}>
@@ -404,7 +465,12 @@ class PostEdit extends React.PureComponent {
                 />
               </div>
               <div className={css(styles.cardWrapper)}>
-                <PostCardInfo post={post} loadCardImage={() => {}} removeCardImage={() => {}} />
+                <PostCardInfo
+                  post={post}
+                  loadCardImage={this.onCardImageLoad}
+                  removeCardImage={this.onCardImageRemove}
+                  onChangePostCardParams={this.onChangePostCardParams}
+                />
               </div>
               <div className={css(styles.cardWrapper)}>
                 <PostLinkInfo link="some link" />
