@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css, StyleSheet } from '../../../aphrodite';
 import AvatarRound from '@/v1/components/AvatarRound/AvatarRound';
 import { themeStyles, separatorColor } from '@/v1/theme';
+import SettingsContext from "../../../contexts/SettingsContext";
 
 const styles = StyleSheet.create({
   panel: {
@@ -32,23 +33,29 @@ const styles = StyleSheet.create({
 });
 
 const PanelLayout = ({ children }) => (
-  <div className={css(styles.panel)}>
-    <div className={css(styles.authorBlock)}>
-      <AvatarRound src={require('../images/avatar.png')} />
-      <div className={css(styles.authorInfo)}>
-        <div className={css(themeStyles.headerFont)}>
-          Артем Левенков
+  <SettingsContext.Consumer>
+    {
+      ({ settings }) => (
+        <div className={css(styles.panel)}>
+          <div className={css(styles.authorBlock)}>
+            <AvatarRound src={settings?.avatar?.url} />
+            <div className={css(styles.authorInfo)}>
+              <div className={css(themeStyles.headerFont)}>
+                {settings?.nickname}
+              </div>
+              <div className={css(styles.description, themeStyles.detailsFont)}>
+                {settings?.specialization}
+              </div>
+            </div>
+          </div>
+          <div className={css(styles.descriptionDetail, themeStyles.detailsFont)}>
+            {settings?.about}
+          </div>
+          {children}
         </div>
-        <div className={css(styles.description, themeStyles.detailsFont)}>
-          Кем являешься кратко
-        </div>
-      </div>
-    </div>
-    <div className={css(styles.descriptionDetail, themeStyles.detailsFont)}>
-      Специализация — Рельсы, фронтенд, автоматизация тестирования и разработки.
-    </div>
-    {children}
-  </div>
+      )
+    }
+  </SettingsContext.Consumer>
 );
 
 PanelLayout.propTypes = { children: PropTypes.node };

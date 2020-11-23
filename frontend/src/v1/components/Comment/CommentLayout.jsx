@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import AvatarRound from '@/v1/components/AvatarRound/AvatarRound';
@@ -9,12 +9,14 @@ import {
   defaultColor,
   themeStyles,
 } from '@/v1/theme';
+
+import SettingsContext from '../../contexts/SettingsContext';
+
 import LikeCounter from '@/v1/components/icon_counters/LikeCounter/LikeCounter';
 import EditButton from '@/v1/components/icon_buttons/EditButton/EditButton';
 import TrashButton from '@/v1/components/icon_buttons/TrashButton/TrashButton';
 import HideButton from '@/v1/components/icon_buttons/HideButton/HideButton';
 import { notReady, notExist } from '@/v1/utils';
-import author from '../../Constants/blogAuthor';
 
 const styles = StyleSheet.create({
   container: { display: 'flex' },
@@ -71,14 +73,16 @@ const CommentLayout = ({
   answer,
   user,
 }) => {
+  const { settings } = useContext(SettingsContext);
+
   const getName = () => {
-    if (comment.user_id) { return author.name; }
+    if (comment.user_id) { return settings?.nickname; }
 
     return comment.author_name || 'Гость';
   };
 
   const getAvatarUrl = () => {
-    if (comment.user_id) { return author.avatarUrl; }
+    if (comment.user_id) { return settings?.avatar?.url; }
 
     return comment.author_url;
   };
@@ -149,7 +153,7 @@ const CommentLayout = ({
       </div>
     </div>
   );
-}
+};
 
 CommentLayout.propTypes = {
   user: PropTypes.object,

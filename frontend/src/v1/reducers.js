@@ -6,6 +6,7 @@ import { default as commentsReducerV1 } from '@/v1/redux/comments/reducer';
 import { default as tagsReducerV1 } from '@/v1/redux/tags/reducer';
 import { default as userSessionReducerV1 } from '@/v1/redux/user_session/reducer';
 import { default as editModeReducerV1 } from '@/v1/redux/editMode/reducer';
+import { default as settingsReducerV1 } from '@/v1/redux/settings/reducer';
 
 export default combineReducers({
   usersStoreV1: usersReducerV1,
@@ -15,4 +16,5 @@ export default combineReducers({
   userSessionV1: userSessionReducerV1,
   form: formReducer,
   editMode: editModeReducerV1,
+  settingsStoreV1: settingsReducerV1,
 });
