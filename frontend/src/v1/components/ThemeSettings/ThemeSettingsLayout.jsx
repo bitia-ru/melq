@@ -25,14 +25,20 @@ const styles = StyleSheet.create({
   itemWrapper: { marginBottom: 16 },
 });
 
-const ThemeSettingsLayout = ({ themes, onItemTriggered, showMoreCount, onShowMore }) => (
+const ThemeSettingsLayout = ({
+  themes,
+  onItemTriggered,
+  showMoreCount,
+  onShowMore,
+  setUpThemes,
+}) => (
   <div className={css(styles.container)}>
     <div className={css(styles.header)}>
       <span className={css(themeStyles.headerFont)}>Настроить ленту по темам</span>
       <div className={css(styles.settingsBtnWrapper)}>
         <Icon
           src={`${require('./assets/settings.svg')}#settings`}
-          onTriggered={() => console.log('Настроить темы')}
+          onTriggered={setUpThemes}
           width={24}
           height={24}
           tooltipText="Настроить темы"
@@ -64,6 +70,7 @@ ThemeSettingsLayout.propTypes = {
   onItemTriggered: PropTypes.func,
   showMoreCount: PropTypes.number,
   onShowMore: PropTypes.func,
+  setUpThemes: PropTypes.func,
 };
 
 export default ThemeSettingsLayout;

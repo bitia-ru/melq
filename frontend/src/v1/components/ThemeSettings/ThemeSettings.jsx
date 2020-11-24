@@ -9,7 +9,7 @@ import ThemeSettingsLayout from './ThemeSettingsLayout';
 
 const DEFAULT_DISPLAYED_LENGTH = 7;
 
-const ThemeSettings = ({ themes, loadTags }) => {
+const ThemeSettings = ({ themes, loadTags, setUpThemes }) => {
   const [showMoreBtnVisible, setShowMoreBtnVisible] = useState(
     themes.length > DEFAULT_DISPLAYED_LENGTH,
   );
@@ -24,6 +24,7 @@ const ThemeSettings = ({ themes, loadTags }) => {
         showMoreBtnVisible ? R.slice(0, DEFAULT_DISPLAYED_LENGTH, themes) : themes
       }
       onItemTriggered={() => {}}
+      setUpThemes={setUpThemes}
       onShowMore={() => setShowMoreBtnVisible(false)}
       showMoreCount={showMoreBtnVisible ? themes.length - DEFAULT_DISPLAYED_LENGTH : 0}
     />
@@ -33,11 +34,19 @@ const ThemeSettings = ({ themes, loadTags }) => {
 ThemeSettings.propTypes = {
   themes: PropTypes.array,
   loadTags: PropTypes.func,
+  setUpThemes: PropTypes.func,
 };
 
 ThemeSettings.defaultProps = { themes: [] };
 
-const mapStateToProps = state => ({ themes: R.values(state.tagsStoreV1.tags) });
+const mapStateToProps = state => ({
+  themes: (
+    R.reject(
+      theme => R.contains(theme.id, state.unselectedThemesIds),
+      R.values(state.tagsStoreV1.tags),
+    )
+  ),
+});
 
 const mapDispatchToProps = dispatch => ({ loadTags: () => dispatch(loadTagsAction()) });
 
