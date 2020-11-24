@@ -19,3 +19,29 @@ export const loadSettings = () => ( // eslint-disable-line import/prefer-default
     );
   }
 );
+
+export const updateSettings = (attributes, afterSuccess, afterAll) => (
+  (dispatch) => {
+    dispatch({ type: acts.LOAD_SETTINGS_REQUEST });
+
+    Api.post(
+      '/v1/settings/1',
+      attributes,
+      {
+        dispatch,
+        method: 'patch',
+        type: 'form-multipart',
+        success() {
+          afterSuccess && afterSuccess();
+          afterAll && afterAll();
+        },
+        failed(error) {
+          dispatch({ type: acts.LOAD_SETTINGS_FAILED });
+          afterAll && afterAll();
+
+          toastHttpError(error);
+        },
+      },
+    );
+  }
+);
