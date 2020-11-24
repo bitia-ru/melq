@@ -14,14 +14,20 @@ const styles = StyleSheet.create({
     height: '100%',
     boxSizing: 'border-box',
   },
+  smallPadding: {
+    paddingTop: '27px',
+    paddingLeft: '28px',
+    paddingRight: '28px',
+    paddingBottom: '28px',
+  },
   title: {
     color: mainFontColor,
     marginBottom: '14px',
   },
 });
 
-const CardLayout = ({ children, title }) => (
-  <div className={css(styles.container)}>
+const CardLayout = ({ children, title, padding }) => (
+  <div className={css(styles.container, padding === 'small' && styles.smallPadding)}>
     {
       title && (
         <div className={css(themeStyles.headerFont, styles.title)}>{title}</div>
@@ -34,6 +40,7 @@ const CardLayout = ({ children, title }) => (
 CardLayout.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
+  padding: PropTypes.string,
 };
 
 export default CardLayout;
