@@ -119,7 +119,12 @@ MainPage.propTypes = {
 
 const mapStateToProps = state => ({
   user: currentUser(state),
-  posts: state.postsStoreV1.posts,
+  posts: R.filter(
+    post => (
+      R.intersection(state.selectedThemesIds, R.map(tag => tag.id, post.tags)).length > 0
+    ),
+    state.postsStoreV1.posts,
+  ),
   editMode: state.editMode,
 });
 

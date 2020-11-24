@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const UserPanel = ({ signIn, openPrivacyPolicy }) => (
+const UserPanel = ({ signIn, openPrivacyPolicy, setUpThemes }) => (
   <PanelLayout>
     <div className={css(styles.container)}>
       <div className={css(styles.contactAuthorWrapper)}>
@@ -48,7 +48,7 @@ const UserPanel = ({ signIn, openPrivacyPolicy }) => (
         </Link>
       </div>
       <div className={css(styles.themeSettingsWrapper)}>
-        <ThemeSettings />
+        <ThemeSettings setUpThemes={setUpThemes} />
       </div>
       <div className={css(styles.footer)}>
         <div className={css(styles.logInBtnWrapper)}>
@@ -65,6 +65,7 @@ const UserPanel = ({ signIn, openPrivacyPolicy }) => (
 UserPanel.propTypes = {
   signIn: PropTypes.func,
   openPrivacyPolicy: PropTypes.func,
+  setUpThemes: PropTypes.func,
 };
 
 export default UserPanel;
