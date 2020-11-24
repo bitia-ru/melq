@@ -58,7 +58,7 @@ export const themeStyles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerFont: {
-    fontFamily: 'GilroyRegular',
+    fontFamily: 'GilroyBold',
     fontSize: '22px',
     lineHeight: '27px',
     fontWeight: 'bold',
