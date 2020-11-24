@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const UserPanel = ({ signIn }) => (
+const UserPanel = ({ signIn, openPrivacyPolicy }) => (
   <PanelLayout>
     <div className={css(styles.container)}>
       <div className={css(styles.contactAuthorWrapper)}>
@@ -54,7 +54,7 @@ const UserPanel = ({ signIn }) => (
         <div className={css(styles.logInBtnWrapper)}>
           <LogInButton onTriggered={signIn} />
         </div>
-        <Link onTriggered={() => {}} linkStyle="dark" size="big">
+        <Link onTriggered={openPrivacyPolicy} linkStyle="dark" size="big">
           Правила использования материалов
         </Link>
       </div>
@@ -62,6 +62,9 @@ const UserPanel = ({ signIn }) => (
   </PanelLayout>
 );
 
-UserPanel.propTypes = { signIn: PropTypes.func };
+UserPanel.propTypes = {
+  signIn: PropTypes.func,
+  openPrivacyPolicy: PropTypes.func,
+};
 
 export default UserPanel;
