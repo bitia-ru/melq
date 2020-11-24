@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { css, StyleSheet } from '../../../aphrodite';
 
@@ -17,14 +18,28 @@ const styles = StyleSheet.create({
   languageSelectWrapper: { textAlign: 'right' },
 });
 
-const DefaultHeader = () => (
+const DefaultHeader = ({ openBlog, openAboutBlog, selected }) => (
   <HeaderLayout>
     <div className={css(styles.leftBlock)}>
       <div className={css(styles.blogLinkWrapper)}>
-        <Link onTriggered={() => {}} linkStyle="dark" size="big" selected>Блог</Link>
+        <Link
+          onTriggered={openBlog}
+          linkStyle="dark"
+          size="big"
+          selected={selected === 'index'}
+        >
+          Блог
+        </Link>
       </div>
       <div className={css(styles.aboutBlogLinkWrapper)}>
-        <Link onTriggered={() => {}} linkStyle="dark" size="big">Об этом блоге</Link>
+        <Link
+          onTriggered={openAboutBlog}
+          linkStyle="dark"
+          size="big"
+          selected={selected === 'about'}
+        >
+          Об этом блоге
+        </Link>
       </div>
       <div>
         <Search onChange={() => {}} variants={[]} />
@@ -35,5 +50,11 @@ const DefaultHeader = () => (
     </div>
   </HeaderLayout>
 );
+
+DefaultHeader.propTypes = {
+  openBlog: PropTypes.func,
+  openAboutBlog: PropTypes.func,
+  selected: PropTypes.string,
+};
 
 export default DefaultHeader;

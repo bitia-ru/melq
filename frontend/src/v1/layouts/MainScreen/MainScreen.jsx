@@ -61,17 +61,37 @@ class MainScreen extends React.PureComponent {
           editMode={editMode}
           switchEditMode={() => setEditMode(!editMode) }
           logOut={closeUserSession}
+          openPrivacyPolicy={
+            () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
+          }
         />
       );
     }
-    return <UserPanel signIn={() => this.props.history.push('#signin')} />;
+    return (
+      <UserPanel
+        signIn={() => this.props.history.push('#signin')}
+        openPrivacyPolicy={
+          () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
+        }
+      />
+    );
   };
 
   renderHeader = () => {
     if (this.props.editMode) {
       return <EditModeHeader addNewPost={() => this.props.history.push('/new')} />;
     }
-    return <DefaultHeader />;
+    return (
+      <DefaultHeader
+        openBlog={() => this.props.history.push('/')}
+        openAboutBlog={() => this.props.history.push(`/${this.props.settings.about_blog_slug}`)}
+        selected={
+          this.props.match.params?.slug === this.props.settings?.about_blog_slug
+            ? 'about'
+            : 'index'
+        }
+      />
+    );
   };
 
   render() {
