@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   logOutBtnWrapper: { width: 25 },
 });
 
-const AdminPanel = ({ editMode, switchEditMode, logOut }) => (
+const AdminPanel = ({ editMode, switchEditMode, logOut, openPrivacyPolicy }) => (
   <PanelLayout>
     <div className={css(styles.container)}>
       <div className={css(styles.editSwitchWrapper)}>
@@ -114,7 +114,7 @@ const AdminPanel = ({ editMode, switchEditMode, logOut }) => (
                 <ThemeSettings />
               </div>
               <div className={css(styles.defaultFooter)}>
-                <Link onTriggered={() => {}} linkStyle="dark" size="big">
+                <Link onTriggered={openPrivacyPolicy} linkStyle="dark" size="big">
                   Правила использования материалов
                 </Link>
                 <div className={css(styles.logOutBtnWrapper)}>
@@ -132,6 +132,7 @@ AdminPanel.propTypes = {
   editMode: PropTypes.bool,
   switchEditMode: PropTypes.func,
   logOut: PropTypes.func,
+  openPrivacyPolicy: PropTypes.func,
 };
 
 export default AdminPanel;
