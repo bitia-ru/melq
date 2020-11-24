@@ -117,11 +117,22 @@ MainPage.propTypes = {
   loadPosts: PropTypes.func,
 };
 
-const mapStateToProps = state => ({
-  user: currentUser(state),
-  posts: state.postsStoreV1.posts,
-  editMode: state.editMode,
-});
+const mapStateToProps = (state) => {
+  const selectedThemesIds = R.reject(
+    id => R.contains(id, state.unselectedThemesIds),
+    R.map(t => t.id, R.values(state.tagsStoreV1.tags)),
+  );
+  return {
+    user: currentUser(state),
+    posts: R.filter(
+      post => (
+        R.intersection(selectedThemesIds, R.map(tag => tag.id, post.tags)).length > 0
+      ),
+      state.postsStoreV1.posts,
+    ),
+    editMode: state.editMode,
+  };
+};
 
 const mapDispatchToProps = dispatch => ({ loadPosts: () => dispatch(loadPosts()) });
 

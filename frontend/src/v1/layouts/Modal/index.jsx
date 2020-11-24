@@ -10,7 +10,7 @@ const onClick = (event) => {
   event.stopPropagation();
 };
 
-const Modal = ({ maxWidth, maxHeight, controls, children }) => (
+const Modal = ({ maxWidth, maxHeight, controls, children, unscrollableFooter }) => (
   <ModalContext.Consumer>
     {
       ({ closeModal }) => (
@@ -19,24 +19,34 @@ const Modal = ({ maxWidth, maxHeight, controls, children }) => (
             css(
               style.modal,
               maxWidth && maxWidthStyle(maxWidth),
-              maxHeight && maxHeightStyle(maxHeight),
             )
           }
           onClick={onClick}
         >
-          <div className={css(style.controlsContainer)}>
-            <button
-              type="button"
-              className="close"
-              onClick={closeModal}
-              style={{
-                width: '17px',
-                height: '17px',
-              }}
-            />
-            {controls}
+          <div
+            className={
+              css(
+                style.modalInner,
+                unscrollableFooter && style.modalInnerWithFooter,
+                maxHeight && maxHeightStyle(maxHeight),
+              )
+            }
+          >
+            <div className={css(style.controlsContainer)}>
+              <button
+                type="button"
+                className="close"
+                onClick={closeModal}
+                style={{
+                  width: '17px',
+                  height: '17px',
+                }}
+              />
+              {controls}
+            </div>
+            {children}
           </div>
-          {children}
+          {unscrollableFooter}
         </div>
       )
     }
@@ -45,19 +55,23 @@ const Modal = ({ maxWidth, maxHeight, controls, children }) => (
 
 Modal.propTypes = {
   controls: PropTypes.arrayOf(PropTypes.element),
+  unscrollableFooter: PropTypes.node,
 };
 
 const style = StyleSheet.create({
   modal: {
     position: 'relative',
     backgroundColor: 'white',
+    color: '#393C51',
+    minHeight: '64px',
+  },
+  modalInner: {
     paddingTop: '67px',
     paddingLeft: '48px',
     paddingRight: '48px',
     paddingBottom: '56px',
-    color: '#393C51',
-    minHeight: '64px',
   },
+  modalInnerWithFooter: { paddingBottom: '24px' },
   controlsContainer: {
     position: 'absolute',
     content: '',
@@ -77,7 +91,14 @@ const maxWidthStyle = (width) => (
 );
 
 const maxHeightStyle = (height) => (
-  StyleSheet.create({ maxHeight: { height: '100%', maxheight: height } }).maxHeight
+  StyleSheet.create({
+    maxHeight: {
+      height: '100%',
+      maxHeight: height,
+      overflowY: 'auto',
+      overflowX: 'hidden',
+    },
+  }).maxHeight
 );
 
 export default Modal;

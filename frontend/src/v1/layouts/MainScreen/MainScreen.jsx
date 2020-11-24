@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { css, StyleSheet } from '../../aphrodite';
@@ -9,12 +10,14 @@ import { closeUserSession } from '@/v1/utils/auth';
 
 import { setEditMode as setEditModeAction } from '../../redux/editMode/actions';
 import { loadSettings } from '../../redux/settings/actions';
+import setUnselectedThemesIds from '../../redux/unselectedThemes/actions';
 
 import LogInForm from '../../forms/LogInForm/LogInForm';
 import AdminPanel from './panels/AdminPanel';
 import UserPanel from './panels/UserPanel';
 import EditModeHeader from './headers/EditModeHeader';
 import DefaultHeader from './headers/DefaultHeader';
+import SetUpThemesForm from '../../forms/SetUpThemesForm';
 
 import './scroll_workaround.css';
 
@@ -46,6 +49,16 @@ class MainScreen extends React.PureComponent {
         hashRoute: true,
         body: <LogInForm />,
       },
+      setup_themes: {
+        hashRoute: true,
+        body: (
+          <SetUpThemesForm
+            themes={this.props.tags}
+            defaultUnselectedIds={this.props.unselectedThemesIds}
+            save={this.props.setUnselectedThemesIds}
+          />
+        ),
+      },
     };
   }
 
@@ -61,6 +74,7 @@ class MainScreen extends React.PureComponent {
           editMode={editMode}
           switchEditMode={() => setEditMode(!editMode) }
           logOut={closeUserSession}
+          setUpThemes={() => this.props.history.push('#setup_themes')}
           openPrivacyPolicy={
             () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
           }
@@ -70,6 +84,7 @@ class MainScreen extends React.PureComponent {
     return (
       <UserPanel
         signIn={() => this.props.history.push('#signin')}
+        setUpThemes={() => this.props.history.push('#setup_themes')}
         openPrivacyPolicy={
           () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
         }
@@ -136,16 +151,22 @@ MainScreen.propTypes = {
   user: PropTypes.object,
   settings: PropTypes.object,
   loadSettings: PropTypes.func,
+  tags: PropTypes.array,
+  setUnselectedThemesIds: PropTypes.func,
+  unselectedThemesIds: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   editMode: state.editMode,
   settings: state.settingsStoreV1.settings[1],
+  tags: R.values(state.tagsStoreV1.tags),
+  unselectedThemesIds: state.unselectedThemesIds,
 });
 
 const mapDispatchToProps = dispatch => ({
   setEditMode: editMode => dispatch(setEditModeAction(editMode)),
   loadSettings: () => dispatch(loadSettings()),
+  setUnselectedThemesIds: themesIds => dispatch(setUnselectedThemesIds(themesIds)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(MainScreen)));
