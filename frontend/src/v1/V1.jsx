@@ -10,6 +10,7 @@ import { currentUser as currentUserObtainer } from './redux/user_session/utils';
 import { default as MainExamplePage } from './examples/Main';
 import examples from '@/v1/examples';
 import ThemesIndex from './screens/ThemesIndex';
+import SettingsEdit from './screens/SettingsEdit/SettingsEdit';
 
 const V1 = ({ currentUser }) => (
   <>
@@ -19,6 +20,7 @@ const V1 = ({ currentUser }) => (
           <Route exact path="/" component={MainPage} />
           <Route exact path="/components" component={MainExamplePage} />
           <Route exact path="/themes" component={ThemesIndex} />
+          <Route exact path="/settings" component={SettingsEdit} />
           <Route exact path={['/new', '/:slug/edit']} component={PostEdit} />
           <Route exact path="/:slug" component={PostShow} />
           <Route
