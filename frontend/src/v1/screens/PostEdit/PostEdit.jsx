@@ -3,56 +3,11 @@ import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import MainScreen from '../../layouts/MainScreen/MainScreen';
 import { loadPost, updatePost, createPost, removePost } from '@/v1/redux/posts/actions';
 import { loadTags } from '@/v1/redux/tags/actions';
-import Button from '@/v1/components/Button/Button';
-import { StyleSheet, css } from '@/v1/aphrodite';
 import showToastr from '@/v1/utils/showToastr';
 import { currentUser } from '@/v1/redux/user_session/utils';
-import TwoColumnsLayout from '../../layouts/TwoColumnsLayout';
-import Link from '../../components/Link/Link';
-import CardLayout from '../../layouts/CardLayout';
-import Select from '../../components/Select/Select';
-import PostCardInfo from './PostCardInfo';
-import PostContentInfo from './PostContentInfo';
-import PostLinkInfo from './PostLinkInfo';
-import AutopostInfo from './AutopostInfo';
-import SeoInfo from './SeoInfo';
-import Theme from '../../components/Theme/Theme';
-
-const styles = StyleSheet.create({
-  container: { marginTop: '40px' },
-  rightBlock: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  leftBlock: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  twoColumnRow: {
-    display: 'grid',
-    gridTemplateColumns: '50% 50%',
-  },
-  leftColumn: { marginRight: '12px' },
-  rightColumn: { marginLeft: '12px' },
-  deletePreviewBtnWrapper: {
-    textAlign: 'center',
-    marginTop: '24px',
-    marginBottom: '24px',
-  },
-  deletePreviewBtnLinkText: {
-    marginLeft: '7px',
-    marginTop: '1px',
-  },
-  deletePreviewBtnInnerContainer: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  publishBtnWrapper: { marginTop: '16px' },
-  cardWrapper: { marginTop: '24px' },
-});
+import PostEditLayout from './PostEditLayout';
 
 class PostEdit extends React.PureComponent {
   constructor(props) {
@@ -337,20 +292,6 @@ class PostEdit extends React.PureComponent {
     console.log(`${socialNetwork} photo removed`);
   };
 
-  preparedTags = () => (
-    R.map(
-      tag => ({
-        id: tag.id,
-        component: Theme,
-        componentProps: {
-          theme: tag,
-          size: 'small',
-        },
-      }),
-      this.props.tags,
-    )
-  );
-
   onTagsChange = (e) => {
     const { posts } = this.props;
     const { post: postState } = this.state;
@@ -402,140 +343,35 @@ class PostEdit extends React.PureComponent {
     };
 
     return (
-      <MainScreen header="" user={user}>
-        <div className={css(styles.container)}>
-          <TwoColumnsLayout>
-            <div className={css(styles.leftBlock)}>
-              <div className={css(styles.twoColumnRow)}>
-                <div className={css(styles.leftColumn)}>
-                  <CardLayout title="Темы поста">
-                    {
-                      this.props.tags && (
-                        <Select
-                          items={this.preparedTags()}
-                          input={
-                            {
-                              value: R.map(t => t.id, post.tags || []),
-                              onChange: this.onTagsChange,
-                            }
-                          }
-                          multiple
-                        />
-                      )
-                    }
-                  </CardLayout>
-                </div>
-                <div className={css(styles.rightColumn)}>
-                  <CardLayout title="Кто может комментировать">
-                    <Select
-                      items={
-                        [
-                          { id: 'everyone', text: 'Все' },
-                          { id: 'authorized_only', text: 'Только авторизованные пользователи' },
-                          { id: 'nobody', text: 'Никто' },
-                        ]
-                      }
-                      input={
-                        {
-                          value: post.can_comment,
-                          onChange: value => this.onChangePostParams('can_comment', value),
-                        }
-                      }
-                    />
-                  </CardLayout>
-                </div>
-              </div>
-              <div className={css(styles.cardWrapper)}>
-                <PostContentInfo
-                  post={post}
-                  removedImagesIds={this.state.removedImagesIds}
-                  onChangePostParams={this.onChangePostParams}
-                  images={images}
-                  imagesUpdatedNames={imagesUpdatedNames}
-                  removeImage={this.removeImage}
-                  checkNameUniq={this.checkNameUniq}
-                  removeJustLoadedImage={this.removeJustLoadedImage}
-                  loadImage={this.onFileChosen}
-                  setImages={newImages => this.setState({ images: newImages })}
-                  setImagesUpdatedNames={
-                    (newImagesUpdatedNames) => {
-                      this.setState({ imagesUpdatedNames: newImagesUpdatedNames })
-                    }
-                  }
-                />
-              </div>
-              <div className={css(styles.cardWrapper)}>
-                <PostCardInfo
-                  post={post}
-                  loadCardImage={this.onCardImageLoad}
-                  removeCardImage={this.onCardImageRemove}
-                  onChangePostCardParams={this.onChangePostCardParams}
-                />
-              </div>
-              <div className={css(styles.cardWrapper)}>
-                <PostLinkInfo link="some link" />
-              </div>
-              <div className={css(styles.cardWrapper)}>
-                <AutopostInfo
-                  post={post}
-                  onChange={this.onChangePostParams}
-                  onRemovePhoto={this.onAnnouncementPhotoRemove}
-                  onLoadPhoto={this.onAnnouncementPhotoLoad}
-                />
-              </div>
-              <div className={css(styles.cardWrapper)}>
-                <SeoInfo onChange={this.onChangePostParams} post={post} />
-              </div>
-            </div>
-            <div className={css(styles.rightBlock)}>
-              <div className={css(styles.btnContainer)}>
-                <Button onClick={this.submit} isWaiting={isWaiting.submitBtn}>
-                  Сохранить в черновик
-                </Button>
-                <div className={css(styles.publishBtnWrapper)}>
-                  <Button
-                    isWaiting={isWaiting.submitBtn}
-                    onClick={() => this.onChangePostParams('published', true, this.submit)}
-                    btnStyle="info"
-                  >
-                    Опубликовать
-                  </Button>
-                </div>
-                <div className={css(styles.deletePreviewBtnWrapper)}>
-                  <Link onTriggered={() => {}}>
-                    <div className={css(styles.deletePreviewBtnInnerContainer)}>
-                      <svg width={16} height={16}>
-                        <use
-                          xlinkHref={
-                            `${require('../../components/Link/images/preview.svg')}#preview`
-                          }
-                        />
-                      </svg>
-                      <span className={css(styles.deletePreviewBtnLinkText)}>Предпросмотр</span>
-                    </div>
-                  </Link>
-                </div>
-                {
-                  slug && (
-                    <div className={css(styles.deletePreviewBtnWrapper)}>
-                      <Link onTriggered={this.remove} isWaiting={isWaiting.removeBtn}>
-                        <div className={css(styles.deletePreviewBtnInnerContainer)}>
-                          <svg width={16} height={16}>
-                            <use
-                              xlinkHref={`${require('../../components/Link/images/trash.svg')}#trash`}
-                            />
-                          </svg>
-                          <span className={css(styles.deletePreviewBtnLinkText)}>Удалить</span>
-                        </div>
-                      </Link>
-                    </div>
-                  )
-                }
-              </div>
-            </div>
-          </TwoColumnsLayout>
-        </div>
-      </MainScreen>
+      <PostEditLayout
+        post={post}
+        user={user}
+        tags={this.props.tags}
+        onTagsChange={this.onTagsChange}
+        onChangePostParams={this.onChangePostParams}
+        onChangePostCardParams={this.onChangePostCardParams}
+        removedImagesIds={this.state.removedImagesIds}
+        isWaiting={isWaiting}
+        images={images}
+        imagesUpdatedNames={imagesUpdatedNames}
+        removeImage={this.removeImage}
+        checkNameUniq={this.checkNameUniq}
+        removeJustLoadedImage={this.removeJustLoadedImage}
+        loadImage={this.onFileChosen}
+        setImages={newImages => this.setState({ images: newImages })}
+        setImagesUpdatedNames={
+          (newImagesUpdatedNames) => {
+            this.setState({ imagesUpdatedNames: newImagesUpdatedNames });
+          }
+        }
+        onCardImageLoad={this.onCardImageLoad}
+        onCardImageRemove={this.onCardImageRemove}
+        onAnnouncementPhotoLoad={this.onAnnouncementPhotoLoad}
+        onAnnouncementPhotoRemove={this.onAnnouncementPhotoRemove}
+        submit={this.submit}
+        remove={this.remove}
+        slug={slug}
+      />
     );
   }
 }
