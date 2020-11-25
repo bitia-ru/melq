@@ -81,7 +81,8 @@ class PostShow extends React.PureComponent {
   render() {
     const { user, posts, history, editMode } = this.props;
 
-    const post = posts[this.props.match.params.slug];
+    const slug = this.props.match.params.slug;
+    const post = posts[slug];
 
     return (
       <MainScreen header="" user={user}>
@@ -90,7 +91,10 @@ class PostShow extends React.PureComponent {
             <div className={css(styles.mainContentWrapper)}>
               {
                 post && (
-                  <PostContent post={post} />
+                  <PostContent
+                    post={post}
+                    slug={slug}
+                  />
                 )
               }
               <PostComments />
