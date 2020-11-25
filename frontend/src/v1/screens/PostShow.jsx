@@ -1,28 +1,22 @@
 import React from 'react';
-import dayjs from 'dayjs';
 import { withRouter } from 'react-router-dom';
-import * as R from 'ramda';
-import marked from 'marked';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { currentUser } from '@/v1/redux/user_session/utils';
 import { loadPost } from '@/v1/redux/posts/actions';
 import { loadComments } from '@/v1/redux/comments/actions';
-import prepareImageUrls from '@/v1/utils/prepareImageUrls';
 import PostComments from '../components/PostComments/PostComments';
 import Button from '../components/Button/Button';
 import LikeCounter from '../components/icon_counters/LikeCounter/LikeCounter';
 import CommentCounter from '../components/icon_counters/CommentCounter/CommentCounter';
 import Link from '../components/Link/Link';
 import TwoColumnsLayout from '../layouts/TwoColumnsLayout';
-import ShareCounter from '../components/icon_counters/ShareCounter/ShareCounter';
-import ViewCounter from '../components/icon_counters/ViewCounter/ViewCounter';
-import Theme from '../components/Theme/Theme';
+import PostContent from '../components/PostContent/PostContent';
 
 import { StyleSheet, css } from '../aphrodite';
 
-import { bgColor, separatorColor, themeStyles, dateTopicCounterColor } from '../theme';
+import { bgColor, separatorColor } from '../theme';
 
 const styles = StyleSheet.create({
   container: { marginTop: 40 },
@@ -30,14 +24,6 @@ const styles = StyleSheet.create({
   rightBlock: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  mainContent: {
-    backgroundColor: bgColor,
-    paddingLeft: 62,
-    paddingRight: 56,
-    paddingTop: 32,
-    paddingBottom: 32,
-    marginBottom: 32,
   },
   commentBlock: {
     marginTop: 32,
@@ -78,24 +64,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   editBtnText: { marginLeft: 7 },
-  topInfoBlock: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  shareCounterWrapper: { marginLeft: 31 },
-  viewCounterWrapper: { marginLeft: 32 },
-  dateText: { color: dateTopicCounterColor },
-  postTitle: {
-    marginTop: 32,
-    marginBottom: 14,
-  },
-  topicBlock: {
-    borderTop: `1px solid ${separatorColor}`,
-    paddingTop: 32,
-    display: 'flex',
-  },
-  itemWrapper: { marginRight: 32 },
 });
 
 class PostShow extends React.PureComponent {
@@ -110,19 +78,6 @@ class PostShow extends React.PureComponent {
     this.props.loadComments(slug);
   }
 
-  prepareImageUrls = (content) => {
-    if (!content) {
-      return '';
-    }
-    const { posts } = this.props;
-    const { slug } = this.props.match.params;
-    const post = posts[slug];
-    const lookUp = R.fromPairs(
-      R.map(image => [image.original_filename, image.url], post.images),
-    );
-    return prepareImageUrls(lookUp, content);
-  };
-
   render() {
     const { user, posts, history, editMode } = this.props;
 
@@ -133,49 +88,11 @@ class PostShow extends React.PureComponent {
         <div className={css(styles.container)}>
           <TwoColumnsLayout>
             <div className={css(styles.mainContentWrapper)}>
-              <div className={css(styles.mainContent)}>
-                {
-                  post && (
-                    <div key={post.id}>
-                      <div className={css(styles.topInfoBlock)}>
-                        <span className={css(themeStyles.defaultFont, styles.dateText)}>
-                          {dayjs(post.created_at).format('DD.MM.YYYY')}
-                        </span>
-                        <div className={css(styles.shareCounterWrapper)}>
-                          <ShareCounter value={post.num_of_reposts} onClick={() => {}} />
-                        </div>
-                        <div className={css(styles.viewCounterWrapper)}>
-                          <ViewCounter value={post.num_of_views} />
-                        </div>
-                      </div>
-                      <div className={css(themeStyles.largeHeaderFont, styles.postTitle)}>
-                        {post.title}
-                      </div>
-                      <div
-                        dangerouslySetInnerHTML={
-                          { __html: marked(this.prepareImageUrls(post.content || '')) }
-                        }
-                      />
-                    </div>
-                  )
-                }
-                <div className={css(styles.topicBlock)}>
-                  {
-                    R.map(
-                      tag => (
-                        <div className={css(styles.itemWrapper)}>
-                          <Theme
-                            onTriggered={() => {}}
-                            size="small"
-                            theme={tag}
-                          />
-                        </div>
-                      ),
-                      post?.tags || [],
-                    )
-                  }
-                </div>
-              </div>
+              {
+                post && (
+                  <PostContent post={post} />
+                )
+              }
               <PostComments />
             </div>
             <div className={css(styles.rightBlock)}>
