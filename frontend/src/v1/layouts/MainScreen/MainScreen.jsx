@@ -66,18 +66,57 @@ class MainScreen extends React.PureComponent {
     this.props.loadSettings();
   }
 
+  getSelectedMenuItem = () => {
+    const { settings } = this.props;
+    const path = this.props.history.location.pathname;
+    if (path === '/themes') {
+      return 'themes';
+    }
+    if (path === '/settings') {
+      return 'settings';
+    }
+    if (path === `/${settings?.about_blog_slug}`) {
+      return 'about_blog';
+    }
+    if (path === `/${settings?.about_blog_slug}/edit`) {
+      return 'about_blog';
+    }
+    if (path === `/${settings?.privacy_policy_slug}`) {
+      return 'privacy_policy';
+    }
+    if (path === `/${settings?.privacy_policy_slug}/edit`) {
+      return 'privacy_policy';
+    }
+    return 'posts';
+  }
+
   renderPanel = () => {
     const { editMode, user, setEditMode } = this.props;
     if (user) {
       return (
         <AdminPanel
           editMode={editMode}
-          switchEditMode={() => setEditMode(!editMode) }
+          switchEditMode={() => setEditMode(!editMode)}
           logOut={closeUserSession}
           setUpThemes={() => this.props.history.push('#setup_themes')}
           openPrivacyPolicy={
             () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
           }
+          openPrivacyPolicyOnEdit={
+            () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}/edit`)
+          }
+          openAboutBlog={
+            () => this.props.history.push(`/${this.props.settings.about_blog_slug}`)
+          }
+          openAboutBlogOnEdit={
+            () => this.props.history.push(`/${this.props.settings.about_blog_slug}/edit`)
+          }
+          openSettings={() => this.props.history.push('/settings')}
+          openThemes={() => this.props.history.push('/themes')}
+          openNewTheme={() => this.props.history.push('/themes#new')}
+          openPosts={() => this.props.history.push('/')}
+          openNewPost={() => this.props.history.push('/new')}
+          selectedMenuItem={this.props.settings && this.getSelectedMenuItem()}
         />
       );
     }
