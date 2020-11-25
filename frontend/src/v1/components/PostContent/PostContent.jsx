@@ -48,14 +48,25 @@ const styles = StyleSheet.create({
   itemWrapper: { marginRight: 32 },
 });
 
-const PostContent = ({ post }) => {
+const PostContent = ({ post, images, postOrigin, slug, imagesUpdatedNames, removedImagesIds }) => {
   const prepareImageUrls = (content) => {
     if (!content) {
       return '';
     }
-    const lookUp = R.fromPairs(
-      R.map(image => [image.original_filename, image.url], post.images),
-    );
+    let lookUp;
+    if (slug) {
+      lookUp = R.fromPairs(
+        R.concat(
+          R.map(
+            image => [imagesUpdatedNames[image.id] || image.original_filename, image.url],
+            R.reject(a => R.contains(a.id, removedImagesIds), (postOrigin || post).images || []),
+          ),
+          R.map(image => [image.name, image.content], images || post.images),
+        ),
+      );
+    } else {
+      lookUp = R.fromPairs(R.map(image => [image.name, image.content], images));
+    }
     return prepareImageUrlsUtils(lookUp, content);
   };
 
@@ -102,6 +113,18 @@ const PostContent = ({ post }) => {
   );
 };
 
-PostContent.propTypes = { post: PropTypes.object.isRequired };
+PostContent.propTypes = {
+  post: PropTypes.object.isRequired,
+  postOrigin: PropTypes.object,
+  images: PropTypes.array,
+  slug: PropTypes.string,
+  imagesUpdatedNames: PropTypes.object,
+  removedImagesIds: PropTypes.array,
+};
+
+PostContent.defaultProps = {
+  imagesUpdatedNames: {},
+  removedImagesIds: [],
+};
 
 export default PostContent;
