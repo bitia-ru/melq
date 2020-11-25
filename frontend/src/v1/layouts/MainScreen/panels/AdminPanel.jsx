@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { css, StyleSheet } from '../../../aphrodite';
@@ -9,6 +9,7 @@ import Switch from '../../../components/Switch/Switch';
 import LanguageSelect from '../../../components/LanguageSelect/LanguageSelect';
 import ThemeSettings from '../../../components/ThemeSettings/ThemeSettings';
 import Link from '../../../components/Link/Link';
+import Menu from '../../../components/Menu/Menu';
 
 import { themeStyles, defaultColor, separatorColor } from '../../../theme';
 
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     paddingTop: 36,
     paddingBottom: 39,
     borderBottom: `1px solid ${separatorColor}`,
+    marginRight: '-40px',
   },
   languageBlock: {
     flex: 1,
@@ -79,11 +81,114 @@ const AdminPanel = ({
   switchEditMode,
   logOut,
   openPrivacyPolicy,
+  openPrivacyPolicyOnEdit,
+  openAboutBlog,
+  openAboutBlogOnEdit,
+  openThemes,
+  openNewTheme,
+  openPosts,
+  openNewPost,
   setUpThemes,
-}) => (
-  <PanelLayout>
-    <div className={css(styles.container)}>
-      <div className={css(styles.editSwitchWrapper)}>
+  openSettings,
+  selectedMenuItem,
+}) => {
+  const menuItems = [
+    {
+      id: 'settings',
+      link: {
+        isWaiting: false,
+        onTriggered: openSettings,
+        linkStyle: 'dark',
+        title: 'Базовая информация / настройки',
+        size: 'big',
+        selected: selectedMenuItem === 'settings',
+      },
+      icon: {
+        src: `${require('../../../components/Menu/images/settings.svg')}#settings`,
+        onTriggered: openSettings,
+        isWaiting: false,
+        width: 24,
+        height: 24,
+      },
+    },
+    {
+      id: 'posts',
+      link: {
+        isWaiting: false,
+        onTriggered: openPosts,
+        linkStyle: 'dark',
+        title: 'Посты',
+        size: 'big',
+        selected: selectedMenuItem === 'posts',
+      },
+      icon: {
+        src: `${require('../../../components/Menu/images/add.svg')}#add`,
+        onTriggered: openNewPost,
+        isWaiting: false,
+        width: 24,
+        height: 24,
+      },
+    },
+    {
+      id: 'themes',
+      link: {
+        isWaiting: false,
+        onTriggered: openThemes,
+        linkStyle: 'dark',
+        title: 'Темы блога',
+        size: 'big',
+        selected: selectedMenuItem === 'themes',
+      },
+      icon: {
+        src: `${require('../../../components/Menu/images/add.svg')}#add`,
+        onTriggered: openNewTheme,
+        isWaiting: false,
+        width: 24,
+        height: 24,
+      },
+    },
+    {
+      id: 'about_blog',
+      link: {
+        isWaiting: false,
+        onTriggered: openAboutBlog,
+        linkStyle: 'dark',
+        title: 'Об этом блоге',
+        size: 'big',
+        selected: selectedMenuItem === 'about_blog',
+      },
+      icon: {
+        src: `${require('../../../components/Menu/images/edit.svg')}#edit`,
+        onTriggered: openAboutBlogOnEdit,
+        isWaiting: false,
+        width: 24,
+        height: 24,
+      },
+    },
+    {
+      id: 'privacy_policy',
+      link: {
+        isWaiting: false,
+        onTriggered: openPrivacyPolicy,
+        linkStyle: 'dark',
+        title: 'Правила использования материалов',
+        size: 'big',
+        selected: selectedMenuItem === 'privacy_policy',
+      },
+      icon: {
+        src: `${require('../../../components/Menu/images/edit.svg')}#edit`,
+        onTriggered: openPrivacyPolicyOnEdit,
+        isWaiting: false,
+        width: 24,
+        height: 24,
+      },
+    },
+  ];
+
+  return (
+    <PanelLayout>
+      <div className={css(styles.container)}>
+        <div className={css(styles.editSwitchWrapper)}>
         <span
           className={
             css(
@@ -95,51 +200,65 @@ const AdminPanel = ({
         >
           Режим редактора
         </span>
-        <Switch onClick={switchEditMode} checked={editMode} />
+          <Switch onClick={switchEditMode} checked={editMode} />
+        </div>
+        {
+          editMode
+            ? (
+              <div className={css(styles.content)}>
+                <div className={css(styles.menuWrapper)}>
+                  <Menu
+                    width="100%"
+                    height="250px"
+                    menuItems={menuItems}
+                  />
+                </div>
+                <div className={css(styles.languageBlock)}>
+                  <LanguageSelect onChange={() => {}} languageId="ru" />
+                </div>
+                <div className={css(styles.editModeFooter)}>
+                  <div className={css(styles.logOutBtnWrapper)}>
+                    <LogOutButton onTriggered={logOut} />
+                  </div>
+                </div>
+              </div>
+            )
+            : (
+              <div className={css(styles.content)}>
+                <div className={css(styles.themeSettingsWrapper)}>
+                  <ThemeSettings setUpThemes={setUpThemes} />
+                </div>
+                <div className={css(styles.defaultFooter)}>
+                  <Link onTriggered={openPrivacyPolicy} linkStyle="dark" size="big">
+                    Правила использования материалов
+                  </Link>
+                  <div className={css(styles.logOutBtnWrapper)}>
+                    <LogOutButton onTriggered={logOut} />
+                  </div>
+                </div>
+              </div>
+            )
+        }
       </div>
-      {
-        editMode
-          ? (
-            <div className={css(styles.content)}>
-              <div className={css(styles.menuWrapper)}>
-                <span>Здесь будет Menu Component</span>
-              </div>
-              <div className={css(styles.languageBlock)}>
-                <LanguageSelect onChange={() => {}} languageId="ru" />
-              </div>
-              <div className={css(styles.editModeFooter)}>
-                <div className={css(styles.logOutBtnWrapper)}>
-                  <LogOutButton onTriggered={logOut} />
-                </div>
-              </div>
-            </div>
-          )
-          : (
-            <div className={css(styles.content)}>
-              <div className={css(styles.themeSettingsWrapper)}>
-                <ThemeSettings setUpThemes={setUpThemes} />
-              </div>
-              <div className={css(styles.defaultFooter)}>
-                <Link onTriggered={openPrivacyPolicy} linkStyle="dark" size="big">
-                  Правила использования материалов
-                </Link>
-                <div className={css(styles.logOutBtnWrapper)}>
-                  <LogOutButton onTriggered={logOut} />
-                </div>
-              </div>
-            </div>
-          )
-      }
-    </div>
-  </PanelLayout>
-);
+    </PanelLayout>
+  );
+};
 
 AdminPanel.propTypes = {
   editMode: PropTypes.bool,
   switchEditMode: PropTypes.func,
   logOut: PropTypes.func,
   openPrivacyPolicy: PropTypes.func,
+  openPrivacyPolicyOnEdit: PropTypes.func,
+  openAboutBlog: PropTypes.func,
+  openAboutBlogOnEdit: PropTypes.func,
+  openThemes: PropTypes.func,
+  openNewTheme: PropTypes.func,
+  openPosts: PropTypes.func,
+  openNewPost: PropTypes.func,
+  openSettings: PropTypes.func,
   setUpThemes: PropTypes.func,
+  selectedMenuItem: PropTypes.string,
 };
 
 export default AdminPanel;
