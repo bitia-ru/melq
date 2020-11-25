@@ -18,6 +18,7 @@ class PostEdit extends React.PureComponent {
       images: [],
       removedImagesIds: [],
       imagesUpdatedNames: {},
+      previewMode: false,
     };
   }
 
@@ -345,6 +346,7 @@ class PostEdit extends React.PureComponent {
     return (
       <PostEditLayout
         post={post}
+        postOrigin={slug && posts[slug]}
         user={user}
         tags={this.props.tags}
         onTagsChange={this.onTagsChange}
@@ -371,6 +373,9 @@ class PostEdit extends React.PureComponent {
         submit={this.submit}
         remove={this.remove}
         slug={slug}
+        previewMode={this.state.previewMode}
+        openPreview={() => this.setState({ previewMode: true })}
+        closePreview={() => this.setState({ previewMode: false })}
       />
     );
   }
