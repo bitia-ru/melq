@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 });
 
 const TagNewForm = ({ save }) => {
-  const [themeText, setThemeText] = useState('');
+  const [tagText, setTagText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
 
   return (
@@ -50,7 +50,7 @@ const TagNewForm = ({ save }) => {
                 </div>
               </div>
               <Input
-                input={{ value: themeText, onChange: e => setThemeText(e.target.value) }}
+                input={{ value: tagText, onChange: e => setTagText(e.target.value) }}
                 maxLength={36}
                 label="Название темы*"
               />
@@ -64,7 +64,7 @@ const TagNewForm = ({ save }) => {
                       () => {
                         setIsWaiting(true);
                         save(
-                          themeText,
+                          tagText,
                           closeModal,
                           () => {
                             setIsWaiting(false);

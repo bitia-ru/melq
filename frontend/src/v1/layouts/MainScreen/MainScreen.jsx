@@ -10,14 +10,14 @@ import { closeUserSession } from '@/v1/utils/auth';
 
 import { setEditMode as setEditModeAction } from '../../redux/editMode/actions';
 import { loadSettings } from '../../redux/settings/actions';
-import setUnselectedThemesIds from '../../redux/unselectedThemes/actions';
+import setUnselectedTagsIds from '../../redux/unselectedTags/actions';
 
 import LogInForm from '../../forms/LogInForm/LogInForm';
 import AdminPanel from './panels/AdminPanel';
 import UserPanel from './panels/UserPanel';
 import EditModeHeader from './headers/EditModeHeader';
 import DefaultHeader from './headers/DefaultHeader';
-import SetUpThemesForm from '../../forms/SetUpThemesForm';
+import SetUpTagsForm from '../../forms/SetUpTagsForm';
 
 import './scroll_workaround.css';
 
@@ -49,13 +49,13 @@ class MainScreen extends React.PureComponent {
         hashRoute: true,
         body: <LogInForm />,
       },
-      setup_themes: {
+      setup_tags: {
         hashRoute: true,
         body: (
-          <SetUpThemesForm
-            themes={this.props.tags}
-            defaultUnselectedIds={this.props.unselectedThemesIds}
-            save={this.props.setUnselectedThemesIds}
+          <SetUpTagsForm
+            tags={this.props.tags}
+            defaultUnselectedIds={this.props.unselectedTagsIds}
+            save={this.props.setUnselectedTagsIds}
           />
         ),
       },
@@ -69,8 +69,8 @@ class MainScreen extends React.PureComponent {
   getSelectedMenuItem = () => {
     const { settings } = this.props;
     const path = this.props.history.location.pathname;
-    if (path === '/themes') {
-      return 'themes';
+    if (path === '/tags') {
+      return 'tags';
     }
     if (path === '/settings') {
       return 'settings';
@@ -98,7 +98,7 @@ class MainScreen extends React.PureComponent {
           editMode={editMode}
           switchEditMode={() => setEditMode(!editMode)}
           logOut={closeUserSession}
-          setUpThemes={() => this.props.history.push('#setup_themes')}
+          setUpTags={() => this.props.history.push('#setup_tags')}
           openPrivacyPolicy={
             () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
           }
@@ -112,8 +112,8 @@ class MainScreen extends React.PureComponent {
             () => this.props.history.push(`/${this.props.settings.about_blog_slug}/edit`)
           }
           openSettings={() => this.props.history.push('/settings')}
-          openThemes={() => this.props.history.push('/themes')}
-          openNewTheme={() => this.props.history.push('/themes#new')}
+          openTags={() => this.props.history.push('/tags')}
+          openNewTag={() => this.props.history.push('/tags#new')}
           openPosts={() => this.props.history.push('/')}
           openNewPost={() => this.props.history.push('/new')}
           selectedMenuItem={this.props.settings && this.getSelectedMenuItem()}
@@ -123,7 +123,7 @@ class MainScreen extends React.PureComponent {
     return (
       <UserPanel
         signIn={() => this.props.history.push('#signin')}
-        setUpThemes={() => this.props.history.push('#setup_themes')}
+        setUpTags={() => this.props.history.push('#setup_tags')}
         openPrivacyPolicy={
           () => this.props.history.push(`/${this.props.settings.privacy_policy_slug}`)
         }
@@ -191,21 +191,21 @@ MainScreen.propTypes = {
   settings: PropTypes.object,
   loadSettings: PropTypes.func,
   tags: PropTypes.array,
-  setUnselectedThemesIds: PropTypes.func,
-  unselectedThemesIds: PropTypes.array,
+  setUnselectedTagsIds: PropTypes.func,
+  unselectedTagsIds: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   editMode: state.editMode,
   settings: state.settingsStoreV1.settings[1],
   tags: R.values(state.tagsStoreV1.tags),
-  unselectedThemesIds: state.unselectedThemesIds,
+  unselectedTagsIds: state.unselectedTagsIds,
 });
 
 const mapDispatchToProps = dispatch => ({
   setEditMode: editMode => dispatch(setEditModeAction(editMode)),
   loadSettings: () => dispatch(loadSettings()),
-  setUnselectedThemesIds: themesIds => dispatch(setUnselectedThemesIds(themesIds)),
+  setUnselectedTagsIds: tagsIds => dispatch(setUnselectedTagsIds(tagsIds)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(MainScreen)));

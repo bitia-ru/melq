@@ -7,7 +7,7 @@ import PanelLayout from './PanelLayout';
 import LogOutButton from '../../../components/icon_buttons/LogOutButton/LogOutButton';
 import Switch from '../../../components/Switch/Switch';
 import LanguageSelect from '../../../components/LanguageSelect/LanguageSelect';
-import ThemeSettings from '../../../components/ThemeSettings/ThemeSettings';
+import TagSettings from '../../../components/TagSettings/TagSettings';
 import Link from '../../../components/Link/Link';
 import Menu from '../../../components/Menu/Menu';
 
@@ -84,11 +84,11 @@ const AdminPanel = ({
   openPrivacyPolicyOnEdit,
   openAboutBlog,
   openAboutBlogOnEdit,
-  openThemes,
-  openNewTheme,
+  openTags,
+  openNewTag,
   openPosts,
   openNewPost,
-  setUpThemes,
+  setUpTags,
   openSettings,
   selectedMenuItem,
 }) => {
@@ -130,18 +130,18 @@ const AdminPanel = ({
       },
     },
     {
-      id: 'themes',
+      id: 'tags',
       link: {
         isWaiting: false,
-        onTriggered: openThemes,
+        onTriggered: openTags,
         linkStyle: 'dark',
         title: 'Темы блога',
         size: 'big',
-        selected: selectedMenuItem === 'themes',
+        selected: selectedMenuItem === 'tags',
       },
       icon: {
         src: `${require('../../../components/Menu/images/add.svg')}#add`,
-        onTriggered: openNewTheme,
+        onTriggered: openNewTag,
         isWaiting: false,
         width: 24,
         height: 24,
@@ -225,8 +225,8 @@ const AdminPanel = ({
             )
             : (
               <div className={css(styles.content)}>
-                <div className={css(styles.themeSettingsWrapper)}>
-                  <ThemeSettings setUpThemes={setUpThemes} />
+                <div className={css(styles.tagSettingsWrapper)}>
+                  <TagSettings setUpTags={setUpTags} />
                 </div>
                 <div className={css(styles.defaultFooter)}>
                   <Link onTriggered={openPrivacyPolicy} linkStyle="dark" size="big">
@@ -252,12 +252,12 @@ AdminPanel.propTypes = {
   openPrivacyPolicyOnEdit: PropTypes.func,
   openAboutBlog: PropTypes.func,
   openAboutBlogOnEdit: PropTypes.func,
-  openThemes: PropTypes.func,
-  openNewTheme: PropTypes.func,
+  openTags: PropTypes.func,
+  openNewTag: PropTypes.func,
   openPosts: PropTypes.func,
   openNewPost: PropTypes.func,
   openSettings: PropTypes.func,
-  setUpThemes: PropTypes.func,
+  setUpTags: PropTypes.func,
   selectedMenuItem: PropTypes.string,
 };
 

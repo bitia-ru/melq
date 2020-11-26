@@ -15,7 +15,7 @@ import MainScreen from '../layouts/MainScreen/MainScreen';
 import Link from '../components/Link/Link';
 import CheckBox from '../components/CheckBox/CheckBox';
 import TagNewForm from '../forms/TagNewForm';
-import Theme from '../components/Theme/Theme';
+import Tag from '../components/Tag/Tag';
 
 import { bgColor } from '../theme';
 
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   checkboxWrapper: { marginRight: '16px' },
 });
 
-class ThemesIndex extends React.PureComponent {
+class TagsIndex extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,19 +67,19 @@ class ThemesIndex extends React.PureComponent {
     this.props.loadTags();
   }
 
-  addTheme = () => {
+  addTag = () => {
     this.props.history.push('#new');
   };
 
-  save = (themeText, afterSuccess, afterAll) => {
+  save = (tagText, afterSuccess, afterAll) => {
     this.props.createTag(
-      { tag: { text: themeText } },
+      { tag: { text: tagText } },
       afterSuccess,
       afterAll,
     );
   };
 
-  removeSelectedThemes = () => {
+  removeSelectedTags = () => {
     if (window.confirm('Удалить темы?')) {
       this.setState({ removeBtnIsWaiting: true });
       this.props.removeTags(
@@ -126,7 +126,7 @@ class ThemesIndex extends React.PureComponent {
       <MainScreen header="" user={user}>
         <div className={css(styles.controlRow)}>
           <div className={css(styles.linkContainer)}>
-            <Link onTriggered={this.addTheme}>
+            <Link onTriggered={this.addTag}>
               <div className={css(styles.innerContainer)}>
                 <svg width={24} height={24}>
                   <use xlinkHref={`${require('../components/Link/images/add.svg')}#add`} />
@@ -137,7 +137,7 @@ class ThemesIndex extends React.PureComponent {
           </div>
           <div className={css(styles.linkContainer)}>
             <Link
-              onTriggered={this.removeSelectedThemes}
+              onTriggered={this.removeSelectedTags}
               isWaiting={this.state.removeBtnIsWaiting}
             >
               <div className={css(styles.innerContainer)}>
@@ -163,7 +163,7 @@ class ThemesIndex extends React.PureComponent {
                       checked={R.contains(tag.id, selectedTagsIds)}
                     />
                   </div>
-                  <Theme theme={tag} />
+                  <Tag tag={tag} />
                 </div>
               ),
               tags,
@@ -175,7 +175,7 @@ class ThemesIndex extends React.PureComponent {
   }
 }
 
-ThemesIndex.propTypes = {
+TagsIndex.propTypes = {
   user: PropTypes.object,
   tags: PropTypes.array,
   history: PropTypes.object,
@@ -197,4 +197,4 @@ const mapDispatchToProps = dispatch => ({
   removeTags: (ids, afterSuccess, afterAll) => dispatch(removeTags(ids, afterSuccess, afterAll)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(ThemesIndex)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(TagsIndex)));

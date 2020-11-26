@@ -6,7 +6,7 @@ import { StyleSheet, css } from '../../aphrodite';
 
 import Icon from '../Icon/Icon';
 import Link from '../Link/Link';
-import Theme from '../Theme/Theme';
+import Tag from '../Tag/Tag';
 
 import { themeStyles } from '../../theme';
 
@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
   itemWrapper: { marginBottom: 16 },
 });
 
-const ThemeSettingsLayout = ({
-  themes,
+const TagSettingsLayout = ({
+  tags,
   onItemTriggered,
   showMoreCount,
   onShowMore,
-  setUpThemes,
+  setUpTags,
 }) => (
   <div className={css(styles.container)}>
     <div className={css(styles.header)}>
@@ -38,7 +38,7 @@ const ThemeSettingsLayout = ({
       <div className={css(styles.settingsBtnWrapper)}>
         <Icon
           src={`${require('./assets/settings.svg')}#settings`}
-          onTriggered={setUpThemes}
+          onTriggered={setUpTags}
           width={24}
           height={24}
           tooltipText="Настроить темы"
@@ -48,12 +48,12 @@ const ThemeSettingsLayout = ({
     <div>
       {
         R.map(
-          theme => (
-            <div className={css(styles.itemWrapper)} key={theme.id}>
-              <Theme theme={theme} onTriggered={() => onItemTriggered(theme.id)} />
+          tag => (
+            <div className={css(styles.itemWrapper)} key={tag.id}>
+              <Tag tag={tag} onTriggered={() => onItemTriggered(tag.id)} />
             </div>
           ),
-          themes,
+          tags,
         )
       }
     </div>
@@ -65,12 +65,12 @@ const ThemeSettingsLayout = ({
   </div>
 );
 
-ThemeSettingsLayout.propTypes = {
-  themes: PropTypes.array,
+TagSettingsLayout.propTypes = {
+  tags: PropTypes.array,
   onItemTriggered: PropTypes.func,
   showMoreCount: PropTypes.number,
   onShowMore: PropTypes.func,
-  setUpThemes: PropTypes.func,
+  setUpTags: PropTypes.func,
 };
 
-export default ThemeSettingsLayout;
+export default TagSettingsLayout;

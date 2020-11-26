@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Item from '../Item/Item';
 
-const ThemeLayout = ({ size, theme, onTriggered }) => (
+const TagLayout = ({ size, tag, onTriggered }) => (
   <Item
     size={size}
-    text={theme.text}
+    text={tag.text}
     textMargin={size === 'small' ? '7px' : '14px'}
     onTriggered={onTriggered}
     focusable
@@ -13,10 +13,10 @@ const ThemeLayout = ({ size, theme, onTriggered }) => (
   />
 );
 
-ThemeLayout.propTypes = {
+TagLayout.propTypes = {
   onTriggered: PropTypes.func,
   size: PropTypes.string,
-  theme: PropTypes.object,
+  tag: PropTypes.object,
 };
 
-export default ThemeLayout;
+export default TagLayout;

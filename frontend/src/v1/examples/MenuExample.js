@@ -101,7 +101,7 @@ const MenuExample = () => {
         isWaiting: false,
         onTriggered: (
           () => {
-            console.log('Open themes');
+            console.log('Open tags');
             setSelectedLinkId(2);
           }
         ),
@@ -114,7 +114,7 @@ const MenuExample = () => {
         src: `${require('../components/Menu/images/add.svg')}#add`,
         onTriggered: (
           () => {
-            console.log('Open new theme window');
+            console.log('Open new tag window');
             setSelectedLinkId(2);
           }
         ),
