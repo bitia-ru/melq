@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       resources :tags
       delete '/tags', to: 'tags#destroy'
       resources :settings
+      resources :post_cards
     end
   end
 end

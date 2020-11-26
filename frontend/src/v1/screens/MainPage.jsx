@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { css, StyleSheet } from '../aphrodite';
 
 import { currentUser } from '@/v1/redux/user_session/utils';
-import { loadPosts } from '@/v1/redux/posts/actions';
+import loadPostCards from '@/v1/redux/post_cards/actions';
 
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import PostCard from '../components/PostCard/PostCard';
@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
 
 class MainPage extends React.PureComponent {
   componentDidMount() {
-    this.props.loadPosts();
+    this.props.loadPostCards();
   }
 
-  onCardClick = (post, e, target) => {
+  onCardClick = (postCard, e, target) => {
     e.stopPropagation();
     switch (target) {
     case 'like':
@@ -54,12 +54,12 @@ class MainPage extends React.PureComponent {
       console.log('Share post');
       break;
     default:
-      this.props.history.push(`/${post.slug}`);
+      this.props.history.push(`/${postCard.post_slug}`);
     }
   };
 
   render() {
-    const { user, posts, editMode } = this.props;
+    const { user, postCards, editMode } = this.props;
 
     return (
       <MainScreen header="" user={user}>
@@ -92,15 +92,15 @@ class MainPage extends React.PureComponent {
         <div className={css(styles.cardsWrapper)}>
           {
             R.map(
-              post => (
+              postCard => (
                 <PostCard
-                  post={post}
-                  onClick={(e, target) => this.onCardClick(post, e, target)}
+                  data={postCard}
+                  onClick={(e, target) => this.onCardClick(postCard, e, target)}
                   disabledCounter={false}
-                  key={post.id}
+                  key={postCard.id}
                 />
               ),
-              R.values(posts),
+              R.values(postCards),
             )
           }
         </div>
@@ -111,10 +111,10 @@ class MainPage extends React.PureComponent {
 
 MainPage.propTypes = {
   user: PropTypes.object,
-  posts: PropTypes.object,
+  postCards: PropTypes.object,
   editMode: PropTypes.bool,
   history: PropTypes.object,
-  loadPosts: PropTypes.func,
+  loadPostCards: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
@@ -124,16 +124,16 @@ const mapStateToProps = (state) => {
   );
   return {
     user: currentUser(state),
-    posts: R.filter(
-      post => (
-        R.intersection(selectedThemesIds, R.map(tag => tag.id, post.tags)).length > 0
+    postCards: R.filter(
+      postCard => (
+        R.contains(postCard.main_tag_id, selectedThemesIds)
       ),
-      state.postsStoreV1.posts,
+      state.postCardsStoreV1.postCards,
     ),
     editMode: state.editMode,
   };
 };
 
-const mapDispatchToProps = dispatch => ({ loadPosts: () => dispatch(loadPosts()) });
+const mapDispatchToProps = dispatch => ({ loadPostCards: () => dispatch(loadPostCards()) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(MainPage));

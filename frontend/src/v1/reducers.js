@@ -8,10 +8,12 @@ import { default as userSessionReducerV1 } from '@/v1/redux/user_session/reducer
 import { default as editModeReducerV1 } from '@/v1/redux/editMode/reducer';
 import { default as settingsReducerV1 } from '@/v1/redux/settings/reducer';
 import { default as unselectedThemesIdsReducerV1 } from '@/v1/redux/unselectedThemes/reducer';
+import { default as postCardsReducerV1 } from '@/v1/redux/post_cards/reducer';
 
 export default combineReducers({
   usersStoreV1: usersReducerV1,
   postsStoreV1: postsReducerV1,
+  postCardsStoreV1: postCardsReducerV1,
   commentsStoreV1: commentsReducerV1,
   tagsStoreV1: tagsReducerV1,
   userSessionV1: userSessionReducerV1,
