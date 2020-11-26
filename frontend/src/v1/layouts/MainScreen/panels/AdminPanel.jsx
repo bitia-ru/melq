@@ -91,6 +91,7 @@ const AdminPanel = ({
   setUpTags,
   openSettings,
   selectedMenuItem,
+  editModeDisabled,
 }) => {
   const menuItems = [
     {
@@ -189,18 +190,22 @@ const AdminPanel = ({
     <PanelLayout>
       <div className={css(styles.container)}>
         <div className={css(styles.editSwitchWrapper)}>
-        <span
-          className={
-            css(
-              themeStyles.mediumFont,
-              themeStyles.fontWeight500,
-              styles.editModeLabel,
-            )
-          }
-        >
-          Режим редактора
-        </span>
-          <Switch onClick={switchEditMode} checked={editMode} />
+          <span
+            className={
+              css(
+                themeStyles.mediumFont,
+                themeStyles.fontWeight500,
+                styles.editModeLabel,
+              )
+            }
+          >
+            Режим редактора
+          </span>
+          <Switch
+            onClick={switchEditMode}
+            checked={editMode}
+            disabled={editModeDisabled}
+          />
         </div>
         {
           editMode
@@ -259,6 +264,7 @@ AdminPanel.propTypes = {
   openSettings: PropTypes.func,
   setUpTags: PropTypes.func,
   selectedMenuItem: PropTypes.string,
+  editModeDisabled: PropTypes.bool,
 };
 
 export default AdminPanel;
