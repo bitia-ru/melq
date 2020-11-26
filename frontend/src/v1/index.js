@@ -9,10 +9,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import ActionCable from 'actioncable';
 import V1 from '@/v1/V1';
-import store from './store';
 import './index.css';
 import './fonts.css';
 import processEntities from '@/v1/utils/processEntities';
+import { configureStoreAsync, saveState } from './store';
 /* eslint-enable import/first */
 
 const EVENTS_TO_MODIFY = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'wheel', 'dragend', 'click'];
@@ -56,7 +56,9 @@ document.removeEventListener = (type, listener, options) => {
   return originalRemoveEventListener(type, listener, modOptions);
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+configureStoreAsync().then((result) => {
+  const store = result;
+
   const ws = {};
 
   ws.cable = ActionCable.createConsumer('/cable');
@@ -69,15 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     },
   );
-});
 
-ReactDOM.render(
-  (
-    <Provider store={store}>
-      <BrowserRouter>
-        <V1 />
-      </BrowserRouter>
-    </Provider>
-  ),
-  document.getElementById('app'),
-);
+  store.subscribe(() => {
+    saveState(store.getState());
+  });
+  ReactDOM.render(
+    (
+      <Provider store={store}>
+        <BrowserRouter>
+          <V1 />
+        </BrowserRouter>
+      </Provider>
+    ),
+    document.getElementById('app'),
+  );
+});
