@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import acts from './acts';
 
-const INITIAL_VALUE = {
+export const INITIAL_VALUE = {
   numOfActiveRequests: 0,
   posts: {},
 };
