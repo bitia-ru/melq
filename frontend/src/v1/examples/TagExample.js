@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Theme from '@/v1/components/Theme/Theme';
+import Tag from '@/v1/components/Tag/Tag';
 
-const demoTheme = { id: 1, text: 'Тема1' };
+const demoTag = { id: 1, text: 'Тема1' };
 
-const ThemeExample = () => {
+const TagExample = () => {
   const [size, setSize] = useState(null);
 
   const onTriggered = () => {
@@ -33,9 +33,9 @@ const ThemeExample = () => {
         />
         <span>Default</span>
       </div>
-      <Theme onTriggered={onTriggered} size={size} theme={demoTheme} />
+      <Tag onTriggered={onTriggered} size={size} tag={demoTag} />
     </>
   );
 };
 
-export default ThemeExample;
+export default TagExample;

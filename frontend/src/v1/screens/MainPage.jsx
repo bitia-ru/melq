@@ -121,7 +121,7 @@ const mapStateToProps = state => ({
   user: currentUser(state),
   postCards: R.filter(
     postCard => (
-      R.contains(postCard.main_tag_id, state.selectedThemesIds)
+      R.contains(postCard.main_tag_id, state.selectedTagsIds)
     ),
     state.postCardsStoreV1.postCards,
   ),

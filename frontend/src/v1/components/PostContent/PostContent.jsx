@@ -6,7 +6,7 @@ import * as R from 'ramda';
 
 import ShareCounter from '../icon_counters/ShareCounter/ShareCounter';
 import ViewCounter from '../icon_counters/ViewCounter/ViewCounter';
-import Theme from '../Theme/Theme';
+import Tag from '../Tag/Tag';
 
 import { default as prepareImageUrlsUtils } from '../../utils/prepareImageUrls';
 
@@ -98,10 +98,10 @@ const PostContent = ({ post, images, postOrigin, slug, imagesUpdatedNames, remov
           R.map(
             tag => (
               <div className={css(styles.itemWrapper)}>
-                <Theme
+                <Tag
                   onTriggered={() => {}}
                   size="small"
-                  theme={tag}
+                  tag={tag}
                 />
               </div>
             ),

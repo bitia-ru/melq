@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import Modal from '../layouts/Modal';
 import Button from '../components/Button/Button';
 import CheckBox from '../components/CheckBox/CheckBox';
-import Theme from '../components/Theme/Theme';
+import Tag from '../components/Tag/Tag';
 
 import { ModalContext } from '../modules/modalable';
 import { css, StyleSheet } from '../aphrodite';
@@ -24,12 +24,12 @@ const styles = StyleSheet.create({
     width: '147px',
     marginLeft: '8px',
   },
-  themeItemWrapper: {
+  tagItemWrapper: {
     display: 'flex',
     alignItems: 'center',
     marginTop: '16px',
   },
-  themeWrapper: { marginLeft: '16px' },
+  tagWrapper: { marginLeft: '16px' },
   saveBtnWrapper: { width: '149px' },
   footer: {
     display: 'flex',
@@ -41,25 +41,25 @@ const styles = StyleSheet.create({
   },
 });
 
-const SetUpThemesForm = ({ save, themes, defaultSelectedIds }) => {
+const SetUpTagsForm = ({ save, tags, defaultSelectedIds }) => {
   const { closeModal } = useContext(ModalContext);
   const [selectedIds, setSelectedIds] = useState(defaultSelectedIds || []);
 
   useEffect(() => setSelectedIds(defaultSelectedIds), [defaultSelectedIds]);
 
   const selectAll = () => {
-    setSelectedIds(R.map(theme => theme.id, themes));
+    setSelectedIds(R.map(tag => tag.id, tags));
   };
 
   const unselectAll = () => {
     setSelectedIds([]);
   };
 
-  const onItemClick = (themeId) => {
-    if (R.contains(themeId, selectedIds)) {
-      setSelectedIds(R.reject(id => id === themeId, selectedIds));
+  const onItemClick = (tagId) => {
+    if (R.contains(tagId, selectedIds)) {
+      setSelectedIds(R.reject(id => id === tagId, selectedIds));
     } else {
-      setSelectedIds([...selectedIds, themeId]);
+      setSelectedIds([...selectedIds, tagId]);
     }
   };
 
@@ -99,18 +99,18 @@ const SetUpThemesForm = ({ save, themes, defaultSelectedIds }) => {
         <div>
           {
             R.map(
-              theme => (
-                <div className={css(styles.themeItemWrapper)}>
+              tag => (
+                <div className={css(styles.tagItemWrapper)}>
                   <CheckBox
-                    onClick={() => onItemClick(theme.id)}
-                    checked={R.contains(theme.id, selectedIds)}
+                    onClick={() => onItemClick(tag.id)}
+                    checked={R.contains(tag.id, selectedIds)}
                   />
-                  <div className={css(styles.themeWrapper)}>
-                    <Theme theme={theme} />
+                  <div className={css(styles.tagWrapper)}>
+                    <Tag tag={tag} />
                   </div>
                 </div>
               ),
-              themes,
+              tags,
             )
           }
         </div>
@@ -119,10 +119,10 @@ const SetUpThemesForm = ({ save, themes, defaultSelectedIds }) => {
   );
 };
 
-SetUpThemesForm.propTypes = {
+SetUpTagsForm.propTypes = {
   save: PropTypes.func,
-  themes: PropTypes.array,
+  tags: PropTypes.array,
   defaultSelectedIds: PropTypes.array,
 };
 
-export default withRouter(SetUpThemesForm);
+export default withRouter(SetUpTagsForm);

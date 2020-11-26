@@ -7,13 +7,13 @@ import Input from '../../components/Input/Input';
 import CardLayout from '../../layouts/CardLayout';
 import Button from '../../components/Button/Button';
 import PhotoPreview from '../../components/PhotoPreview/PhotoPreview';
-import Theme from '../../components/Theme/Theme';
+import Tag from '../../components/Tag/Tag';
 
 import { css, StyleSheet } from '../../aphrodite';
 import { cardColors, defaultColor, mainFontColor, themeStyles, focusBorderColor } from '../../theme';
 
 const styles = StyleSheet.create({
-  cardThemeWrapper: { width: '368px' },
+  cardTagWrapper: { width: '368px' },
   cardView: { marginTop: '21px' },
   cardViewLabel: { color: defaultColor },
   cardViewItems: {
@@ -59,9 +59,9 @@ const PostCardInfo = ({
     R.map(
       tag => ({
         id: tag.id,
-        component: Theme,
+        component: Tag,
         componentProps: {
-          theme: tag,
+          tag,
           size: 'small',
         },
       }),
