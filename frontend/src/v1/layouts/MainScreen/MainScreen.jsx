@@ -66,6 +66,17 @@ class MainScreen extends React.PureComponent {
     this.props.loadSettings();
   }
 
+  getEditModeDisabled = () => {
+    const path = this.props.history.location.pathname;
+    if (R.contains(path, ['/new', '/tags', '/settings'])) {
+      return true;
+    }
+    if (path === `/${this.props.match.params.slug}/edit`) {
+      return true;
+    }
+    return false;
+  }
+
   getSelectedMenuItem = () => {
     const { settings } = this.props;
     const path = this.props.history.location.pathname;
@@ -96,6 +107,7 @@ class MainScreen extends React.PureComponent {
       return (
         <AdminPanel
           editMode={editMode}
+          editModeDisabled={this.getEditModeDisabled()}
           switchEditMode={() => setEditMode(!editMode)}
           logOut={closeUserSession}
           setUpTags={() => this.props.history.push('#setup_tags')}
