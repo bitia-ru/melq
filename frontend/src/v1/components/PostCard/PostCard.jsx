@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import PostCardLayout from './PostCardLayout';
 
-const PostCard = ({ post, onClick, disabledCounter }) => {
+const PostCard = ({ data, onClick, disabledCounter }) => {
   const getDisabled = (key) => {
     if (typeof disabledCounter === 'boolean') {
       return disabledCounter;
@@ -11,12 +11,12 @@ const PostCard = ({ post, onClick, disabledCounter }) => {
   };
 
   return (
-    <PostCardLayout post={post} onClick={onClick} getDisabled={getDisabled} />
+    <PostCardLayout data={data} onClick={onClick} getDisabled={getDisabled} />
   );
 };
 
 PostCard.propTypes = {
-  post: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
   disabledCounter: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
 };

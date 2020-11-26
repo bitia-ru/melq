@@ -10,7 +10,6 @@ import {
   bgColor,
   mainFontColor,
   disabledBtnColor,
-  cardColors,
   dateTopicCounterColor,
   themeStyles,
 } from '@/v1/theme';
@@ -76,34 +75,34 @@ const styles = StyleSheet.create({
   },
 });
 
-const PostCardLayout = ({ post, onClick, getDisabled }) => (
+const PostCardLayout = ({ data, onClick, getDisabled }) => (
   <Card
     height="468px"
     width="390px"
-    backgroundColor={post.card?.fill_color || bgColor}
+    backgroundColor={data.fill_color || bgColor}
     onClick={onClick}
   >
     <div className={css(styles.headerWrapper)}>
       <span className={css(styles.header)}>
         {
-          dayjs(post.created_at).format('DD.MM.YYYY')
+          dayjs(data.created_at).format('DD.MM.YYYY')
         }
       </span>
-      <span className={css(styles.header)}>{post?.card?.main_tag?.text}</span>
+      <span className={css(styles.header)}>{data.main_tag?.text}</span>
     </div>
     {
-      post.card?.image
+      data.image
         ? (
           <div className={css(styles.contentWrapper)}>
             <div className={css(styles.mainContainer)}>
-              <img src={post.card.image.url} alt="" />
+              <img src={data.image.url} alt="" />
             </div>
             <div className={css(styles.secondaryContainer)}>
               <div className={css(styles.title)}>
-                {post.card.title}
+                {data.title}
               </div>
               <div className={css(styles.content, themeStyles.smallDetailsFont)}>
-                {post.card.description}
+                {data.description}
               </div>
             </div>
           </div>
@@ -111,10 +110,10 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
           <div className={css(styles.contentWrapper)}>
             <div className={css(styles.mainContainer)}>
               <div className={css(styles.title)}>
-                {post.card.title}
+                {data.title}
               </div>
               <div className={css(styles.content, themeStyles.smallDetailsFont)}>
-                {post.card.description}
+                {data.description}
               </div>
             </div>
           </div>
@@ -125,22 +124,22 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
       <LikeCounter
         checked={false}
         disabled={getDisabled('like')}
-        value={post.num_of_likes}
+        value={data.num_of_likes}
         onClick={e => onClick(e, 'like')}
       />
       <CommentCounter
         disabled={getDisabled('comment')}
-        value={post.num_of_comments}
+        value={data.num_of_comments}
         onClick={e => onClick(e, 'comment')}
       />
       <ShareCounter
         disabled={getDisabled('share')}
-        value={post.num_of_reposts}
+        value={data.num_of_reposts}
         onClick={e => onClick(e, 'share')}
       />
       <ViewCounter
         disabled={getDisabled('view')}
-        value={post.num_of_views}
+        value={data.num_of_views}
         hoverable={false}
       />
     </div>
@@ -148,7 +147,7 @@ const PostCardLayout = ({ post, onClick, getDisabled }) => (
 );
 
 PostCardLayout.propTypes = {
-  post: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
   getDisabled: PropTypes.func.isRequired,
 };
