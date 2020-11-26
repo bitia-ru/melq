@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MainScreen from '../layouts/MainScreen/MainScreen';
 import { currentUser } from '@/v1/redux/user_session/utils';
-import { loadPost } from '@/v1/redux/posts/actions';
+import { loadPost, removePost } from '@/v1/redux/posts/actions';
 import { loadComments } from '@/v1/redux/comments/actions';
+
 import PostComments from '../components/PostComments/PostComments';
 import Button from '../components/Button/Button';
 import LikeCounter from '../components/icon_counters/LikeCounter/LikeCounter';
@@ -69,7 +70,10 @@ const styles = StyleSheet.create({
 class PostShow extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { content: '' };
+    this.state = {
+      content: '',
+      isWaiting: { removeBtn: false },
+    };
   }
 
   componentDidMount() {
@@ -78,8 +82,28 @@ class PostShow extends React.PureComponent {
     this.props.loadComments(slug);
   }
 
+  remove = () => {
+    const { slug } = this.props.match.params;
+    const { isWaiting } = this.state;
+    this.setState({ isWaiting: { ...isWaiting, removeBtn: true } });
+    if (confirm('Удалить пост?')) {
+      this.props.removePost(
+        slug,
+        () => {
+          this.props.history.push('/');
+        },
+        () => {
+          this.setState({ isWaiting: { ...isWaiting, removeBtn: false } });
+        },
+      );
+    } else {
+      this.setState({ isWaiting: { ...isWaiting, removeBtn: false } });
+    }
+  };
+
   render() {
     const { user, posts, history, editMode } = this.props;
+    const { isWaiting } = this.state;
 
     const slug = this.props.match.params.slug;
     const post = posts[slug];
@@ -114,7 +138,7 @@ class PostShow extends React.PureComponent {
                       </div>
                     </Button>
                     <div className={css(styles.deleteBtnWrapper)}>
-                      <Link onTriggered={() => {}}>
+                      <Link onTriggered={this.remove} isWaiting={isWaiting.removeBtn}>
                         <div className={css(styles.deleteBtnInnerContainer)}>
                           <svg width={16} height={16}>
                             <use xlinkHref={`${require('../components/Link/images/trash.svg')}#trash`} />
@@ -153,6 +177,7 @@ PostShow.propTypes = {
   history: PropTypes.object,
   loadComments: PropTypes.func,
   editMode: PropTypes.bool,
+  removePost: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -164,6 +189,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   loadPost: slug => dispatch(loadPost(slug)),
   loadComments: slug => dispatch(loadComments(slug)),
+  removePost: (slug, afterSuccess, afterAll) => dispatch(removePost(slug, afterSuccess, afterAll)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PostShow));
