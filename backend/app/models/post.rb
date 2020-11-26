@@ -32,6 +32,10 @@ class Post
     @updated_at = post[:updated_at]&.to_datetime
   end
 
+  def [](*args)
+    send(args[0])
+  end
+
   def self.posts_dir
     FileUtils.mkdir_p Settings.postsDir unless Dir.exist?(Settings.postsDir)
 
@@ -216,11 +220,8 @@ class Post
   end
 
   def destroy!
-    FileUtils.rm_rf("#{Settings.postsDir}/#{slug}")
-    PostsTag.where(post_slug: slug).each do |pt|
-      pt.destroy!
-      pt.tag.destroy! unless PostsTag.where(tag: pt.tag).exists?
-    end
+    FileUtils.rm_rf("#{Settings.postsDir}/#{slug}") if Dir.exist?("#{Settings.postsDir}/#{slug}")
+    PostCard.where(post_slug: slug).destroy_all
     push_to_git
 
     self
