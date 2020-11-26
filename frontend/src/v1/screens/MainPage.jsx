@@ -118,15 +118,15 @@ MainPage.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const selectedThemesIds = R.reject(
-    id => R.contains(id, state.unselectedThemesIds),
+  const selectedTagsIds = R.reject(
+    id => R.contains(id, state.unselectedTagsIds),
     R.map(t => t.id, R.values(state.tagsStoreV1.tags)),
   );
   return {
     user: currentUser(state),
     postCards: R.filter(
       postCard => (
-        R.contains(postCard.main_tag_id, selectedThemesIds)
+        R.contains(postCard.main_tag_id, selectedTagsIds)
       ),
       state.postCardsStoreV1.postCards,
     ),

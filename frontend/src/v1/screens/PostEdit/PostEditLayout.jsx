@@ -14,7 +14,7 @@ import SeoInfo from './SeoInfo';
 import Link from '../../components/Link/Link';
 import Button from '../../components/Button/Button';
 import MainScreen from '../../layouts/MainScreen/MainScreen';
-import Theme from '../../components/Theme/Theme';
+import Tag from '../../components/Tag/Tag';
 import PostContent from '../../components/PostContent/PostContent';
 
 const styles = StyleSheet.create({
@@ -84,9 +84,9 @@ const PostEditLayout = ({
     R.map(
       tag => ({
         id: tag.id,
-        component: Theme,
+        component: Tag,
         componentProps: {
-          theme: tag,
+          tag,
           size: 'small',
         },
       }),

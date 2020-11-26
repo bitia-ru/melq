@@ -7,7 +7,7 @@ import { default as tagsReducerV1 } from '@/v1/redux/tags/reducer';
 import { default as userSessionReducerV1 } from '@/v1/redux/user_session/reducer';
 import { default as editModeReducerV1 } from '@/v1/redux/editMode/reducer';
 import { default as settingsReducerV1 } from '@/v1/redux/settings/reducer';
-import { default as unselectedThemesIdsReducerV1 } from '@/v1/redux/unselectedThemes/reducer';
+import { default as unselectedTagsIdsReducerV1 } from '@/v1/redux/unselectedTags/reducer';
 import { default as postCardsReducerV1 } from '@/v1/redux/post_cards/reducer';
 
 export default combineReducers({
@@ -20,5 +20,5 @@ export default combineReducers({
   form: formReducer,
   editMode: editModeReducerV1,
   settingsStoreV1: settingsReducerV1,
-  unselectedThemesIds: unselectedThemesIdsReducerV1,
+  unselectedTagsIds: unselectedTagsIdsReducerV1,
 });

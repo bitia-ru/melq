@@ -4,7 +4,7 @@ import { css, StyleSheet } from '../../../aphrodite';
 
 import PanelLayout from './PanelLayout';
 import Link from '../../../components/Link/Link';
-import ThemeSettings from '../../../components/ThemeSettings/ThemeSettings';
+import TagSettings from '../../../components/TagSettings/TagSettings';
 import LogInButton from '../../../components/icon_buttons/LogInButton/LogInButton';
 
 import { separatorColor } from '@/v1/theme';
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     paddingBottom: 36,
     borderBottom: `1px solid ${separatorColor}`,
   },
-  themeSettingsWrapper: {
+  tagSettingsWrapper: {
     paddingTop: 27,
     paddingBottom: 27,
     flex: 1,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const UserPanel = ({ signIn, openPrivacyPolicy, setUpThemes }) => (
+const UserPanel = ({ signIn, openPrivacyPolicy, setUpTags }) => (
   <PanelLayout>
     <div className={css(styles.container)}>
       <div className={css(styles.contactAuthorWrapper)}>
@@ -47,8 +47,8 @@ const UserPanel = ({ signIn, openPrivacyPolicy, setUpThemes }) => (
           Написать автору
         </Link>
       </div>
-      <div className={css(styles.themeSettingsWrapper)}>
-        <ThemeSettings setUpThemes={setUpThemes} />
+      <div className={css(styles.tagSettingsWrapper)}>
+        <TagSettings setUpTags={setUpTags} />
       </div>
       <div className={css(styles.footer)}>
         <div className={css(styles.logInBtnWrapper)}>
@@ -65,7 +65,7 @@ const UserPanel = ({ signIn, openPrivacyPolicy, setUpThemes }) => (
 UserPanel.propTypes = {
   signIn: PropTypes.func,
   openPrivacyPolicy: PropTypes.func,
-  setUpThemes: PropTypes.func,
+  setUpTags: PropTypes.func,
 };
 
 export default UserPanel;
