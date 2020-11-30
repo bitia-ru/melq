@@ -15,3 +15,8 @@ convert_md_post_by_slug_to_html.js slug [dir_from] - скрипт, которы�
 convert_md_posts_to_html.sh [dir_from] [dir_to] - скрипт проходит по всем постам и по index.md генерирует index.html, картинки копируются вместе с постами
 перед выполнением скрипта npm i
 
+Для включения debug-а для gw/nginx надо:
+1) Перед http {...} добавить строчку:
+error_log /var/log/nginx/error.log debug;
+2) В server {...} добавить строчку:
+error_log /var/log/nginx/error.log debug;
