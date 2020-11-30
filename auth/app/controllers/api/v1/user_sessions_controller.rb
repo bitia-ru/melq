@@ -47,15 +47,13 @@ module Api
           cookies[:user_session_token] = {
               value: token,
               domain: request.domain,
-              expires: life_time.days.from_now,
-              same_site: :none
-          }.merge(request.protocol == "https://" ? {secure: true} : {})
+              expires: life_time.days.from_now
+          }.merge(request.protocol == "https://" ? {secure: true} : {same_site: :none})
           cookies[:user_id] = {
               value: user.id,
               domain: request.domain,
-              expires: life_time.days.from_now,
-              same_site: :none
-          }.merge(request.protocol == "https://" ? {secure: true} : {})
+              expires: life_time.days.from_now
+          }.merge(request.protocol == "https://" ? {secure: true} : {same_site: :none})
           instance_variable_set("@#{resource_name}", user_session)
         else
           UserSession.create!(
