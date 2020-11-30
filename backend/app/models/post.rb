@@ -103,11 +103,13 @@ class Post
   end
 
   def card_attributes=(*args)
-    params = args.empty? ? {} : args[0]
+    params = args.empty? ? {} : args[0].stringify_keys
 
     raise StandardError, 'Args empty' if params.keys.empty?
 
     post_card = card
+    return if post_card.post_slug.nil?
+
     post_card.assign_attributes(params)
     post_card.save!
   end
@@ -123,7 +125,7 @@ class Post
   end
 
   def assign_attributes(*args)
-    params = args.empty? ? {} : args[0]
+    params = args.empty? ? {} : args[0].stringify_keys
 
     raise StandardError, 'Args empty' if params.keys.empty?
 
@@ -131,8 +133,17 @@ class Post
     if params.include?('images_attachments_attributes')
       self.images_attachments_attributes = params['images_attachments_attributes']
     end
+
+    unless params.include?('card_attributes')
+      self.card_attributes = { published: params.dig('published') }
+    end
     params.each do |k, v|
       next if k == 'images_attachments_attributes'
+
+      if k == 'card_attributes'
+        send("#{k}=", v.merge(published: params.dig('published') || false))
+        next
+      end
 
       send("#{k}=", v)
     end
@@ -213,7 +224,8 @@ class Post
   end
 
   def self.create!(*args)
-    post = Post.new(*args)
+    post = Post.new
+    post.assign_attributes(*args)
     raise StandardError, 'Post not valid' unless post.valid?
 
     post.save!

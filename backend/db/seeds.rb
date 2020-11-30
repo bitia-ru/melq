@@ -17,12 +17,14 @@ Post.create!(
   slug: 'about-blog-slug',
   title: 'About blog',
   content: 'About blog',
-  published: true
+  published: true,
+  card_attributes: { title: 'About blog', description: 'About blog' }
 )
 
 Post.create!(
   slug: 'privacy-policy-slug',
   title: 'Privacy policy',
   content: 'Privacy policy',
-  published: true
+  published: true,
+  card_attributes: { title: 'Privacy policy', description: 'Privacy policy' }
 )
