@@ -3,20 +3,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 
-import { loadTags as loadTagsAction } from '@/v1/redux/tags/actions';
-
 import TagSettingsLayout from './TagSettingsLayout';
 
 const DEFAULT_DISPLAYED_LENGTH = 7;
 
-const TagSettings = ({ tags, loadTags, setUpTags }) => {
+const TagSettings = ({ tags, setUpTags }) => {
   const [showMoreBtnVisible, setShowMoreBtnVisible] = useState(
     tags.length > DEFAULT_DISPLAYED_LENGTH,
   );
 
   useEffect(() => setShowMoreBtnVisible(tags.length > DEFAULT_DISPLAYED_LENGTH), [tags]);
-
-  useEffect(loadTags, []);
 
   return (
     <TagSettingsLayout
@@ -33,7 +29,6 @@ const TagSettings = ({ tags, loadTags, setUpTags }) => {
 
 TagSettings.propTypes = {
   tags: PropTypes.array,
-  loadTags: PropTypes.func,
   setUpTags: PropTypes.func,
 };
 
@@ -48,6 +43,4 @@ const mapStateToProps = state => ({
   ),
 });
 
-const mapDispatchToProps = dispatch => ({ loadTags: () => dispatch(loadTagsAction()) });
-
-export default connect(mapStateToProps, mapDispatchToProps)(TagSettings);
+export default connect(mapStateToProps)(TagSettings);

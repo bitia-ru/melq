@@ -10,6 +10,7 @@ import { closeUserSession } from '@/v1/utils/auth';
 
 import { setEditMode as setEditModeAction } from '../../redux/editMode/actions';
 import { loadSettings } from '../../redux/settings/actions';
+import { loadTags as loadTagsAction } from '@/v1/redux/tags/actions';
 import setUnselectedTagsIds from '../../redux/unselectedTags/actions';
 
 import LogInForm from '../../forms/LogInForm/LogInForm';
@@ -64,6 +65,7 @@ class MainScreen extends React.PureComponent {
 
   componentDidMount() {
     this.props.loadSettings();
+    this.props.loadTags();
   }
 
   getEditModeDisabled = () => {
@@ -205,6 +207,7 @@ MainScreen.propTypes = {
   tags: PropTypes.array,
   setUnselectedTagsIds: PropTypes.func,
   unselectedTagsIds: PropTypes.array,
+  loadTags: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
@@ -218,6 +221,7 @@ const mapDispatchToProps = dispatch => ({
   setEditMode: editMode => dispatch(setEditModeAction(editMode)),
   loadSettings: () => dispatch(loadSettings()),
   setUnselectedTagsIds: tagsIds => dispatch(setUnselectedTagsIds(tagsIds)),
+  loadTags: () => dispatch(loadTagsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withModals(MainScreen)));
