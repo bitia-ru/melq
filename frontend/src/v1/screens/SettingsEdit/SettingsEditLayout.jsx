@@ -17,7 +17,15 @@ import MainScreen from '../../layouts/MainScreen/MainScreen';
 
 import styles from './styles';
 
-const SettingsEditLayout = ({ settings, user, loadAvatar, onSettingsChange, save }) => {
+const SettingsEditLayout = ({
+  settings,
+  user,
+  loadAvatar,
+  onSettingsChange,
+  save,
+  isWaiting,
+  submitBtnDisabled,
+}) => {
   const fileInputRef = useRef(null);
 
   const preparedInput = fieldName => ({
@@ -47,11 +55,19 @@ const SettingsEditLayout = ({ settings, user, loadAvatar, onSettingsChange, save
                 </div>
               </div>
               <Input
-                input={preparedInput('specialization')}
+                input={preparedInput('nickname')}
                 fontSize="small"
-                label="Специальность"
+                label="Имя автора блога"
                 maxLength={19}
               />
+              <div className={css(styles.specializationInputWrapper)}>
+                <Input
+                  input={preparedInput('specialization')}
+                  fontSize="small"
+                  label="Специальность"
+                  maxLength={19}
+                />
+              </div>
               <div className={css(styles.aboutAuthorTextAreaWrapper)}>
                 <TextArea
                   maxLength={123}
@@ -176,7 +192,11 @@ const SettingsEditLayout = ({ settings, user, loadAvatar, onSettingsChange, save
           </div>
         </div>
       </div>
-      <div style={{width: '133px'}}><Button onClick={save} btnStyle="info">Сохранить</Button></div>
+      <div className={css(styles.submitBtnWrapper)}>
+        <Button onClick={save} btnStyle="info" isWaiting={isWaiting} disabled={submitBtnDisabled}>
+          Сохранить
+        </Button>
+      </div>
     </MainScreen>
   );
 };
@@ -187,6 +207,8 @@ SettingsEditLayout.propTypes = {
   loadAvatar: PropTypes.func,
   onSettingsChange: PropTypes.func,
   save: PropTypes.func,
+  isWaiting: PropTypes.bool,
+  submitBtnDisabled: PropTypes.bool,
 };
 
 export default SettingsEditLayout;

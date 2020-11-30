@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     width: '133px',
     marginLeft: '16px',
   },
+  specializationInputWrapper: { marginTop: '21px' },
   aboutAuthorTextAreaWrapper: { marginTop: '21px' },
   socialLinkIconWrapper: {
     display: 'flex',
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     color: dateTopicCounterColor,
   },
   socialLinkIntegrationStateActive: { color: successColor },
+  submitBtnWrapper: { width: '133px' },
 });
 
 export default styles;

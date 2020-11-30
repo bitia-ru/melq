@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,7 +12,10 @@ import SettingsEditLayout from './SettingsEditLayout';
 class SettingsEdit extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { settings: {} };
+    this.state = {
+      settings: {},
+      isWaiting: false,
+    };
   }
 
   onSettingsChange = (fieldName, fieldValue) => {
@@ -29,7 +33,11 @@ class SettingsEdit extends React.PureComponent {
   save = () => {
     const { settings } = this.state;
     const formData = new FormData();
+    this.setState({ isWaiting: true });
 
+    if (settings.nickname) {
+      formData.append('setting[nickname]', settings.nickname);
+    }
     if (settings.specialization) {
       formData.append('setting[specialization]', settings.specialization);
     }
@@ -56,12 +64,18 @@ class SettingsEdit extends React.PureComponent {
     }
     this.props.updateSettings(
       formData,
+      () => {
+        this.setState({ settings: {} });
+      },
+      () => {
+        this.setState({ isWaiting: false });
+      },
     );
   };
 
   render() {
     const { user, settings: settingsProps } = this.props;
-    const { settings: settingsState } = this.state;
+    const { settings: settingsState, isWaiting } = this.state;
     const settings = {
       ...settingsProps,
       ...settingsState,
@@ -74,6 +88,8 @@ class SettingsEdit extends React.PureComponent {
         loadAvatar={this.loadAvatar}
         onSettingsChange={this.onSettingsChange}
         save={this.save}
+        isWaiting={isWaiting}
+        submitBtnDisabled={R.equals(settingsState, {})}
       />
     );
   }
