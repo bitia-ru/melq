@@ -17,10 +17,13 @@ const mapIndexed = R.addIndex(R.map);
 
 const btns = [
   {
+    id: 'published',
     text: 'Опубликованные',
-    style: 'info',
   },
-  { text: 'Черновики' },
+  {
+    id: 'drafts',
+    text: 'Черновики',
+  },
 ];
 
 const styles = StyleSheet.create({
@@ -37,6 +40,11 @@ const styles = StyleSheet.create({
 });
 
 class MainPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { published: true };
+  }
+
   componentDidMount() {
     this.props.loadPostCards();
   }
@@ -60,6 +68,7 @@ class MainPage extends React.PureComponent {
 
   render() {
     const { user, postCards, editMode } = this.props;
+    const published = editMode ? this.state.published : true;
 
     return (
       <MainScreen header="" user={user}>
@@ -68,12 +77,29 @@ class MainPage extends React.PureComponent {
             editMode && (
               <div className={css(styles.btnsContainer)}>
                 <Button
-                  onClick={() => {}}
+                  onClick={
+                    (index) => {
+                      this.setState({ published: btns[index].id === 'published' });
+                    }
+                  }
                   size="big"
                   tooltipText={R.map(btn => btn.tooltipText, btns)}
                   tooltipSide={R.map(btn => btn.tooltipSide, btns)}
                   disabled={R.map(btn => btn.disabled, btns)}
-                  btnStyle={R.map(btn => btn.style, btns)}
+                  btnStyle={
+                    R.map(
+                      (btn) => {
+                        if (btn.id === 'published' && published) {
+                          return 'info';
+                        }
+                        if (btn.id === 'drafts' && !published) {
+                          return 'info';
+                        }
+                        return null;
+                      },
+                      btns,
+                    )
+                  }
                   isWaiting={R.map(btn => btn.isWaiting, btns)}
                 >
                   {
@@ -100,7 +126,7 @@ class MainPage extends React.PureComponent {
                   key={postCard.id}
                 />
               ),
-              R.values(postCards),
+              R.filter(card => card.published === published, R.values(postCards)),
             )
           }
         </div>
